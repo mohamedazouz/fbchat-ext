@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.jivesoftware.smack.XMPPException;
 
 /**
  *
@@ -38,18 +37,16 @@ public class ReadyChat extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            // TODO output your page here
-            /*out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ReadyChat</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ReadyChat at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");*/
-
+            session = request.getSession();
+            String friend = request.getParameter("friend");
+            String msg = request.getParameter("chatext");
+            ChatClient c = (ChatClient) session.getAttribute("buddList");
+            c.sendMessage(msg, friend);
+            request.setAttribute("buddyList", c);
+        } catch (Exception ex) {
+            Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-             request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
             out.close();
         }
     }
@@ -65,8 +62,6 @@ public class ReadyChat extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("hii");
-
         processRequest(request, response);
     }
 
@@ -80,19 +75,6 @@ public class ReadyChat extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        System.out.println("hii");
-        session = request.getSession();
-        String friend = request.getParameter("friend");
-        String msg = request.getParameter("chatext");
-        ChatClient c = (ChatClient) session.getAttribute("chat");
-        try {
-            c.sendMessage(msg, friend);
-        } catch (Exception ex) {
-            Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        request.setAttribute("buddyList", c);
         processRequest(request, response);
     }
 

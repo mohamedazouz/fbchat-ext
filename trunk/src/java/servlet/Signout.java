@@ -35,7 +35,7 @@ public class Signout extends HttpServlet {
         try {
             // TODO output your page here
             session = request.getSession();
-            ChatClient c = (ChatClient) session.getAttribute("buddList2");
+            ChatClient c = (ChatClient) session.getAttribute("buddList");
             c.disconnect();
             ChatClient.connected = false;
             out.println("<html>");

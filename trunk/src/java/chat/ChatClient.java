@@ -94,15 +94,11 @@ public class ChatClient implements MessageListener {
             FriendBuddy friend = new FriendBuddy();
             friend.setId(r.getUser());
             try {
-                sendMessage("", r.getUser());
+                this.sendMessage("", r.getUser());
             } catch (XMPPException ex) {
                 Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
             friend.setName(r.getName());
-            if(r.getName().equalsIgnoreCase("Prog Mania"))
-            {
-                System.out.println("hi");
-            }
             if (presence.getType() == Presence.Type.available) {
                 friend.setStaus("1");
             } else {
@@ -119,17 +115,18 @@ public class ChatClient implements MessageListener {
 
     @Override
     public void processMessage(Chat chat, Message message) {
+        System.out.println(message.getType().name());
         if (message.getType() == Message.Type.chat && message.getBody() != null) {
 
             System.out.println("xml:"+message.toXML());
             System.out.println(chat.getParticipant() + " says: " + message.getBody() + " to :"+connection.getUser());
             CreatJsonFile c = new CreatJsonFile();
             try {
-                c.createJsonFile(chat.getParticipant(), connection.getUser().split("/")[0], message.getBody());
+                c.createJsonFile(chat.getParticipant(), message.getBody());
             } catch (Exception ex) {
                 Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
-            setRcvedMessage(message.getBody());
+            
         }
 
     }

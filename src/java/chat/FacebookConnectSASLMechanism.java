@@ -2,7 +2,6 @@ package chat;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.GregorianCalendar;
@@ -39,6 +38,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
         // super.authenticate();
         // }
 
+    @Override
         protected void authenticate() throws IOException, XMPPException {
                 StringBuilder stanza = new StringBuilder();
                 stanza.append("<auth mechanism=\"").append(getName());
@@ -49,6 +49,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                 getSASLAuthentication().send(stanza.toString());
         }
 
+    @Override
         public void authenticate(String apiKeyAndSessionKey, String host, String sessionSecret)
                         throws IOException, XMPPException {
 
@@ -74,6 +75,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                 authenticate();
         }
 
+    @Override
         public void authenticate(String username, String host, CallbackHandler cbh)
                         throws IOException, XMPPException {
                 String[] mechanisms = { "DIGEST-MD5" };
@@ -86,6 +88,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                 return "X-FACEBOOK-PLATFORM";
         }
 
+    @Override
         public void challengeReceived(String challenge) throws IOException {
                 // Build the challenge response stanza encoding the response text
                 StringBuilder stanza = new StringBuilder();
@@ -152,7 +155,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
         }
 
     private String convertToHex(byte[] data) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int i = 0; i < data.length; i++) {
             int halfbyte = (data[i] >>> 4) & 0x0F;
             int two_halfs = 0;

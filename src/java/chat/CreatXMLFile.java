@@ -5,7 +5,6 @@
 package chat;
 
 import java.io.*;
-import java.net.URI;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;

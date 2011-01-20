@@ -2,27 +2,27 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
         <servlet-name>xmppreceiver</servlet-name>
-        <servlet-class>servlet.xmppreceiver</servlet-class>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.xmppreceiver</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ReadyChat</servlet-name>
-        <servlet-class>servlet.ReadyChat</servlet-class>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.ReadyChat</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Login</servlet-name>
-        <servlet-class>servlet.Login</servlet-class>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.Login</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Signout</servlet-name>
-        <servlet-class>servlet.Signout</servlet-class>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.Signout</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateList</servlet-name>
-        <servlet-class>servlet.UpdateList</servlet-class>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.UpdateList</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Users</servlet-name>
-        <servlet-class>servlet.Users</servlet-class>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.Users</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ReadyChat</servlet-name>

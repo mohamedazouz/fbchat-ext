@@ -25,7 +25,7 @@
                 <c:forEach items="${buddList.list}" var="l">
                     <c:if test="${l.staus == '1'}">
                         <div >
-                            pic : <img src="${l.pic}" width="100" height="100"/>
+                            pic : <img src="${l.pic}" />
                             Name : ${l.name}
                             status : ${l.staus}
                         </div>

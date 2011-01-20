@@ -23,7 +23,7 @@ public class CreatJsonFile {
         Date d = new Date();
         JSONArray jSONArray = null;
         JSONObject jSONObject = new JSONObject();
-        File file = new File("/media/D/Azouz/chat/out.json");
+        File file = new File("/media/D/Azouz/chat/"+f+".json");//.subSequence(1, f.lastIndexOf("@"))
         long nownow = d.getTime();
         d.getTime();
         int now = d.getSeconds();

@@ -24,7 +24,6 @@ import org.jivesoftware.smack.packet.Presence;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import com.google.code.facebookapi.ProfileField;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -33,14 +32,13 @@ import org.json.JSONObject;
  */
 public class ChatClient implements MessageListener {
 
-    private ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();
-    private XMPPConnection connection;
+    private ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();// Store All list of friends for login one
+    private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fcebook
     private SecurityMode securityMode = SecurityMode.enabled;
     private boolean isSaslAuthenticationEnabled = true;
     private boolean isCompressionEnabled = false;
     private boolean isReconnectionAllowed = false;
     private int port = 5222;
-    String host = "";
     private String domain = "chat.facebook.com";
     private String apiKey = "76f98c6f348e8d27ed504ae74da69cea";
     private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";
@@ -50,39 +48,29 @@ public class ChatClient implements MessageListener {
     FacebookJsonRestClient facebook;
     HashMap<Long, String> profilepictures = new HashMap<Long, String>();
 
+    /*
+     * this function connect to facebook via user authutocation token
+     */
     public void login(String token) throws XMPPException, InterruptedException, FacebookException {
-
-        SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
-                FacebookConnectSASLMechanism.class);
-        SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
-
-        ConnectionConfiguration config = null;
-
-        config = new ConnectionConfiguration(domain, port);
-
-        config.setSecurityMode(securityMode);
-        config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
-        config.setCompressionEnabled(isCompressionEnabled);
-        config.setReconnectionAllowed(isReconnectionAllowed);
-
-        connection = new XMPPConnection(config);
-
         try {
+            SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
+                    FacebookConnectSASLMechanism.class);
+            SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
+            ConnectionConfiguration config = null;
+            config = new ConnectionConfiguration(domain, port);
+            config.setSecurityMode(securityMode);
+            config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
+            config.setCompressionEnabled(isCompressionEnabled);
+            config.setReconnectionAllowed(isReconnectionAllowed);
+            connection = new XMPPConnection(config);
             connection.connect();
-        } catch (XMPPException e) {
-            System.out.println("error");
-        }
-        facebook = new FacebookJsonRestClient(apiKey, apiSecret);
-        String FB_SESSION_KEY = facebook.auth_getSession(token);
-
-
-        String username = apiKey + "|" + FB_SESSION_KEY;
-        try {
+            facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+            String FB_SESSION_KEY = facebook.auth_getSession(token);
             connection.login(apiKey + "|" + FB_SESSION_KEY, apiSecret, resource);
             Presence packet = new Presence(Presence.Type.available);
             connection.sendPacket(packet);
             GetprofilesPictures();
-        } catch (XMPPException e) {
+        } catch (Exception e) {
             System.out.println("error2");
         }
     }
@@ -118,11 +106,8 @@ public class ChatClient implements MessageListener {
     }
 
     public void loginkaman() throws XMPPException, InterruptedException, FacebookException {
-        //   SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
-        // FacebookConnectSASLMechanism.class);
-        //SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
         ConnectionConfiguration config = null;
-        config = new ConnectionConfiguration(host, port);
+        config = new ConnectionConfiguration("", port);
 
         config.setSecurityMode(securityMode);
         config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
@@ -137,7 +122,7 @@ public class ChatClient implements MessageListener {
         try {
             connection.connect();
 
-            FacebookJsonRestClient facebook = new FacebookJsonRestClient(apiKey, apiSecret, FB_SESSION_KEY);
+            facebook = new FacebookJsonRestClient(apiKey, apiSecret, FB_SESSION_KEY);
             facebook.isDesktop();
             facebook.users_setStatus("ya moshel wel application  dah y5las b2aa :D");
 
@@ -153,13 +138,14 @@ public class ChatClient implements MessageListener {
     }
 
     public void loginagain(String username, String pass) {
-        SASLAuthentication.registerSASLMechanism("DIGEST-MD5", MySASLDigestMD5Mechanism.class);
-
-        ConnectionConfiguration config = new ConnectionConfiguration("chat.facebook.com", 5222);
-        //config.setSASLAuthenticationEnabled(true);
-
-        connection = new XMPPConnection(config);
         try {
+            SASLAuthentication.registerSASLMechanism("DIGEST-MD5", MySASLDigestMD5Mechanism.class);
+
+            ConnectionConfiguration config = new ConnectionConfiguration("chat.facebook.com", 5222);
+            //config.setSASLAuthenticationEnabled(true);
+
+            connection = new XMPPConnection(config);
+
             connection.connect();
             connection.login(username, pass);
         } catch (Exception e) {
@@ -174,31 +160,43 @@ public class ChatClient implements MessageListener {
     }
 
     public void displayBuddyList() {
-        list.clear();
-        Roster roster = connection.getRoster();
-        Collection<RosterEntry> entries = roster.getEntries();
+        try {
+            list.clear();
+            Roster roster = connection.getRoster();
+            Collection<RosterEntry> entries = roster.getEntries();
+            JSONArray jSONArray = new JSONArray();
+            for (RosterEntry r : entries) {
+                Presence presence = roster.getPresence(r.getUser());
+                FriendBuddy friend = new FriendBuddy();
+                friend.setId(r.getUser());
 
-        for (RosterEntry r : entries) {
-            Presence presence = roster.getPresence(r.getUser());
-            FriendBuddy friend = new FriendBuddy();
-            friend.setId(r.getUser());
-            try {
-                this.sendMessage("", r.getUser());
-            } catch (XMPPException ex) {
-                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                friend.setName(r.getName());
+                String temp = r.getUser();
+                String id = (String) temp.subSequence(1, temp.lastIndexOf("@"));
+                friend.setPic(getprofilepic(new Long(id)));
+                if (presence.getType() == Presence.Type.available) {
+                    this.sendMessage("", r.getUser());
+                    friend.setStaus("1");
+                    JSONObject jSONObject = new JSONObject();
+                    jSONObject.put("id", friend.getId().subSequence(1, friend.getId().lastIndexOf("@")));
+                    jSONObject.put("name", friend.getName());
+                    jSONArray.put(jSONObject);
+                } else {
+                    friend.setStaus("0");
+                }
+                list.add(friend);
             }
-            friend.setName(r.getName());
-            String temp = r.getUser();
-            String id = (String) temp.subSequence(1, temp.lastIndexOf("@"));
-            friend.setPic(getprofilepic(new Long(id)));
-            if (presence.getType() == Presence.Type.available) {
-                friend.setStaus("1");
-
-            } else {
-                friend.setStaus("0");
-            }
-            list.add(friend);
+            File file = new File("/media/D/Azouz/chat/online+" + connection.getUser().subSequence(1, connection.getUser().lastIndexOf("@")) + ".json");
+            PrintWriter out;
+            out = new PrintWriter(file);
+            String json = jSONArray.toString(5);
+            out.append(json);
+            out.close();
+        } catch (Exception ex) {
+            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+
 
     }
 
@@ -208,19 +206,15 @@ public class ChatClient implements MessageListener {
 
     @Override
     public void processMessage(Chat chat, Message message) {
-        System.out.println(message.getType().name());
-        if (message.getType() == Message.Type.chat && message.getBody() != null) {
-
-            System.out.println("xml:" + message.toXML());
-            System.out.println(chat.getParticipant() + " says: " + message.getBody() + " to :" + connection.getUser());
-            CreatJsonFile c = new CreatJsonFile();
-            try {
-
+        try {
+            if (message.getType() == Message.Type.chat && message.getBody() != null) {
+                System.out.println("xml:" + message.toXML());
+                System.out.println(chat.getParticipant() + " says: " + message.getBody() + " to :" + connection.getUser());
+                CreatJsonFile c = new CreatJsonFile();
                 c.createJsonFile(chat.getParticipant(), message.getBody());
-            } catch (Exception ex) {
-                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+        } catch (Exception ex) {
+            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -231,7 +225,6 @@ public class ChatClient implements MessageListener {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String msg;
         String sessionKey = "7f605feabdb3e1c7eb1efd43-1198560721";
-        //c.loginagain("azouz", "7117340");
         c.loginkaman();
         c.displayBuddyList();
         System.out.println("-----");
@@ -240,11 +233,6 @@ public class ChatClient implements MessageListener {
         for (int i = 0; i < c.getList().size(); i++) {
             System.out.println(c.getList().get(i).getName());
         }
-
-        /*while (!(msg = br.readLine()).equals("bye")) {
-
-        c.sendMessage(msg, "-100001513410529@chat.facebook.com");
-        }*/
         c.disconnect();
     }
 

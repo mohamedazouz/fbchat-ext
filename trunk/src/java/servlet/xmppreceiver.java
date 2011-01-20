@@ -43,15 +43,16 @@ public class xmppreceiver extends HttpServlet {
                 ChatClient.connected = false;
             }
             if (!ChatClient.connected) {
-                String login = (String) session.getAttribute("login");
                 token = request.getParameter("auth_token");
                 if (token != null) {
                     c = new ChatClient();
-                     c.login(token);
+                    c.login(token);
                     c.displayBuddyList();
                     session.setAttribute("buddList", c);
+
                     //   c.disconnect();
                 } else {
+                    session.setAttribute("loginApp", "1");
                     String firstApplicationloging = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://196.221.190.148:8084/fbchatproxy/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
                     String redirct = "http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0";
 
@@ -61,18 +62,18 @@ public class xmppreceiver extends HttpServlet {
             }
         } catch (Exception e) {
             System.out.println("error");/*
-                                         * XMPPError connecting to chat.facebook.com:5222.: remote-server-error(502) XMPPError connecting to chat.facebook.com:5222.
-  -- caused by: java.net.ConnectException: Connection timed out: connect
+             * XMPPError connecting to chat.facebook.com:5222.: remote-server-error(502) XMPPError connecting to chat.facebook.com:5222.
+            -- caused by: java.net.ConnectException: Connection timed out: connect
              */
         } finally {
-            if (token != null) {
+            if (token != null ) {
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             }
             out.close();
 
         }
 
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -118,7 +119,7 @@ perission URL
 -https://graph.facebook.com/oauth/authorize?client_id=172430629459688&redirect_uri=http://41.178.64.38:8080/Facebook/&scope=user_photos,user_videos,publish_stream,status_update,xmpp_login,access_token,email
 
 -
- http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://196.221.190.148:8084/fbchatproxy/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access
+http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://196.221.190.148:8084/fbchatproxy/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access
 
 -https://graph.facebook.com/oauth/authorize?client_id=172430629459688&redirect_uri=http://41.178.64.38:8080/Facebook/scope=user_photos,user_videos,publish_stream
 

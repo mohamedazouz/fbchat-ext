@@ -21,6 +21,7 @@ public class Login extends MultiActionController{
      * @param response
      */
     public void login(HttpServletRequest request,HttpServletResponse response){
+        System.out.println("helllooooooooo");
         //TO DO: redirect to the login screen in facebook.
     }
 

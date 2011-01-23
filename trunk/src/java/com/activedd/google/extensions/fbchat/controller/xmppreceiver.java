@@ -5,6 +5,7 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import com.activedd.google.extensions.fbchat.chat.FriendBuddy;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -39,6 +40,7 @@ public class xmppreceiver extends HttpServlet {
         String token = "";
         ChatClient c = null;
         try {
+           
             if (session.getAttribute("buddList") == null) {
                 ChatClient.connected = false;
             }
@@ -49,24 +51,23 @@ public class xmppreceiver extends HttpServlet {
                     c.login(token);
                     c.displayBuddyList();
                     session.setAttribute("buddList", c);
-
                     //   c.disconnect();
                 } else {
                     session.setAttribute("loginApp", "1");
                     String firstApplicationloging = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://196.221.190.148:8084/fbchatproxy/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
                     String redirct = "http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0";
-
-
+                    redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
                     response.sendRedirect(redirct);
                 }
             }
         } catch (Exception e) {
-            System.out.println("error");/*
+            System.out.println("error");
+            /*
              * XMPPError connecting to chat.facebook.com:5222.: remote-server-error(502) XMPPError connecting to chat.facebook.com:5222.
-            -- caused by: java.net.ConnectException: Connection timed out: connect
+             *-- caused by: java.net.ConnectException: Connection timed out: connect
              */
         } finally {
-            if (token != null ) {
+            if (token != null) {
                 request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
             }
             out.close();

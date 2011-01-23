@@ -2,28 +2,31 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package com.activedd.google.extensions.fbchat.controller;
 
-import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  *
- * @author Activedd2
+ * @author ibrahim
  */
-public class ReadyChat extends HttpServlet {
-
-    HttpSession session;
-
-    /**
+public class AllUser extends HttpServlet {
+   JSONArray jSONArray;
+    String redirct ;
+    String userId ;
+    /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
@@ -31,27 +34,39 @@ public class ReadyChat extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            session = request.getSession();
-            String to="-";
-            String friend = request.getParameter("friend");
-            String msg = request.getParameter("chatext");
-            to+=friend+"@chat.facebook.com";
-            ChatClient c = (ChatClient) session.getAttribute("buddList");
-            c.sendMessage(msg, to);
-            request.setAttribute("buddyList", c);
-        } catch (Exception ex) {
-            Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
+            if (request.getParameter("userid") != null) {
+                userId = request.getParameter("userid");
+                redirct="/AllUser?all=";
+            }
+            if (request.getParameter("all") != null) {
+                redirct = "";
+                out.print(request.getParameter("all"));
+            } else {
+                File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/all-" + userId + ".json");
+                Scanner sc = new Scanner(file);
+                String temp = "";
+                while (sc.hasNextLine()) {
+                    temp += sc.nextLine();
+                }
+                try {
+                    jSONArray = new JSONArray(temp);
+                } catch (JSONException ex) {
+                    Logger.getLogger(OnlineUser.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } finally {
-            request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
+            if (!redirct.equals("")) {
+                redirct+=jSONArray.toString();
+                request.getRequestDispatcher(redirct).forward(request, response);
+            }
+
             out.close();
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -63,9 +78,9 @@ public class ReadyChat extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         processRequest(request, response);
-    }
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -76,7 +91,7 @@ public class ReadyChat extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -88,4 +103,5 @@ public class ReadyChat extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

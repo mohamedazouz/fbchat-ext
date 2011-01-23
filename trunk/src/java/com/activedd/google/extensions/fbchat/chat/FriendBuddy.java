@@ -8,6 +8,9 @@ package com.activedd.google.extensions.fbchat.chat;
 /**
  *
  * @author Activedd2
+ *
+ * its the model for buddy list
+ * each user have a id , name, status , pic
  */
 public class FriendBuddy {
     private String id;

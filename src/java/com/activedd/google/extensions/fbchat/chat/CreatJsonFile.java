@@ -16,14 +16,24 @@ import org.json.JSONObject;
 /**
  *
  * @author Activedd2
+ *
+ * this class is to load the receiving message to the user
  */
+
 public class CreatJsonFile {
 
+    /*
+     * this function is to create  json file
+     *
+     * to check it also if the user put more than messsage within two seconds
+     * 
+     */
     public void createJsonFile(String f, String msg) throws JSONException, FileNotFoundException {
         Date d = new Date();
         JSONArray jSONArray = null;
         JSONObject jSONObject = new JSONObject();
-        File file = new File("/media/D/Azouz/chat/"+f+".json");//.subSequence(1, f.lastIndexOf("@"))
+        File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/"+f.subSequence(1, f.lastIndexOf("@"))+".json");//.subSequence(1, f.lastIndexOf("@"))
+        
         long nownow = d.getTime();
         d.getTime();
         int now = d.getSeconds();

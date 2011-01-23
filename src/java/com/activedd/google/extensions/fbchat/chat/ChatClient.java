@@ -29,6 +29,8 @@ import org.json.JSONObject;
 /**
  *
  * @author Activedd2
+ *
+ * this class is to manage whole chat client sending and receiving messages 
  */
 public class ChatClient implements MessageListener {
 
@@ -74,7 +76,9 @@ public class ChatClient implements MessageListener {
             System.out.println("error2");
         }
     }
-
+/*
+ * to get all profile pictures for all users
+ */
     void GetprofilesPictures() {
         try {
             ArrayList<Long> friendsID = new ArrayList<Long>();
@@ -85,6 +89,7 @@ public class ChatClient implements MessageListener {
             }
             ArrayList<ProfileField> pf = new ArrayList<ProfileField>();
             pf.add(ProfileField.PIC);
+            pf.add(ProfileField.NAME);
             friendsid = facebook.users_getInfo(friendsID, pf);
             for (int i = 0; i < friendsid.length(); i++) {
                 JSONObject jSONObject = friendsid.getJSONObject(i);
@@ -92,6 +97,11 @@ public class ChatClient implements MessageListener {
                 String id = ((Object) jSONObject.get("uid")).toString();
                 profilepictures.put(new Long(id), pic);
             }
+            File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/all-" + connection.getUser().subSequence(1, connection.getUser().lastIndexOf("@")) + ".json");
+            PrintWriter out;
+            out = new PrintWriter(file);
+            out.append(friendsid.toString(5));
+            out.close();
 
         } catch (Exception ex) {
             System.out.println(ex.toString());
@@ -99,7 +109,9 @@ public class ChatClient implements MessageListener {
         }
 
     }
-
+/*
+ * get profile picture for user id
+ */
     String getprofilepic(long id) {
         String pic = profilepictures.get(id);
         return pic;
@@ -153,7 +165,9 @@ public class ChatClient implements MessageListener {
         }
 
     }
-
+/*
+ * to send message for spcific user
+ */
     public void sendMessage(String message, String to) throws XMPPException {
         Chat chat = connection.getChatManager().createChat(to, this);
         chat.sendMessage(message);
@@ -175,7 +189,6 @@ public class ChatClient implements MessageListener {
                 String id = (String) temp.subSequence(1, temp.lastIndexOf("@"));
                 friend.setPic(getprofilepic(new Long(id)));
                 if (presence.getType() == Presence.Type.available) {
-                    this.sendMessage("", r.getUser());
                     friend.setStaus("1");
                     JSONObject jSONObject = new JSONObject();
                     jSONObject.put("id", friend.getId().subSequence(1, friend.getId().lastIndexOf("@")));
@@ -186,20 +199,23 @@ public class ChatClient implements MessageListener {
                 }
                 list.add(friend);
             }
-            File file = new File("/media/D/Azouz/chat/online+" + connection.getUser().subSequence(1, connection.getUser().lastIndexOf("@")) + ".json");
+            File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/online-" + connection.getUser().subSequence(1, connection.getUser().lastIndexOf("@")) + ".json");
             PrintWriter out;
             out = new PrintWriter(file);
             String json = jSONArray.toString(5);
             out.append(json);
             out.close();
+
         } catch (Exception ex) {
             Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 
-
     }
 
+    /*
+     * to disconnect and logout from the server
+     */
     public void disconnect() {
         connection.disconnect();
     }
@@ -207,6 +223,7 @@ public class ChatClient implements MessageListener {
     @Override
     public void processMessage(Chat chat, Message message) {
         try {
+
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
                 System.out.println("xml:" + message.toXML());
                 System.out.println(chat.getParticipant() + " says: " + message.getBody() + " to :" + connection.getUser());

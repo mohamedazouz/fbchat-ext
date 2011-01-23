@@ -4,24 +4,28 @@
  */
 package com.activedd.google.extensions.fbchat.controller;
 
-import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  *
- * @author Activedd2
+ * @author ibrahim
  */
-public class ReadyChat extends HttpServlet {
+public class OnlineUser extends HttpServlet {
 
-    HttpSession session;
+    JSONArray jSONArray;
+    String redirct ;
+    String userId ;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -32,23 +36,35 @@ public class ReadyChat extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            session = request.getSession();
-            String to="-";
-            String friend = request.getParameter("friend");
-            String msg = request.getParameter("chatext");
-            to+=friend+"@chat.facebook.com";
-            ChatClient c = (ChatClient) session.getAttribute("buddList");
-            c.sendMessage(msg, to);
-            request.setAttribute("buddyList", c);
-        } catch (Exception ex) {
-            Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
+            if (request.getParameter("userid") != null) {
+                userId = request.getParameter("userid");
+                redirct="/OnlineUser?online=";
+            }
+            if (request.getParameter("online") != null) {
+                redirct = "";
+                out.print(request.getParameter("online"));
+            } else {
+                File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/online-" + userId + ".json");
+                Scanner sc = new Scanner(file);
+                String temp = "";
+                while (sc.hasNextLine()) {
+                    temp += sc.nextLine();
+                }
+                try {
+                    jSONArray = new JSONArray(temp);
+                } catch (JSONException ex) {
+                    Logger.getLogger(OnlineUser.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } finally {
-            request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
+            if (!redirct.equals("")) {
+                redirct+=jSONArray.toString();
+                request.getRequestDispatcher(redirct).forward(request, response);
+            }
+
             out.close();
         }
     }

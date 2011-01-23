@@ -12,7 +12,9 @@ import javax.xml.transform.stream.*;
 import org.w3c.dom.*;
 
 public class CreatXMLFile {
-
+    /*
+     * create xml file which contain all the chat history between to user
+     */
     public void createXML(String f, String t, String d) throws Exception {
         String str = "1";
         int no = Integer.parseInt(str);

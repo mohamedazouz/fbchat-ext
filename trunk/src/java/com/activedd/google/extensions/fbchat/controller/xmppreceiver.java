@@ -26,6 +26,9 @@ public class xmppreceiver extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     *
+     * this function is the home of the extension which enable user to login
+     * by getting token to pass it to login function in out client
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,8 +36,6 @@ public class xmppreceiver extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String apiKey = "76f98c6f348e8d27ed504ae74da69cea";
-        String secretKey = "c4cc0e40e6f8f17362685640a9b0adb4";
         HttpSession session = request.getSession();
         request.getHeaderNames();
         String token = "";
@@ -44,7 +45,7 @@ public class xmppreceiver extends HttpServlet {
             if (session.getAttribute("buddList") == null) {
                 ChatClient.connected = false;
             }
-            if (!ChatClient.connected) {
+            if (!ChatClient.connected) { 
                 token = request.getParameter("auth_token");
                 if (token != null) {
                     c = new ChatClient();
@@ -58,6 +59,7 @@ public class xmppreceiver extends HttpServlet {
                     String redirct = "http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0";
                     redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
                     response.sendRedirect(redirct);
+                    
                 }
             }
         } catch (Exception e) {

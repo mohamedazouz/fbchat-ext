@@ -42,16 +42,16 @@ public class ChatClient implements MessageListener {
     private boolean isReconnectionAllowed = false;
     private int port = 5222;
     private String domain = "chat.facebook.com";
-    private String apiKey = "76f98c6f348e8d27ed504ae74da69cea";
-    private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";
+    
+    private String apiKey = "76f98c6f348e8d27ed504ae74da69cea";  //Application Key
+    private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";  //Application Secert key
     private String resource = "Facebook Group Chat";
-    private String rcvedMessage = "";
     public static boolean connected = false;
-    FacebookJsonRestClient facebook;
+    FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
     HashMap<Long, String> profilepictures = new HashMap<Long, String>();
 
     /*
-     * this function connect to facebook via user authutocation token
+     * this function connect to facebook via user authutocation token and get seesion key to login
      */
     public void login(String token) throws XMPPException, InterruptedException, FacebookException {
         try {
@@ -259,6 +259,12 @@ public class ChatClient implements MessageListener {
         connection.disconnect();
         ChatClient.connected = false;
     }
+    public void goOffline() {
+        Presence packet = new Presence(Presence.Type.available);
+        packet.setMode(Presence.Mode.away);
+        connection.sendPacket(packet);
+    }
+
 
     /**
      * @return the list
@@ -272,19 +278,5 @@ public class ChatClient implements MessageListener {
      */
     public void setList(ArrayList<FriendBuddy> list) {
         this.list = list;
-    }
-
-    /**
-     * @return the rcvedMessage
-     */
-    public String getRcvedMessage() {
-        return rcvedMessage;
-    }
-
-    /**
-     * @param rcvedMessage the rcvedMessage to set
-     */
-    public void setRcvedMessage(String rcvedMessage) {
-        this.rcvedMessage = rcvedMessage;
     }
 }

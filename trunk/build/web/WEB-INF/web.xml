@@ -28,6 +28,10 @@
         <servlet-name>AllUser</servlet-name>
         <servlet-class>com.activedd.google.extensions.fbchat.controller.AllUser</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Goffline</servlet-name>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.Goffline</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ReadyChat</servlet-name>
         <url-pattern>/ReadyChat</url-pattern>
@@ -55,6 +59,10 @@
     <servlet-mapping>
         <servlet-name>AllUser</servlet-name>
         <url-pattern>/AllUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Goffline</servlet-name>
+        <url-pattern>/Goffline</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

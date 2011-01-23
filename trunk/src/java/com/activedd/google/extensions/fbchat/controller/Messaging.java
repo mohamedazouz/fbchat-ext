@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class Messaging extends MultiActionController{
 
     public void send(HttpServletRequest request,HttpServletResponse response){
+        System.out.println("sending");
         //TO DO: send a message,
     }
 

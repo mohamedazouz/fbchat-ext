@@ -29,6 +29,8 @@ public class ReadyChat extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     *
+     * this function is to send friends live chat message by getting his id
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -38,13 +40,17 @@ public class ReadyChat extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             session = request.getSession();
-            String to="-";
+            String to = "-";
             String friend = request.getParameter("friend");
+            if (!friend.contains("@")) {
+                to += friend + "@chat.facebook.com";
+            }else
+            {
+                to=friend;
+            }
             String msg = request.getParameter("chatext");
-            to+=friend+"@chat.facebook.com";
             ChatClient c = (ChatClient) session.getAttribute("buddList");
             c.sendMessage(msg, to);
-            request.setAttribute("buddyList", c);
         } catch (Exception ex) {
             Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

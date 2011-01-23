@@ -20,7 +20,8 @@
 
     <body>
 
-        <a href="Signout">Sign out</a>
+        <a href="Goffline">Sign out</a>
+        <a href="Goffline">offline</a>
         <a href="updatelist">UpdateList</a>
         <a href="users.jsp">Users</a>
         <a href="onlineUsers.jsp">online</a>

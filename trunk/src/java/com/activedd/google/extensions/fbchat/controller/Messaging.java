@@ -23,6 +23,8 @@ public class Messaging extends MultiActionController {
 
     HttpSession session;
 
+    private ChatClient chatClient;
+
     public void send(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: send a message,
         //get to ID url parameter and msg
@@ -48,7 +50,8 @@ public class Messaging extends MultiActionController {
 
     public void onlinefriends(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: get list of online friends.
-        //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again 
+        //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
+
         JSONArray jSONArray = new JSONArray();
         String redirct = "";
         String userId = "";
@@ -83,4 +86,9 @@ public class Messaging extends MultiActionController {
     public void friendlist(HttpServletRequest request, HttpServletResponse response){
         //TO DO: get a list of all friends in json.
     }
+
+    public void setChatClient(ChatClient chatClient) {
+        this.chatClient = chatClient;
+    }
+    
 }

@@ -188,46 +188,11 @@ public class ChatClient {
      * to disconnect and logout from the server
      */
     public void disconnect() {
+        Presence packet = new Presence(Presence.Type.unavailable);
+        connection.sendPacket(packet);
         connection.disconnect();
     }
 
-    /**
-     *
-     * @param chat
-     * @param message
-     */
-    /*@Override
-    public void processMessage(Chat chat, Message message) {
-    try {
-
-    if (message.getType() == Message.Type.chat && message.getBody() != null) {
-    System.out.println("xml:" + message.toXML());
-    System.out.println(chat.getParticipant() + " says: " + message.getBody() + " to :" + connection.getUser());
-    JsonCreate c = new JsonCreate();
-    c.createJsonFile(chat.getParticipant(), message.getBody());
-    }
-    } catch (Exception ex) {
-    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
-    }
-
-    }*/
-
-    /*public static void main(String args[]) throws XMPPException, IOException, InterruptedException, FacebookException {
-
-    ChatClient c = new ChatClient();
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    String msg;
-    String sessionKey = "7f605feabdb3e1c7eb1efd43-1198560721";
-    c.loginkaman();
-    c.displayBuddyList();
-    System.out.println("-----");
-    System.out.println("Enter your message in the console.");
-    System.out.println("-----\n");
-    for (int i = 0; i < c.getList().size(); i++) {
-    System.out.println(c.getList().get(i).getName());
-    }
-    c.disconnect();
-    }*/
     /**
      *
      */
@@ -242,65 +207,5 @@ public class ChatClient {
         Presence packet = new Presence(Presence.Type.available);
         packet.setMode(Presence.Mode.away);
         connection.sendPacket(packet);
-    }
-
-    /**
-     *
-     * @throws XMPPException
-     * @throws InterruptedException
-     * @throws FacebookException
-     */
-    public void loginkaman() throws XMPPException, InterruptedException, FacebookException {
-        ConnectionConfiguration config = null;
-        config = new ConnectionConfiguration("", port);
-
-        config.setSecurityMode(securityMode);
-        config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
-        config.setCompressionEnabled(isCompressionEnabled);
-        config.setReconnectionAllowed(isReconnectionAllowed);
-
-        connection = new XMPPConnection(config);
-
-
-
-        String FB_SESSION_KEY = "7f605feabdb3e1c7eb1efd43-1198560721";
-        try {
-            connection.connect();
-
-            facebook = new FacebookJsonRestClient(apiKey, apiSecret, FB_SESSION_KEY);
-            facebook.isDesktop();
-            facebook.users_setStatus("ya moshel wel application  dah y5las b2aa :D");
-
-            String username = apiKey + "|" + FB_SESSION_KEY;
-            connection.login(username, apiSecret);
-            /*
-             * XMPPError connecting to :5222.: remote-server-error(502) XMPPError connecting to :5222.
-            -- caused by: java.net.ConnectException: Connection refused
-             */
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-    }
-
-    /**
-     *
-     * @param username
-     * @param pass
-     */
-    public void loginagain(String username, String pass) {
-        try {
-            SASLAuthentication.registerSASLMechanism("DIGEST-MD5", MySASLDigestMD5Mechanism.class);
-
-            ConnectionConfiguration config = new ConnectionConfiguration("chat.facebook.com", 5222);
-            //config.setSASLAuthenticationEnabled(true);
-
-            connection = new XMPPConnection(config);
-
-            connection.connect();
-            connection.login(username, pass);
-        } catch (Exception e) {
-            System.out.println("hi");
-        }
-
     }
 }

@@ -31,7 +31,6 @@ public class Connect extends MultiActionController {
             String sessionkey = (String) session.getAttribute("sessionkey");
             chatClient.login(sessionkey);
             session.setAttribute("client", chatClient);
-            
         } catch (Exception ex) {
             Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
         }

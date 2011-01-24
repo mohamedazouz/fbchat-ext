@@ -25,28 +25,12 @@
         <servlet-class>com.activedd.google.extensions.fbchat.controller.ReadyChat</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Signout</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.Signout</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>UpdateList</servlet-name>
         <servlet-class>com.activedd.google.extensions.fbchat.controller.UpdateList</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Users</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.Users</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>OnlineUser</servlet-name>
         <servlet-class>com.activedd.google.extensions.fbchat.controller.OnlineUser</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AllUser</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.AllUser</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Goffline</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.Goffline</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SessionKeyLogin</servlet-name>
@@ -61,10 +45,6 @@
         <url-pattern>/ReadyChat</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Signout</servlet-name>
-        <url-pattern>/Signout</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>xmppreceiver</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
@@ -73,20 +53,8 @@
         <url-pattern>/updatelist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Users</servlet-name>
-        <url-pattern>/Users</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>OnlineUser</servlet-name>
         <url-pattern>/OnlineUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AllUser</servlet-name>
-        <url-pattern>/AllUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Goffline</servlet-name>
-        <url-pattern>/Goffline</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SessionKeyLogin</servlet-name>

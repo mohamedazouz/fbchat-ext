@@ -28,11 +28,11 @@ public class JsonCreate {
      * to check it also if the user put more than messsage within two seconds
      * 
      */
-    public void createJsonFile(String f, String msg) throws JSONException, FileNotFoundException {
+    public void createJsonFile(String f, String msg,String to) throws JSONException, FileNotFoundException {
         Date d = new Date();
         JSONArray jSONArray = null;
         JSONObject jSONObject = new JSONObject();
-        File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/"+f.subSequence(1, f.lastIndexOf("@"))+".json");//.subSequence(1, f.lastIndexOf("@"))
+        File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/"+to.subSequence(1, to.lastIndexOf("@"))+".json");
 //        file=new File();
 
         long nownow = d.getTime();

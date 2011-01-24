@@ -5,11 +5,15 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.google.code.facebookapi.FacebookJsonRestClient;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -31,10 +35,10 @@ public class Login extends MultiActionController {
      */
     public void login(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+            //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+            String redirct = generateLoginURL();
             response.sendRedirect(redirct);
             //TO DO: redirect to the login screen in facebook.
-
         } catch (Exception ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -60,12 +64,20 @@ public class Login extends MultiActionController {
         return new ModelAndView("thankYou");
     }
 
-    public void getauthkey(HttpServletRequest request, HttpServletResponse response) {
+    public void getauthkey(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
+        response.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
         if (session.getAttribute("sessionkey") != null) {
             String sessionkey = (String) session.getAttribute("sessionkey");
             session.removeAttribute("sessionkey");
-            response.setHeader("sessionkey", sessionkey);
+            JSONObject jSONObject = new JSONObject();
+            jSONObject.put("sessionkey", sessionkey);
+            out.println(jSONObject.toString());
+        } else {
+            String redirct = generateLoginURL();
+            response.sendRedirect(redirct);
         }
         //response like {"sessionkey":"xxx"}
         //if there is no session key in the session response like: {}
@@ -80,8 +92,18 @@ public class Login extends MultiActionController {
         this.apiSecret = apiSecret;
     }
 
-    private String generateLoginURL(){
-        return null;
-    }
+    private String generateLoginURL() {
+        String apiID = "172430629459688";
 
+        String nextPage = "next=http://www.facebook.com/login.php?api_key=" + apiKey + "&v=1.0/&&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=";
+
+
+        String permission = "user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+
+        String authurl = "http://www.facebook.com/login.php?api_key=" + apiID + "&connect_display=popup&v=1.0&" + nextPage + permission;
+
+        // String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+
+        return authurl;
+    }
 }

@@ -26,12 +26,12 @@ public class Connect extends MultiActionController {
         try {
             //TO DO: go online on facebook.
             //get the seesion key from url as parameter
+            chatClient=new ChatClient();
             session = request.getSession();
-            ChatClient c = new ChatClient();
-            String sessionkey = request.getParameter("sessionkey");
-            session.setAttribute("sessionKey", sessionkey);
-            c.login(sessionkey);
-            session.setAttribute("buddList", c);
+            String sessionkey = (String) session.getAttribute("sessionkey");
+            chatClient.login(sessionkey);
+            session.setAttribute("client", chatClient);
+            
         } catch (Exception ex) {
             Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -39,12 +39,8 @@ public class Connect extends MultiActionController {
 
     public void disconnect(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: go offline.
-        session = request.getSession();
-        ChatClient c = (ChatClient) session.getAttribute("buddList");
-        c.disconnect();
-        session.removeAttribute("buddList");
+        chatClient.disconnect();
     }
-
     private ChatClient chatClient;
 
     public void setChatClient(ChatClient chatClient) {

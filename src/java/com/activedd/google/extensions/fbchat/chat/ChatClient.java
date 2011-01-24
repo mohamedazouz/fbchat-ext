@@ -42,16 +42,22 @@ public class ChatClient implements MessageListener {
     private boolean isReconnectionAllowed = false;
     private int port = 5222;
     private String domain = "chat.facebook.com";
-    
     private String apiKey = "76f98c6f348e8d27ed504ae74da69cea";  //Application Key
     private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";  //Application Secert key
     private String resource = "Facebook Group Chat";
+    /**
+     *
+     */
     public static boolean connected = false;
     FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
     HashMap<Long, String> profilepictures = new HashMap<Long, String>();
 
-    /*
+    /**
      * this function connect to facebook via user authutocation token and get seesion key to login
+     * @param FB_SESSION_KEY
+     * @throws XMPPException
+     * @throws InterruptedException
+     * @throws FacebookException
      */
     public void login(String FB_SESSION_KEY) throws XMPPException, InterruptedException, FacebookException {
         try {
@@ -66,7 +72,7 @@ public class ChatClient implements MessageListener {
             config.setReconnectionAllowed(isReconnectionAllowed);
             connection = new XMPPConnection(config);
             connection.connect();
-            facebook = new FacebookJsonRestClient(apiKey, apiSecret,FB_SESSION_KEY);
+            facebook = new FacebookJsonRestClient(apiKey, apiSecret, FB_SESSION_KEY);
             connection.login(apiKey + "|" + FB_SESSION_KEY, apiSecret, resource);
             Presence packet = new Presence(Presence.Type.available);
             connection.sendPacket(packet);
@@ -75,9 +81,10 @@ public class ChatClient implements MessageListener {
             System.out.println("error2");
         }
     }
-/*
- * to get all profile pictures for all users
- */
+    /*
+     * to get all profile pictures for all users
+     */
+
     void GetprofilesPictures() {
         try {
             ArrayList<Long> friendsID = new ArrayList<Long>();
@@ -108,14 +115,21 @@ public class ChatClient implements MessageListener {
         }
 
     }
-/*
- * get profile picture for user id
- */
+    /*
+     * get profile picture for user id
+     */
+
     String getprofilepic(long id) {
         String pic = profilepictures.get(id);
         return pic;
     }
 
+    /**
+     *
+     * @throws XMPPException
+     * @throws InterruptedException
+     * @throws FacebookException
+     */
     public void loginkaman() throws XMPPException, InterruptedException, FacebookException {
         ConnectionConfiguration config = null;
         config = new ConnectionConfiguration("", port);
@@ -148,6 +162,11 @@ public class ChatClient implements MessageListener {
         }
     }
 
+    /**
+     *
+     * @param username
+     * @param pass
+     */
     public void loginagain(String username, String pass) {
         try {
             SASLAuthentication.registerSASLMechanism("DIGEST-MD5", MySASLDigestMD5Mechanism.class);
@@ -164,15 +183,22 @@ public class ChatClient implements MessageListener {
         }
 
     }
-/*
- * to send message for spcific user
- */
+
+    /**
+     * to send message for spcific user
+     * @param message
+     * @param to
+     * @throws XMPPException
+     */
     public void sendMessage(String message, String to) throws XMPPException {
         Chat chat = connection.getChatManager().createChat(to, this);
         chat.sendMessage(message);
     }
 
-    public void displayBuddyList() {
+    /**
+     * review this
+     */
+    public List displayBuddyList() {
         try {
             list.clear();
             Roster roster = connection.getRoster();
@@ -208,17 +234,23 @@ public class ChatClient implements MessageListener {
         } catch (Exception ex) {
             Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        return null;
 
     }
 
-    /*
+
+    /**
      * to disconnect and logout from the server
      */
     public void disconnect() {
         connection.disconnect();
     }
 
+    /**
+     *
+     * @param chat
+     * @param message
+     */
     @Override
     public void processMessage(Chat chat, Message message) {
         try {
@@ -235,35 +267,40 @@ public class ChatClient implements MessageListener {
 
     }
 
-    public static void main(String args[]) throws XMPPException, IOException, InterruptedException, FacebookException {
+    /*public static void main(String args[]) throws XMPPException, IOException, InterruptedException, FacebookException {
 
-        ChatClient c = new ChatClient();
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String msg;
-        String sessionKey = "7f605feabdb3e1c7eb1efd43-1198560721";
-        c.loginkaman();
-        c.displayBuddyList();
-        System.out.println("-----");
-        System.out.println("Enter your message in the console.");
-        System.out.println("-----\n");
-        for (int i = 0; i < c.getList().size(); i++) {
-            System.out.println(c.getList().get(i).getName());
-        }
-        c.disconnect();
+    ChatClient c = new ChatClient();
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    String msg;
+    String sessionKey = "7f605feabdb3e1c7eb1efd43-1198560721";
+    c.loginkaman();
+    c.displayBuddyList();
+    System.out.println("-----");
+    System.out.println("Enter your message in the console.");
+    System.out.println("-----\n");
+    for (int i = 0; i < c.getList().size(); i++) {
+    System.out.println(c.getList().get(i).getName());
     }
-
+    c.disconnect();
+    }*/
+    /**
+     *
+     */
     public void signout() {
         Presence packet = new Presence(Presence.Type.unavailable);
         connection.sendPacket(packet);
         connection.disconnect();
         ChatClient.connected = false;
     }
+
+    /**
+     *
+     */
     public void goOffline() {
         Presence packet = new Presence(Presence.Type.available);
         packet.setMode(Presence.Mode.away);
         connection.sendPacket(packet);
     }
-
 
     /**
      * @return the list

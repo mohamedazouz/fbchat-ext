@@ -4,14 +4,13 @@
  */
 package com.activedd.google.extensions.fbchat.controller;
 
-import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJsonRestClient;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
@@ -46,7 +45,7 @@ public class Login extends MultiActionController {
      * @param request
      * @param response
      */
-    public void authenticate(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) {
         try {
             //TO DO: this url that will facebook redirects to after authenticating application from facebook.
             //      and set the user key in the httpsession.
@@ -58,6 +57,7 @@ public class Login extends MultiActionController {
         } catch (Exception ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return new ModelAndView("thankYou");
     }
 
     public void getauthkey(HttpServletRequest request, HttpServletResponse response) {
@@ -67,7 +67,21 @@ public class Login extends MultiActionController {
             session.removeAttribute("sessionkey");
             response.setHeader("sessionkey", sessionkey);
         }
-
+        //response like {"sessionkey":"xxx"}
+        //if there is no session key in the session response like: {}
 
     }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
+
+    private String generateLoginURL(){
+        return null;
+    }
+
 }

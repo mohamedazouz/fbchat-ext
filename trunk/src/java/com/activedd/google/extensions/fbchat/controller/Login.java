@@ -6,7 +6,6 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;

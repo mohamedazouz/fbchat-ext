@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>xmppreceiver</servlet-name>
         <servlet-class>com.activedd.google.extensions.fbchat.controller.xmppreceiver</servlet-class>
@@ -32,6 +48,14 @@
         <servlet-name>Goffline</servlet-name>
         <servlet-class>com.activedd.google.extensions.fbchat.controller.Goffline</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SessionKeyLogin</servlet-name>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.SessionKeyLogin</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SessionKey</servlet-name>
+        <servlet-class>com.activedd.google.extensions.fbchat.controller.SessionKey</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ReadyChat</servlet-name>
         <url-pattern>/ReadyChat</url-pattern>
@@ -63,6 +87,14 @@
     <servlet-mapping>
         <servlet-name>Goffline</servlet-name>
         <url-pattern>/Goffline</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SessionKeyLogin</servlet-name>
+        <url-pattern>/SessionKeyLogin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SessionKey</servlet-name>
+        <url-pattern>/SessionKey</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

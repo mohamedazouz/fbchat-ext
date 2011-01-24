@@ -29,6 +29,7 @@ public class Connect extends MultiActionController {
             session = request.getSession();
             ChatClient c = new ChatClient();
             String sessionkey = request.getParameter("sessionkey");
+            session.setAttribute("sessionKey", sessionkey);
             c.login(sessionkey);
             session.setAttribute("buddList", c);
         } catch (Exception ex) {
@@ -42,5 +43,11 @@ public class Connect extends MultiActionController {
         ChatClient c = (ChatClient) session.getAttribute("buddList");
         c.disconnect();
         session.removeAttribute("buddList");
+    }
+
+    private ChatClient chatClient;
+
+    public void setChatClient(ChatClient chatClient) {
+        this.chatClient = chatClient;
     }
 }

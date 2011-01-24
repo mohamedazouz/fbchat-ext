@@ -42,7 +42,9 @@
     <bean name="Login" class="com.activedd.google.extensions.fbchat.controller.Login" >
     </bean>
     <bean name="Connect" class="com.activedd.google.extensions.fbchat.controller.Connect" >
+        <property name="chatClient" ref="chatClient"></property>
     </bean>
     <bean name="Messaging" class="com.activedd.google.extensions.fbchat.controller.Messaging" >
+        <property name="chatClient" ref="chatClient"></property>
     </bean>
 </beans>

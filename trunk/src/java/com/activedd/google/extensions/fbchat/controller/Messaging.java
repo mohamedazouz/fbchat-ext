@@ -5,14 +5,22 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import com.activedd.google.extensions.fbchat.chat.FriendBuddy;
+import com.google.code.facebookapi.FacebookException;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.jivesoftware.smack.ChatManager;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
@@ -22,7 +30,6 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class Messaging extends MultiActionController {
 
     HttpSession session;
-
     private ChatClient chatClient;
 
     public void send(HttpServletRequest request, HttpServletResponse response) {
@@ -31,64 +38,61 @@ public class Messaging extends MultiActionController {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         try {
-            request.setCharacterEncoding("UTF-8");
+//            chatClient.s
+            request.setCharacterEncoding("UTF-8");//100001513410529 messaging/send.htm?to=100001513410529&msg=hello
             session = request.getSession();
+            chatClient = (ChatClient) session.getAttribute("client");
             String to = "-";
             String friend = request.getParameter("to");
-            if (!friend.contains("@")) {
-                to += friend + "@chat.facebook.com";
-            } else {
-                to = friend;
-            }
+            to += friend + "@chat.facebook.com";
             String msg = request.getParameter("msg");
-            ChatClient c = (ChatClient) session.getAttribute("buddList");
-            c.sendMessage(msg, to);
+            chatClient.sendMessage(msg, to);
         } catch (Exception ex) {
             Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void onlinefriends(HttpServletRequest request, HttpServletResponse response) {
+    public void onlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, FacebookException, JSONException {
         //TO DO: get list of online friends.
         //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
 
         JSONArray jSONArray = new JSONArray();
-        String redirct = "";
-        String userId = "";
         response.setContentType("application/json;charset=UTF-8");
-        try {
-            if (request.getParameter("userid") != null) {
-                userId = request.getParameter("userid");
-                redirct = "/OnlineUser?online=";
-            }
-            if (request.getParameter("online") != null) {
-                redirct = "";
-            } else {
-                File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/online-" + userId + ".json");
-                Scanner sc = new Scanner(file);
-                String temp = "";
-                while (sc.hasNextLine()) {
-                    temp += sc.nextLine();
-                }
-
-                jSONArray = new JSONArray(temp);
-
-            }
-            if (!redirct.equals("")) {
-                redirct += jSONArray.toString();
-                request.getRequestDispatcher(redirct).forward(request, response);
-            }
-        } catch (Exception ex) {
-//            Logger.getLogger(OnlineUser.class.getName()).log(Level.SEVERE, null, ex);
+        PrintWriter out = response.getWriter();
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        //String userId = request.getParameter("userid");
+        ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) chatClient.getOnlineUser();
+        for (int i = 0; i < list.size(); i++) {
+            JSONObject jSONObject = new JSONObject();
+            jSONObject.put("id", list.get(i).getId());
+            jSONObject.put("name", list.get(i).getName());
+            jSONObject.put("pic", list.get(i).getPic());
+            jSONArray.put(jSONObject);
         }
+        out.println(jSONArray.toString());
     }
 
-    public void friendlist(HttpServletRequest request, HttpServletResponse response){
+    public void friendlist(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+        JSONArray jSONArray = new JSONArray();
+        response.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        //String userId = request.getParameter("userid");
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) chatClient.displayBuddyList();
+        for (int i = 0; i < list.size(); i++) {
+            JSONObject jSONObject = new JSONObject();
+            jSONObject.put("id", list.get(i).getId());
+            jSONObject.put("name", list.get(i).getName());
+            jSONObject.put("pic", list.get(i).getPic());
+            jSONArray.put(jSONObject);
+        }
+        out.println(jSONArray.toString());
         //TO DO: get a list of all friends in json.
     }
 
     public void setChatClient(ChatClient chatClient) {
         this.chatClient = chatClient;
     }
-    
 }

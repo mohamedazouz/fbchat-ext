@@ -20,5 +20,7 @@
           p:password="${jdbc.password}" /-->
     
     <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
-    
+
+    <bean iid="chatClient" class="com.activedd.google.extensions.fbchat.chat.ChatClient"></bean>
+
 </beans>

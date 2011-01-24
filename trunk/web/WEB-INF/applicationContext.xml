@@ -21,6 +21,10 @@
     
     <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
 
-    <bean iid="chatClient" class="com.activedd.google.extensions.fbchat.chat.ChatClient"></bean>
+    <bean id="chatClient" class="com.activedd.google.extensions.fbchat.chat.ChatClient"></bean>
+    <bean id="jsoncreator" class="com.activedd.google.extensions.fbchat.chat.JsonCreate" ></bean>
+    <bean id="messageListener" class="com.activedd.google.extensions.fbchat.chat.MessageListenerImp">
+        <property name="jsonCreate" ref="jsoncreator"></property>
+    </bean>
 
 </beans>

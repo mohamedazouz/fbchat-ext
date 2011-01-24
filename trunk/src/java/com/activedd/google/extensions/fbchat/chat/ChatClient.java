@@ -53,7 +53,7 @@ public class ChatClient implements MessageListener {
     /*
      * this function connect to facebook via user authutocation token and get seesion key to login
      */
-    public void login(String token) throws XMPPException, InterruptedException, FacebookException {
+    public void login(String FB_SESSION_KEY) throws XMPPException, InterruptedException, FacebookException {
         try {
             SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
                     FacebookConnectSASLMechanism.class);
@@ -66,8 +66,7 @@ public class ChatClient implements MessageListener {
             config.setReconnectionAllowed(isReconnectionAllowed);
             connection = new XMPPConnection(config);
             connection.connect();
-            facebook = new FacebookJsonRestClient(apiKey, apiSecret);
-            String FB_SESSION_KEY = facebook.auth_getSession(token);
+            facebook = new FacebookJsonRestClient(apiKey, apiSecret,FB_SESSION_KEY);
             connection.login(apiKey + "|" + FB_SESSION_KEY, apiSecret, resource);
             Presence packet = new Presence(Presence.Type.available);
             connection.sendPacket(packet);

@@ -6,6 +6,7 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.FriendBuddy;
+import com.google.code.facebookapi.FacebookJsonRestClient;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -19,6 +20,10 @@ import javax.servlet.http.HttpSession;
  * @author Activedd2
  */
 public class xmppreceiver extends HttpServlet {
+
+    FacebookJsonRestClient facebook;
+    private String apiKey = "76f98c6f348e8d27ed504ae74da69cea";  //Application Key
+    private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";  //Application Secert key
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -40,18 +45,22 @@ public class xmppreceiver extends HttpServlet {
         request.getHeaderNames();
         String token = "";
         ChatClient c = null;
+        String FB_SESSION_KEY="";
         try {
-           
-            if (session.getAttribute("buddList") == null) {
+
+/*            if (session.getAttribute("buddList") == null) {
                 ChatClient.connected = false;
-            }
-            if (!ChatClient.connected) { 
+            }*/
+           // if (!ChatClient.connected) {
                 token = request.getParameter("auth_token");
                 if (token != null) {
-                    c = new ChatClient();
-                    c.login(token);
+                    //c = new ChatClient();
+                    
+                    facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+                     FB_SESSION_KEY = facebook.auth_getSession(token);
+                  /*  c.login(FB_SESSION_KEY);
                     c.displayBuddyList();
-                    session.setAttribute("buddList", c);
+                    session.setAttribute("buddList", c);*/
                     //   c.disconnect();
                 } else {
                     session.setAttribute("loginApp", "1");
@@ -59,9 +68,9 @@ public class xmppreceiver extends HttpServlet {
                     String redirct = "http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0";
                     redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
                     response.sendRedirect(redirct);
-                    
+
                 }
-            }
+         //   }
         } catch (Exception e) {
             System.out.println("error");
             /*
@@ -70,7 +79,7 @@ public class xmppreceiver extends HttpServlet {
              */
         } finally {
             if (token != null) {
-                request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
+                request.getRequestDispatcher("/SessionKeyLogin?sessionkey="+FB_SESSION_KEY).forward(request, response);
             }
             out.close();
 

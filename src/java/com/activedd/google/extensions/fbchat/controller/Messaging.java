@@ -48,7 +48,7 @@ public class Messaging extends MultiActionController {
             String msg = request.getParameter("msg");
             chatClient.sendMessage(msg, to);
         } catch (Exception ex) {
-            Logger.getLogger(ReadyChat.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
     }
 

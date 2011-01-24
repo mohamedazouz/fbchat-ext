@@ -258,7 +258,7 @@ public class ChatClient implements MessageListener {
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
                 System.out.println("xml:" + message.toXML());
                 System.out.println(chat.getParticipant() + " says: " + message.getBody() + " to :" + connection.getUser());
-                CreatJsonFile c = new CreatJsonFile();
+                JsonCreate c = new JsonCreate();
                 c.createJsonFile(chat.getParticipant(), message.getBody());
             }
         } catch (Exception ex) {

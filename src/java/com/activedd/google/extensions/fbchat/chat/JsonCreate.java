@@ -20,7 +20,7 @@ import org.json.JSONObject;
  * this class is to load the receiving message to the user
  */
 
-public class CreatJsonFile {
+public class JsonCreate {
 
     /*
      * this function is to create  json file
@@ -33,7 +33,8 @@ public class CreatJsonFile {
         JSONArray jSONArray = null;
         JSONObject jSONObject = new JSONObject();
         File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/"+f.subSequence(1, f.lastIndexOf("@"))+".json");//.subSequence(1, f.lastIndexOf("@"))
-        
+//        file=new File();
+
         long nownow = d.getTime();
         d.getTime();
         int now = d.getSeconds();

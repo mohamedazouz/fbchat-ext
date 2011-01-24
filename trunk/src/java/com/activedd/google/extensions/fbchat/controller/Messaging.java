@@ -52,7 +52,7 @@ public class Messaging extends MultiActionController {
         JSONArray jSONArray = new JSONArray();
         String redirct = "";
         String userId = "";
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         try {
             if (request.getParameter("userid") != null) {
                 userId = request.getParameter("userid");
@@ -76,7 +76,11 @@ public class Messaging extends MultiActionController {
                 request.getRequestDispatcher(redirct).forward(request, response);
             }
         } catch (Exception ex) {
-            Logger.getLogger(OnlineUser.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(OnlineUser.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void friendlist(HttpServletRequest request, HttpServletResponse response){
+        //TO DO: get a list of all friends in json.
     }
 }

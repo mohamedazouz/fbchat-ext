@@ -67,18 +67,31 @@ public class Login extends MultiActionController {
     public void getauthkey(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
         response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
+//        PrintWriter out = response.getWriter();
 
-        if (session.getAttribute("sessionkey") != null) {
-            String sessionkey = (String) session.getAttribute("sessionkey");
-            session.removeAttribute("sessionkey");
-            JSONObject jSONObject = new JSONObject();
+        String sessionkey = (String) session.getAttribute("sessionkey");
+        session.removeAttribute("sessionkey");
+        JSONObject jSONObject = new JSONObject();
+        
+        if(sessionkey != null){
             jSONObject.put("sessionkey", sessionkey);
-            out.println(jSONObject.toString());
-        } else {
-            String redirct = generateLoginURL();
-            response.sendRedirect(redirct);
         }
+
+        jSONObject.write(response.getWriter());
+//        if (session.getAttribute("sessionkey") != null) {
+//            String sessionkey = (String) session.getAttribute("sessionkey");
+//            session.removeAttribute("sessionkey");
+//            JSONObject jSONObject = new JSONObject();
+//            jSONObject.put("sessionkey", sessionkey);
+////            response.getWriter().write(jSONObject.toString());
+//            jSONObject.write(response.getWriter());
+//
+//        } else {
+////            String redirct = generateLoginURL();
+////            response.sendRedirect(redirct);
+//            response.getWriter().write("{}");
+//        }
+        response.getWriter().close();
         //response like {"sessionkey":"xxx"}
         //if there is no session key in the session response like: {}
 

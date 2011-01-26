@@ -29,10 +29,6 @@
         <servlet-class>com.activedd.google.extensions.fbchat.controller.UpdateList</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>OnlineUser</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.OnlineUser</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>SessionKeyLogin</servlet-name>
         <servlet-class>com.activedd.google.extensions.fbchat.controller.SessionKeyLogin</servlet-class>
     </servlet>
@@ -51,10 +47,6 @@
     <servlet-mapping>
         <servlet-name>UpdateList</servlet-name>
         <url-pattern>/updatelist</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>OnlineUser</servlet-name>
-        <url-pattern>/OnlineUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SessionKeyLogin</servlet-name>

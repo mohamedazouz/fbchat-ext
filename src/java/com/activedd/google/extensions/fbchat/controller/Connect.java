@@ -20,6 +20,14 @@ public class Connect extends MultiActionController {
 
     HttpSession session;
 
+    /**
+     * Connect Page is to login to facebook chat via user session key.
+     * 
+     * you should send me a session key in url as parameter named "sessionkey"
+     * 
+     * @param request
+     * @param response
+     */
     public void connect(HttpServletRequest request, HttpServletResponse response) {
         try {
             //TO DO: go online on facebook.
@@ -35,6 +43,12 @@ public class Connect extends MultiActionController {
         }
     }
 
+    /**
+     * DisConnect Page is to log off from facebook chat .
+     *
+     * @param request
+     * @param response
+     */
     public void disconnect(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: go offline.
         chatClient.disconnect();

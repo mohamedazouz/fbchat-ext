@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.jivesoftware.smack.XMPPException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +30,10 @@ public class Messaging extends MultiActionController {
     private ChatClient chatClient;
 
     /**
-     * 
+     * send page is to send message to specific user.
+     *
+     * url need two parameter of sending user in key named "to" , message text in key named "msg"
+     *
      * @param request
      * @param response
      * @throws UnsupportedEncodingException
@@ -51,11 +55,13 @@ public class Messaging extends MultiActionController {
             String msg = request.getParameter("msg");
             chatClient.sendMessage(msg, to);
         } catch (Exception ex) {
-            
         }
     }
 
     /**
+     * onlinefriends page is to send all online friends with its name ,id and pic
+     *
+     *  nothing need to send via url as parameter
      * 
      * @param request
      * @param response
@@ -87,10 +93,14 @@ public class Messaging extends MultiActionController {
     }
 
     /**
-     * 
+     * friendlist page is to send all friends with its name ,id and pic
+     *
+     *  nothing need to send via url as parameter
+     *
      * @param request
      * @param response
      * @throws IOException
+     * @throws FacebookException
      * @throws JSONException
      */
     public void friendlist(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {

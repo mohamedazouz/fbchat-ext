@@ -40,8 +40,6 @@ public class Messaging extends MultiActionController {
     public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException {
         //TO DO: send a message,
         //get to ID url parameter and msg
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         String to = "-";

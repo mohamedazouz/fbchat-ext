@@ -7,6 +7,7 @@ package com.activedd.google.extensions.fbchat.chat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.security.ProtectionDomain;
 import java.util.Date;
 import java.util.Scanner;
 import org.json.JSONArray;

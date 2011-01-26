@@ -36,14 +36,10 @@ public class Login extends MultiActionController {
      * @param response
      */
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        try {
-            //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
-            String redirct = generateLoginURL();
-            response.sendRedirect(redirct);
-            //TO DO: redirect to the login screen in facebook.
-//        } catch (Exception ex) {
-//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+        String redirct = generateLoginURL();
+        response.sendRedirect(redirct);
+        //TO DO: redirect to the login screen in facebook.
     }
 
     /**
@@ -56,21 +52,17 @@ public class Login extends MultiActionController {
      * @param response
      */
     public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException {
-//        try {
-            //TO DO: this url that will facebook redirects to after authenticating application from facebook.
-            //      and set the user key in the httpsession.
-            session = request.getSession();
-            String token = request.getParameter("auth_token");
-            facebook = new FacebookJsonRestClient(apiKey, apiSecret);
-            String FB_SESSION_KEY = facebook.auth_getSession(token);
-            session.setAttribute("sessionkey", FB_SESSION_KEY);
-//        } catch (Exception ex) {
-//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        //TO DO: this url that will facebook redirects to after authenticating application from facebook.
+        //      and set the user key in the httpsession.
+        session = request.getSession();
+        String token = request.getParameter("auth_token");
+        facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+        String FB_SESSION_KEY = facebook.auth_getSession(token);
+        session.setAttribute("sessionkey", FB_SESSION_KEY);
         return new ModelAndView("thankYou");
     }
 
-     /**
+    /**
      * getauthkey Page is to send session key value to the user.
      *
      * nothing need to send via url as parameter
@@ -81,30 +73,17 @@ public class Login extends MultiActionController {
     public void getauthkey(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
         response.setContentType("application/json;charset=UTF-8");
-//        PrintWriter out = response.getWriter();
 
         String sessionkey = (String) session.getAttribute("sessionkey");
         session.removeAttribute("sessionkey");
         JSONObject jSONObject = new JSONObject();
-        
-        if(sessionkey != null){
+
+        if (sessionkey != null) {
             jSONObject.put("sessionkey", sessionkey);
         }
 
         jSONObject.write(response.getWriter());
-//        if (session.getAttribute("sessionkey") != null) {
-//            String sessionkey = (String) session.getAttribute("sessionkey");
-//            session.removeAttribute("sessionkey");
-//            JSONObject jSONObject = new JSONObject();
-//            jSONObject.put("sessionkey", sessionkey);
-////            response.getWriter().write(jSONObject.toString());
-//            jSONObject.write(response.getWriter());
-//
-//        } else {
-////            String redirct = generateLoginURL();
-////            response.sendRedirect(redirct);
-//            response.getWriter().write("{}");
-//        }
+
         response.getWriter().close();
         //response like {"sessionkey":"xxx"}
         //if there is no session key in the session response like: {}

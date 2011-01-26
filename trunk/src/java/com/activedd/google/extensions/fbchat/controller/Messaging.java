@@ -43,19 +43,13 @@ public class Messaging extends MultiActionController {
         //get to ID url parameter and msg
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
-//        response.setContentType("text/html;charset=UTF-8");
-//        try {
-//            chatClient.s
-//            request.setCharacterEncoding("UTF-8");//100001513410529 messaging/send.htm?to=100001513410529&msg=hello
-            session = request.getSession();
-            chatClient = (ChatClient) session.getAttribute("client");
-            String to = "-";
-            String friend = request.getParameter("to");
-            to += friend + "@chat.facebook.com";
-            String msg = request.getParameter("msg");
-            chatClient.sendMessage(msg, to);
-//        } catch (Exception ex) {
-//        }
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        String to = "-";
+        String friend = request.getParameter("to");
+        to += friend + "@chat.facebook.com";
+        String msg = request.getParameter("msg");
+        chatClient.sendMessage(msg, to);
     }
 
     /**
@@ -75,10 +69,8 @@ public class Messaging extends MultiActionController {
 
         JSONArray jSONArray = new JSONArray();
         response.setContentType("application/json;charset=UTF-8");
-//        PrintWriter out = response.getWriter();
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        //String userId = request.getParameter("userid");
         ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) chatClient.getOnlineUser();
         for (int i = 0; i < list.size(); i++) {
             JSONObject jSONObject = new JSONObject();
@@ -88,7 +80,6 @@ public class Messaging extends MultiActionController {
             jSONArray.put(jSONObject);
         }
         jSONArray.write(response.getWriter());
-//        out.println(jSONArray.toString());
         response.getWriter().close();
     }
 
@@ -119,12 +110,8 @@ public class Messaging extends MultiActionController {
             jSONArray.put(jSONObject);
         }
         jSONArray.write(response.getWriter());
-//        out.println(jSONArray.toString());
         response.getWriter().close();
         //TO DO: get a list of all friends in json.
     }
 
-    public void setChatClient(ChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
 }

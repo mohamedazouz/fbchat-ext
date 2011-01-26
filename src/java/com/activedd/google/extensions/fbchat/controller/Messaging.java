@@ -8,7 +8,6 @@ import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.FriendBuddy;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
@@ -95,10 +94,9 @@ public class Messaging extends MultiActionController {
      * @throws JSONException
      */
     public void friendlist(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+        //TO DO: get a list of all friends in json.
         JSONArray jSONArray = new JSONArray();
         response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        //String userId = request.getParameter("userid");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) chatClient.displayBuddyList();
@@ -111,7 +109,6 @@ public class Messaging extends MultiActionController {
         }
         jSONArray.write(response.getWriter());
         response.getWriter().close();
-        //TO DO: get a list of all friends in json.
     }
 
 }

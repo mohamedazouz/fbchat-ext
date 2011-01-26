@@ -28,7 +28,11 @@ public class Login extends MultiActionController {
     private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";  //Application Secert key
 
     /**
-     * //write what this url does here.
+     * login page its first time login to show to the user permission of the application
+     * then redirect it to the application home which is authenticate page to generate session key
+     *
+     * nothing need to send via url as parameter
+     * 
      * @param request
      * @param response
      */
@@ -44,7 +48,11 @@ public class Login extends MultiActionController {
     }
 
     /**
-     * //write what this url does here.
+     * authenticate Page is to authenticate user from facebook to get user session key from auth_token value
+     * which facebook send via redirected url.
+     *
+     * nothing need to send via url as parameter
+     * 
      * @param request
      * @param response
      */
@@ -63,6 +71,14 @@ public class Login extends MultiActionController {
         return new ModelAndView("thankYou");
     }
 
+     /**
+     * getauthkey Page is to send session key value to the user.
+     *
+     * nothing need to send via url as parameter
+     *
+     * @param request
+     * @param response
+     */
     public void getauthkey(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
         response.setContentType("application/json;charset=UTF-8");

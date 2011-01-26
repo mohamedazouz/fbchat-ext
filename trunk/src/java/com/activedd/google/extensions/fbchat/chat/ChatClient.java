@@ -147,7 +147,7 @@ public class ChatClient {
      */
     public List displayBuddyList() throws JSONException {
         ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();
-        Roster roster = connection.getRoster();
+        Roster roster = this.connection.getRoster();
         Collection<RosterEntry> entries = roster.getEntries();
         JSONArray jSONArray = new JSONArray();
         for (RosterEntry r : entries) {

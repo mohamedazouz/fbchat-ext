@@ -4,10 +4,9 @@
  */
 package com.activedd.google.extensions.fbchat.controller;
 
+import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,15 +35,15 @@ public class Login extends MultiActionController {
      * @param request
      * @param response
      */
-    public void login(HttpServletRequest request, HttpServletResponse response) {
-        try {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        try {
             //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
             String redirct = generateLoginURL();
             response.sendRedirect(redirct);
             //TO DO: redirect to the login screen in facebook.
-        } catch (Exception ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        } catch (Exception ex) {
+//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     /**
@@ -56,8 +55,8 @@ public class Login extends MultiActionController {
      * @param request
      * @param response
      */
-    public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) {
-        try {
+    public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException {
+//        try {
             //TO DO: this url that will facebook redirects to after authenticating application from facebook.
             //      and set the user key in the httpsession.
             session = request.getSession();
@@ -65,9 +64,9 @@ public class Login extends MultiActionController {
             facebook = new FacebookJsonRestClient(apiKey, apiSecret);
             String FB_SESSION_KEY = facebook.auth_getSession(token);
             session.setAttribute("sessionkey", FB_SESSION_KEY);
-        } catch (Exception ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        } catch (Exception ex) {
+//            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         return new ModelAndView("thankYou");
     }
 

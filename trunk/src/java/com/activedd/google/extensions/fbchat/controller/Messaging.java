@@ -38,13 +38,13 @@ public class Messaging extends MultiActionController {
      * @param response
      * @throws UnsupportedEncodingException
      */
-    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException {
         //TO DO: send a message,
         //get to ID url parameter and msg
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 //        response.setContentType("text/html;charset=UTF-8");
-        try {
+//        try {
 //            chatClient.s
 //            request.setCharacterEncoding("UTF-8");//100001513410529 messaging/send.htm?to=100001513410529&msg=hello
             session = request.getSession();
@@ -54,8 +54,8 @@ public class Messaging extends MultiActionController {
             to += friend + "@chat.facebook.com";
             String msg = request.getParameter("msg");
             chatClient.sendMessage(msg, to);
-        } catch (Exception ex) {
-        }
+//        } catch (Exception ex) {
+//        }
     }
 
     /**

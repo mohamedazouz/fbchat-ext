@@ -5,11 +5,11 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.code.facebookapi.FacebookException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.jivesoftware.smack.XMPPException;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
@@ -28,8 +28,8 @@ public class Connect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void connect(HttpServletRequest request, HttpServletResponse response) {
-        try {
+    public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException {
+//        try {
             //TO DO: go online on facebook.
             //get the seesion key from url as parameter
             chatClient=new ChatClient();
@@ -38,9 +38,9 @@ public class Connect extends MultiActionController {
 //            String sessionkey = (String) session.getAttribute("sessionkey");
             chatClient.login(sessionkey);
             session.setAttribute("client", chatClient);
-        } catch (Exception ex) {
-            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        } catch (Exception ex) {
+//            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     /**

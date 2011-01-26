@@ -16,49 +16,9 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
-    <servlet>
-        <servlet-name>xmppreceiver</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.xmppreceiver</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ReadyChat</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.ReadyChat</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateList</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.UpdateList</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>SessionKeyLogin</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.SessionKeyLogin</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>SessionKey</servlet-name>
-        <servlet-class>com.activedd.google.extensions.fbchat.controller.SessionKey</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ReadyChat</servlet-name>
-        <url-pattern>/ReadyChat</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>xmppreceiver</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateList</servlet-name>
-        <url-pattern>/updatelist</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SessionKeyLogin</servlet-name>
-        <url-pattern>/SessionKeyLogin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SessionKey</servlet-name>
-        <url-pattern>/SessionKey</url-pattern>
-    </servlet-mapping>
     <session-config>
         <session-timeout>
-            60
+            120
         </session-timeout>
     </session-config>
     <welcome-file-list>

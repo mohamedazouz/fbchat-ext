@@ -29,18 +29,13 @@ public class Connect extends MultiActionController {
      * @param response
      */
     public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException {
-//        try {
             //TO DO: go online on facebook.
             //get the seesion key from url as parameter
             chatClient=new ChatClient();
             session = request.getSession();
             String sessionkey = request.getParameter("sessionkey");
-//            String sessionkey = (String) session.getAttribute("sessionkey");
             chatClient.login(sessionkey);
             session.setAttribute("client", chatClient);
-//        } catch (Exception ex) {
-//            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 
     /**
@@ -58,7 +53,4 @@ public class Connect extends MultiActionController {
     
     private ChatClient chatClient;
 
-    public void setChatClient(ChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
 }

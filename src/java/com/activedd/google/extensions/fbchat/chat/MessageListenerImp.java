@@ -22,7 +22,7 @@ public class MessageListenerImp implements MessageListener {
         try {
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
                 setJsonCreate(new JsonCreate());
-                getJsonCreate().createJsonFile(chat.getParticipant(), message.getBody(),this.getTo());
+                getJsonCreate().createJsonFile(chat.getParticipant(), message.getBody(), this.getTo());
             }
         } catch (Exception ex) {
             Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);

@@ -6,6 +6,7 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.google.code.facebookapi.FacebookException;
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,6 +20,12 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class Connect extends MultiActionController {
 
     HttpSession session;
+    private String apiKey;  //Application Key
+    private String apiSecret;  //Application Secert key
+    private String apiId;
+    private String resource ;
+    private String domain ;
+    private int port = 5222;
 
     /**
      * Connect Page is to login to facebook chat via user session key.
@@ -28,14 +35,15 @@ public class Connect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException {
-            //TO DO: go online on facebook.
-            //get the seesion key from url as parameter
-            chatClient=new ChatClient();
-            session = request.getSession();
-            String sessionkey = request.getParameter("sessionkey");
-            chatClient.login(sessionkey);
-            session.setAttribute("client", chatClient);
+    public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException, IOException {
+        //TO DO: go online on facebook.
+        //get the seesion key from url as parameter
+        chatClient = new ChatClient();
+        session = request.getSession();
+        String sessionkey = request.getParameter("sessionkey");
+        //String sessionkey = (String) session.getAttribute("sessionkey");
+        chatClient.login(sessionkey,apiKey,apiSecret,domain,resource,port);
+        session.setAttribute("client", chatClient);
     }
 
     /**
@@ -50,7 +58,38 @@ public class Connect extends MultiActionController {
         session.removeAttribute("client");
         session.removeAttribute("sessionkey");
     }
-    
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
+
+    public void setApiID(String apiId) {
+        this.apiId = apiId;
+    }
     private ChatClient chatClient;
 
+    /**
+     * @param resource the resource to set
+     */
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
+
+    /**
+     * @param domain the domain to set
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    /**
+     * @param port the port to set
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
 }

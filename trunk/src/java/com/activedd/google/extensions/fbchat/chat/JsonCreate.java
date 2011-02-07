@@ -6,6 +6,7 @@ package com.activedd.google.extensions.fbchat.chat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.ProtectionDomain;
 import java.util.Date;
@@ -20,7 +21,6 @@ import org.json.JSONObject;
  *
  * this class is to load the receiving message to the user
  */
-
 public class JsonCreate {
 
     /*
@@ -29,13 +29,17 @@ public class JsonCreate {
      * to check it also if the user put more than messsage within two seconds
      * 
      */
-    public void createJsonFile(String f, String msg,String to) throws JSONException, FileNotFoundException {
+    public void createJsonFile(String f, String msg, String to) throws JSONException, FileNotFoundException, IOException {
         Date d = new Date();
         JSONArray jSONArray = null;
         JSONObject jSONObject = new JSONObject();
-        File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/"+to.subSequence(1, to.lastIndexOf("@"))+".json");
-//        file=new File();
-
+        //File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/" + to.subSequence(1, to.lastIndexOf("@")) + ".json");
+        ProtectionDomain domain = this.getClass().getProtectionDomain();
+        File filea = new File(domain.getCodeSource().getLocation().getPath());
+        String path=filea.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getCanonicalFile().getPath();
+        File file = new File(path+"/web/chat/"+to.subSequence(1, to.lastIndexOf("@")) + ".json");
+        System.out.println("Location: " + domain.getCodeSource().getLocation().getPath() );
+        System.out.println("path " +path );
         long nownow = d.getTime();
         d.getTime();
         int now = d.getSeconds();

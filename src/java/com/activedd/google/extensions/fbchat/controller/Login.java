@@ -6,7 +6,9 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJsonRestClient;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,8 +25,9 @@ public class Login extends MultiActionController {
 
     HttpSession session;
     private FacebookJsonRestClient facebook;
-    private String apiKey = "76f98c6f348e8d27ed504ae74da69cea";  //Application Key
-    private String apiSecret = "c4cc0e40e6f8f17362685640a9b0adb4";  //Application Secert key
+    private String apiKey;  //Application Key
+    private String apiSecret;  //Application Secert key
+    private String apiId;
 
     /**
      * login page its first time login to show to the user permission of the application
@@ -36,6 +39,7 @@ public class Login extends MultiActionController {
      * @param response
      */
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("appid from prop:"+apiId);
         //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
         String redirct = generateLoginURL();
         response.sendRedirect(redirct);
@@ -98,15 +102,19 @@ public class Login extends MultiActionController {
         this.apiSecret = apiSecret;
     }
 
+    public void setApiID(String apiId) {
+        this.apiId = apiId;
+    }
+
     private String generateLoginURL() {
-        String apiID = "172430629459688";
+
 
         String nextPage = "next=http://www.facebook.com/login.php?api_key=" + apiKey + "&v=1.0/&&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=";
 
 
         String permission = "user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
 
-        String authurl = "http://www.facebook.com/login.php?api_key=" + apiID + "&connect_display=popup&v=1.0&" + nextPage + permission;
+        String authurl = "http://www.facebook.com/login.php?api_key=" + apiId + "&connect_display=popup&v=1.0&" + nextPage + permission;
 
         // String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
 

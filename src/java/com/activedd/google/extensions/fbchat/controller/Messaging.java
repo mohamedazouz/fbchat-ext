@@ -64,18 +64,11 @@ public class Messaging extends MultiActionController {
         //TO DO: get list of online friends.
         //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
 
-        JSONArray jSONArray = new JSONArray();
+        
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) chatClient.getOnlineUser();
-        for (int i = 0; i < list.size(); i++) {
-            JSONObject jSONObject = new JSONObject();
-            jSONObject.put("id", list.get(i).getId());
-            jSONObject.put("name", list.get(i).getName());
-            jSONObject.put("pic", list.get(i).getPic());
-            jSONArray.put(jSONObject);
-        }
+        JSONArray jSONArray = chatClient.getOnlineUser();
         jSONArray.write(response.getWriter());
         response.getWriter().close();
     }
@@ -91,20 +84,12 @@ public class Messaging extends MultiActionController {
      * @throws FacebookException
      * @throws JSONException
      */
-    public void friendlist(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
-        //TO DO: get a list of all friends in json.
-        JSONArray jSONArray = new JSONArray();
+
+    public void friendlist(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException, FacebookException {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) chatClient.displayBuddyList();
-        for (int i = 0; i < list.size(); i++) {
-            JSONObject jSONObject = new JSONObject();
-            jSONObject.put("id", list.get(i).getId());
-            jSONObject.put("name", list.get(i).getName());
-            jSONObject.put("pic", list.get(i).getPic());
-            jSONArray.put(jSONObject);
-        }
+        JSONArray jSONArray = chatClient.getBuddyList();
         jSONArray.write(response.getWriter());
         response.getWriter().close();
     }

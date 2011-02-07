@@ -38,16 +38,14 @@ public class ChatClient {
     private boolean isSaslAuthenticationEnabled = true;
     private boolean isCompressionEnabled = false;
     private boolean isReconnectionAllowed = false;
-    
-    
     /**
      *
      */
     public static boolean connected = false;
     FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
-    HashMap<Long, String> profilepictures = new HashMap<Long, String>();
     MessageListenerImp messageListenerImp;
 ///media/D/Azouz/NetBeansProjects/proxy_facebook_chat/build/web/WEB-INF/classes/com/activedd/google/extensions/fbchat/chat/ChatClient.class"
+
     /**
      * this function connect to facebook via user authutocation token and get seesion key to login
      * @param FB_SESSION_KEY
@@ -55,7 +53,7 @@ public class ChatClient {
      * @throws InterruptedException
      * @throws FacebookException
      */
-    public void login(String FB_SESSION_KEY,String apiKey,String apiSecret,String domain,String resource,int port) throws XMPPException, InterruptedException, FacebookException {
+    public void login(String FB_SESSION_KEY, String apiKey, String apiSecret, String domain, String resource, int port) throws XMPPException, InterruptedException, FacebookException {
         try {
             SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
                     FacebookConnectSASLMechanism.class);
@@ -75,7 +73,6 @@ public class ChatClient {
             Presence packet = new Presence(Presence.Type.available);
             connection.sendPacket(packet);
             messageListenerImp.setTo(connection.getUser().split("/")[0]);
-            GetprofilesPictures();
         } catch (Exception e) {
             System.out.println("error2");
         }
@@ -84,8 +81,8 @@ public class ChatClient {
      * to get all profile pictures for all users
      */
 
-    public List GetprofilesPictures() throws FacebookException, JSONException, FileNotFoundException {
-        ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();
+    public JSONArray getBuddyList() throws FacebookException, JSONException, FileNotFoundException {
+        //ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();
 
         ArrayList<Long> friendsID = new ArrayList<Long>();
         JSONArray friendsid = this.facebook.friends_get();
@@ -97,37 +94,22 @@ public class ChatClient {
         pf.add(ProfileField.PIC_SQUARE);
         pf.add(ProfileField.NAME);
         friendsid = facebook.users_getInfo(friendsID, pf);
-        for (int i = 0; i < friendsid.length(); i++) {
-            JSONObject jSONObject = friendsid.getJSONObject(i);
-            String pic = (String) jSONObject.get("pic_square");
-            String id = ((Object) jSONObject.get("uid")).toString();
-            profilepictures.put(new Long(id), pic);
-        }
-        /*File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/all-" + connection.getUser().subSequence(1, connection.getUser().lastIndexOf("@")) + ".json");
-        PrintWriter out;
-        out = new PrintWriter(file);
-        out.append(friendsid.toString(5));
-        out.close();*/
-        return list;
+        return friendsid;
     }
 
-    public List getOnlineUser() throws JSONException {
-        ArrayList<FriendBuddy> list = (ArrayList<FriendBuddy>) this.displayBuddyList();
-        ArrayList<FriendBuddy> arrayList = new ArrayList<FriendBuddy>();
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getStaus().equals("1")) {
-                arrayList.add(list.get(i));
+    public JSONArray getOnlineUser() throws JSONException, FacebookException, FileNotFoundException {
+        JSONArray friends = getBuddyList();
+        JSONArray onlineFriends=new JSONArray();
+        Roster roster = this.connection.getRoster();
+        for (int i = 0; i < friends.length(); i++) {
+            JSONObject jSONObject = friends.getJSONObject(i);
+            Presence presence = roster.getPresence("-"+jSONObject.get("uid")+"@chat.facebook.com");
+            if (presence.getType() == Presence.Type.available) {
+                onlineFriends.put(jSONObject);
             }
+            
         }
-        return arrayList;
-    }
-    /*
-     * get profile picture for user id
-     */
-
-    String getprofilepic(long id) {
-        String pic = profilepictures.get(id);
-        return pic;
+        return onlineFriends;
     }
 
     /**
@@ -139,44 +121,6 @@ public class ChatClient {
     public void sendMessage(String message, String to) throws XMPPException {
         Chat chat = connection.getChatManager().createChat(to, messageListenerImp);
         chat.sendMessage(message);
-    }
-
-    /**
-     * review this
-     */
-    public List displayBuddyList() throws JSONException {
-        ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();
-        Roster roster = this.connection.getRoster();
-        Collection<RosterEntry> entries = roster.getEntries();
-        JSONArray jSONArray = new JSONArray();
-        for (RosterEntry r : entries) {
-            Presence presence = roster.getPresence(r.getUser());
-            FriendBuddy friend = new FriendBuddy();
-            friend.setId(r.getUser());
-
-            friend.setName(r.getName());
-            String temp = r.getUser();
-            String id = (String) temp.subSequence(1, temp.lastIndexOf("@"));
-            friend.setPic(getprofilepic(new Long(id)));
-            if (presence.getType() == Presence.Type.available) {
-                friend.setStaus("1");
-                JSONObject jSONObject = new JSONObject();
-                jSONObject.put("id", friend.getId().subSequence(1, friend.getId().lastIndexOf("@")));
-                jSONObject.put("name", friend.getName());
-                jSONArray.put(jSONObject);
-            } else {
-                friend.setStaus("0");
-            }
-            list.add(friend);
-        }
-        /*File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/online-" + connection.getUser().subSequence(1, connection.getUser().lastIndexOf("@")) + ".json");
-        PrintWriter out;
-        out = new PrintWriter(file);
-        String json = jSONArray.toString(5);
-        out.append(json);
-        out.close();*/
-        return list;
-
     }
 
     /**

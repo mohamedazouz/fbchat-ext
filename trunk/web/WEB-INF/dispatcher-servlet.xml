@@ -45,11 +45,12 @@
     <bean name="Login" class="com.activedd.google.extensions.fbchat.controller.Login" >
         <property name="apiID" value="${fbapp.appID}"/>
         <property name="apiKey" value="${fbapp.appKey}"/>
-        <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
+<!--        <property name="apiSecret" value="${fbapp.apiSecretkey}"/>-->
+        <property name="facebook" ref="facebookJsonRestClient"/>
     </bean>
 
     <bean name="Connect" class="com.activedd.google.extensions.fbchat.controller.Connect" >
-        <property name="apiID" value="${fbapp.appID}"/>
+<!--        <property name="apiID" value="${fbapp.appID}"/>-->
         <property name="apiKey" value="${fbapp.appKey}"/>
         <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
         <property name="resource" value="${fbapp.resource}"/>

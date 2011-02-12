@@ -28,5 +28,9 @@
     <bean id="messageListener" class="com.activedd.google.extensions.fbchat.chat.MessageListenerImp">
         <property name="jsonCreate" ref="jsoncreator"></property>
     </bean>
+    <bean id="facebookJsonRestClient" class="com.google.code.facebookapi.FacebookJsonRestClient" >
+        <constructor-arg value="${fbapp.appKey}" ></constructor-arg>
+        <constructor-arg value="${fbapp.apiSecretkey}" ></constructor-arg>
+    </bean>
 
 </beans>

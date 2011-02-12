@@ -21,11 +21,11 @@
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
-        <url-pattern>/*.htm</url-pattern>
+        <url-pattern>*.htm</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
-        <url-pattern>/*.json</url-pattern>
+        <url-pattern>*.json</url-pattern>
     </filter-mapping>
     <servlet>
         <servlet-name>dispatcher</servlet-name>

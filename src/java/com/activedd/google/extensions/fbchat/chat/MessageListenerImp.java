@@ -21,18 +21,18 @@ public class MessageListenerImp implements MessageListener {
     public void processMessage(Chat chat, Message message) {
         try {
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
-                setJsonCreate(new JsonCreate());
-                getJsonCreate().createJsonFile(chat.getParticipant(), message.getBody(), this.getTo());
+//                setJsonCreate(new JsonCreate());
+                jsonCreate.createJsonFile(chat.getParticipant(), message.getBody(), to);
             }
         } catch (Exception ex) {
             Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private JsonCreate jsonCreate;
+    private JsonCreate jsonCreate =new JsonCreate();
 
-    public void setJsonCreate(JsonCreate jsonCreate) {
-        this.jsonCreate = jsonCreate;
-    }
+//    public void setJsonCreate(JsonCreate jsonCreate) {
+//        this.jsonCreate = jsonCreate;
+//    }
 
     /**
      * @return the to
@@ -51,7 +51,7 @@ public class MessageListenerImp implements MessageListener {
     /**
      * @return the jsonCreate
      */
-    public JsonCreate getJsonCreate() {
-        return jsonCreate;
-    }
+//    public JsonCreate getJsonCreate() {
+//        return jsonCreate;
+//    }
 }

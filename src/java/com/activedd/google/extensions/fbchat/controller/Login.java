@@ -6,9 +6,7 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJsonRestClient;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,7 +24,8 @@ public class Login extends MultiActionController {
     HttpSession session;
     private FacebookJsonRestClient facebook;
     private String apiKey;  //Application Key
-    private String apiSecret;  //Application Secert key
+    //useless.
+//    private String apiSecret;  //Application Secert key
     private String apiId;
 
     /**
@@ -39,7 +38,7 @@ public class Login extends MultiActionController {
      * @param response
      */
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("appid from prop:"+apiId);
+//        System.out.println("appid from prop:"+apiId);
         //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
         String redirct = generateLoginURL();
         response.sendRedirect(redirct);
@@ -58,9 +57,13 @@ public class Login extends MultiActionController {
     public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException {
         //TO DO: this url that will facebook redirects to after authenticating application from facebook.
         //      and set the user key in the httpsession.
-        session = request.getSession();
+        //creates a new session if there is not session.
+        session = request.getSession(true);
+        //get the request token from the request.
         String token = request.getParameter("auth_token");
-        facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+        //facebook object is isntanciated in the application context once.
+//        facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+        //generates the authintication token for the user.
         String FB_SESSION_KEY = facebook.auth_getSession(token);
         session.setAttribute("sessionkey", FB_SESSION_KEY);
         return new ModelAndView("thankYou");
@@ -78,6 +81,12 @@ public class Login extends MultiActionController {
         //TO DO: check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
         response.setContentType("application/json;charset=UTF-8");
 
+        //must instanciate the session again from the request.
+        session=request.getSession(false);
+        //if there is no session in the request, stop proceeding the function.
+        if(session == null){
+            return;
+        }
         String sessionkey = (String) session.getAttribute("sessionkey");
         session.removeAttribute("sessionkey");
         JSONObject jSONObject = new JSONObject();
@@ -98,12 +107,16 @@ public class Login extends MultiActionController {
         this.apiKey = apiKey;
     }
 
-    public void setApiSecret(String apiSecret) {
-        this.apiSecret = apiSecret;
-    }
+//    public void setApiSecret(String apiSecret) {
+//        this.apiSecret = apiSecret;
+//    }
 
     public void setApiID(String apiId) {
         this.apiId = apiId;
+    }
+
+    public void setFacebook(FacebookJsonRestClient facebook) {
+        this.facebook = facebook;
     }
 
     private String generateLoginURL() {

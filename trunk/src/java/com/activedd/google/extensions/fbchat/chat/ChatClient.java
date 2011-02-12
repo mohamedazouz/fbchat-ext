@@ -12,14 +12,12 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import com.google.code.facebookapi.ProfileField;
-import java.security.ProtectionDomain;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,22 +57,25 @@ public class ChatClient {
                     FacebookConnectSASLMechanism.class);
             SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
             ConnectionConfiguration config = null;
+            //you can instanciate on config in all the applications as you don't need it for each user.
             config = new ConnectionConfiguration(domain, port);
             config.setSecurityMode(securityMode);
             config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
             config.setCompressionEnabled(isCompressionEnabled);
             config.setReconnectionAllowed(isReconnectionAllowed);
             //config.
+            //why we need a new instance of connection? why you don't set it in the context insted of instanciating new one every time?
             connection = new XMPPConnection(config);
             messageListenerImp = new MessageListenerImp();
             connection.connect();
+            //why we need facebook instance here ?
             facebook = new FacebookJsonRestClient(apiKey, apiSecret, FB_SESSION_KEY);
             connection.login(apiKey + "|" + FB_SESSION_KEY, apiSecret, resource);
             Presence packet = new Presence(Presence.Type.available);
             connection.sendPacket(packet);
             messageListenerImp.setTo(connection.getUser().split("/")[0]);
         } catch (Exception e) {
-            System.out.println("error2");
+            System.out.println(e.getMessage());
         }
     }
     /*

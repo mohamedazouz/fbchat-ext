@@ -30,6 +30,7 @@ public class JsonCreate {
      * 
      */
     public void createJsonFile(String f, String msg, String to) throws JSONException, FileNotFoundException, IOException {
+        //please care about naming convention. i don't like Date d or long nownow.
         Date d = new Date();
         JSONArray jSONArray = null;
         JSONObject jSONObject = new JSONObject();
@@ -38,17 +39,18 @@ public class JsonCreate {
         File filea = new File(domain.getCodeSource().getLocation().getPath());
         String path=filea.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getCanonicalFile().getPath();
         File file = new File(path+"/web/chat/"+to.subSequence(1, to.lastIndexOf("@")) + ".json");
-        System.out.println("Location: " + domain.getCodeSource().getLocation().getPath() );
-        System.out.println("path " +path );
+//        System.out.println("Location: " + domain.getCodeSource().getLocation().getPath() );
+//        System.out.println("path " +path );
         long nownow = d.getTime();
+        //what is this. ?
         d.getTime();
         int now = d.getSeconds();
-        System.out.println("now=>" + now);
+//        System.out.println("now=>" + now);
         d = new Date(file.lastModified());
         int last = d.getSeconds();
-        System.out.println("from=>" + last);
+//        System.out.println("from=>" + last);
         int remain = Math.abs(last - now);
-        System.out.println("total=>" + remain);
+//        System.out.println("total=>" + remain);
         String tot = "";
         if (remain < 2 && file.exists()) {
             System.out.println("allah b2aa");
@@ -70,6 +72,6 @@ public class JsonCreate {
         String json = jSONArray.toString(5);
         out.append(json);
         out.close();
-        System.out.println(jSONArray);
+//        System.out.println(jSONArray);
     }
 }

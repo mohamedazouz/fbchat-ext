@@ -5,18 +5,15 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
-import com.activedd.google.extensions.fbchat.chat.FriendBuddy;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.jivesoftware.smack.XMPPException;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**

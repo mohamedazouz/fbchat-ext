@@ -22,7 +22,7 @@ public class Connect extends MultiActionController {
     HttpSession session;
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
-    private String apiId;
+//    private String apiId;
     private String resource ;
     private String domain ;
     private int port = 5222;
@@ -39,7 +39,8 @@ public class Connect extends MultiActionController {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
         chatClient = new ChatClient();
-        session = request.getSession();
+        //create a new session if there is no session associated with request.
+        session = request.getSession(true);
         String sessionkey = request.getParameter("sessionkey");
         //String sessionkey = (String) session.getAttribute("sessionkey");
         chatClient.login(sessionkey,apiKey,apiSecret,domain,resource,port);
@@ -67,9 +68,9 @@ public class Connect extends MultiActionController {
         this.apiSecret = apiSecret;
     }
 
-    public void setApiID(String apiId) {
-        this.apiId = apiId;
-    }
+//    public void setApiID(String apiId) {
+//        this.apiId = apiId;
+//    }
     private ChatClient chatClient;
 
     /**

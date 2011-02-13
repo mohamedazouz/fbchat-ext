@@ -25,7 +25,7 @@ public class Login extends MultiActionController {
     private FacebookJsonRestClient facebook;
     private String apiKey;  //Application Key
     //useless.
-//    private String apiSecret;  //Application Secert key
+    private String apiSecret;  //Application Secert key
     private String apiId;
 
     /**
@@ -99,9 +99,9 @@ public class Login extends MultiActionController {
         this.apiKey = apiKey;
     }
 
-//    public void setApiSecret(String apiSecret) {
-//        this.apiSecret = apiSecret;
-//    }
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
+    }
 
     public void setApiID(String apiId) {
         this.apiId = apiId;

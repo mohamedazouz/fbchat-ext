@@ -16,8 +16,13 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.sasl.SASLMechanism;
 import org.jivesoftware.smack.util.Base64;
 
+
 /**
  *
+ * @author http://code.google.com/p/fbgc/
+ * from
+ * http://code.google.com/p/fbgc/source/browse/trunk/daemon/src/main/java/org/albino/mechanisms/FacebookConnectSASLMechanism.java
+ * 
  */
 public class FacebookConnectSASLMechanism extends SASLMechanism {
 

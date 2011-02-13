@@ -13,13 +13,26 @@ import org.jivesoftware.smack.packet.Message;
 /**
  *
  * @author prog
+ *
+ * message receiver listener
  */
 public class MessageListenerImp implements MessageListener {
 
+    /**
+     * Message receiver
+     */
     private String to;
 
+    /**
+     * automatic called when user receive message and call CreateJson class to store it
+     *
+     * @param chat who send the message
+     * @param message receiving message
+     */
     public void processMessage(Chat chat, Message message) {
         try {
+
+
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
 //                setJsonCreate(new JsonCreate());
                 jsonCreate.createJsonFile(chat.getParticipant(), message.getBody(), to);

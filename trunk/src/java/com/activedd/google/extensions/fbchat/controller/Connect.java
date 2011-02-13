@@ -5,12 +5,15 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.jivesoftware.smack.XMPPException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
@@ -23,28 +26,35 @@ public class Connect extends MultiActionController {
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
 //    private String apiId;
-    private String resource ;
-    private String domain ;
-    private int port = 5222;
+    private String resource;
+    private String domain;
+    private int port;
+    private ServerConfiguration configuration;
 
     /**
-     * Connect Page is to login to facebook chat via user session key.
+     * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
      * 
      * you should send me a session key in url as parameter named "sessionkey"
      * 
      * @param request
      * @param response
      */
-    public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException, IOException {
+    public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException, IOException, FacebookException, FacebookException, FacebookException, FacebookException, JSONException {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
-        chatClient = new ChatClient();
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        chatClient = new ChatClient(configuration.getConfiguration());
         //create a new session if there is no session associated with request.
         session = request.getSession(true);
         String sessionkey = request.getParameter("sessionkey");
         //String sessionkey = (String) session.getAttribute("sessionkey");
-        chatClient.login(sessionkey,apiKey,apiSecret,domain,resource,port);
+        chatClient.xmppConnectAndLogin(sessionkey, apiKey, apiSecret, domain, resource, port);
         session.setAttribute("client", chatClient);
+        JSONObject jSONObject = chatClient.getLoggedInUserDetails();
+        jSONObject.write(response.getWriter());
+        response.getWriter().close();
+
     }
 
     /**
@@ -60,10 +70,18 @@ public class Connect extends MultiActionController {
         session.removeAttribute("sessionkey");
     }
 
+    /**
+     * 
+     * @param apiKey
+     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
 
+    /**
+     * 
+     * @param apiSecret
+     */
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
     }
@@ -92,5 +110,12 @@ public class Connect extends MultiActionController {
      */
     public void setPort(int port) {
         this.port = port;
+    }
+
+    /**
+     * @param configuration the configuration to set
+     */
+    public void setConfiguration(ServerConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

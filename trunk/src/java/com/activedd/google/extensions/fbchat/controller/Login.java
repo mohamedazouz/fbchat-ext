@@ -42,7 +42,6 @@ public class Login extends MultiActionController {
         //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
         String redirct = generateLoginURL();
         response.sendRedirect(redirct);
-        //TO DO: redirect to the login screen in facebook.
     }
 
     /**
@@ -55,7 +54,7 @@ public class Login extends MultiActionController {
      * @param response
      */
     public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException {
-        //TO DO: this url that will facebook redirects to after authenticating application from facebook.
+        //this url that will facebook redirects to after authenticating application from facebook.
         //      and set the user key in the httpsession.
         //creates a new session if there is not session.
         session = request.getSession(true);
@@ -78,9 +77,8 @@ public class Login extends MultiActionController {
      * @param response
      */
     public void getauthkey(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
-        //TO DO: check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
+        //check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
         response.setContentType("application/json;charset=UTF-8");
-
         //must instanciate the session again from the request.
         session=request.getSession(false);
         //if there is no session in the request, stop proceeding the function.
@@ -90,17 +88,11 @@ public class Login extends MultiActionController {
         String sessionkey = (String) session.getAttribute("sessionkey");
         session.removeAttribute("sessionkey");
         JSONObject jSONObject = new JSONObject();
-
         if (sessionkey != null) {
             jSONObject.put("sessionkey", sessionkey);
         }
-
         jSONObject.write(response.getWriter());
-
         response.getWriter().close();
-        //response like {"sessionkey":"xxx"}
-        //if there is no session key in the session response like: {}
-
     }
 
     public void setApiKey(String apiKey) {
@@ -125,11 +117,11 @@ public class Login extends MultiActionController {
         String nextPage = "next=http://www.facebook.com/login.php?api_key=" + apiKey + "&v=1.0/&&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=";
 
 
-        String permission = "user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+        String permission = "user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";//,friends_online_presence,user_online_presence
 
         String authurl = "http://www.facebook.com/login.php?api_key=" + apiId + "&connect_display=popup&v=1.0&" + nextPage + permission;
 
-        // String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
+        // String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access,read_friendlists";
 
         return authurl;
     }

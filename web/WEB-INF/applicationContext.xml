@@ -29,8 +29,13 @@
     <bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:../fbproperties.properties"/>
     </bean>
-    <bean id="configuration" class="com.activedd.google.extensions.fbchat.chat.ServerConfiguration">
+    <bean id="configuration" class="com.activedd.google.extensions.fbchat.chat.ServerConfiguration" >
         <constructor-arg value="${fbapp.domain}" />
         <constructor-arg value="${fbapp.port}"/>
     </bean>
+    <bean id="facebook" class="com.google.code.facebookapi.FacebookJsonRestClient">
+        <constructor-arg value="${fbapp.appKey}" />
+        <constructor-arg value="${fbapp.apiSecretkey}"/>
+    </bean>
+    
 </beans>

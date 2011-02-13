@@ -26,51 +26,41 @@ import org.json.JSONObject;
  *
  * @author Activedd2
  *
- * this class is to manage whole chat client sending and receiving messages 
+ * this class is to manage whole chat client from connection , login to facebook chat and  sending messages
+ * @
  */
 public class ChatClient {
 
-    //  private ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();// Store All list of friends for login one
     private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fcebook
-    private SecurityMode securityMode = SecurityMode.enabled;
-    private boolean isSaslAuthenticationEnabled = true;
-    private boolean isCompressionEnabled = false;
-    private boolean isReconnectionAllowed = false;
-    /**
-     *
-     */
-    public static boolean connected = false;
-    FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
-    MessageListenerImp messageListenerImp;
-///media/D/Azouz/NetBeansProjects/proxy_facebook_chat/build/web/WEB-INF/classes/com/activedd/google/extensions/fbchat/chat/ChatClient.class"
+    private FacebookJsonRestClient facebook;
+    // facebook client to get sessionkey and enable me to acces friends details like a photos and status
+    private MessageListenerImp messageListenerImp;
+
+    public ChatClient(ConnectionConfiguration config) {
+        connection = new XMPPConnection(config);
+        messageListenerImp = new MessageListenerImp();
+    }
 
     /**
-     * this function connect to facebook via user authutocation token and get seesion key to login
-     * @param FB_SESSION_KEY
-     * @throws XMPPException
+     * connect facebook chat host  using XMPP protocol which facebook provide for its server, implemented by smack API
+     *
+     * login to facebook  using X-FACEBOOK-PLATFORM SASL authentication mechanism implemented by smack API
+     * 
+     * @param fbSessionKey its user session key for this application
+     * @param apiKey application key
+     * @param apiSecret application secret key
+     * @param domain it is facebook chat domain
+     * @param resource Facebook Group Chat
+     * @param port connection port to facebook 
+     * @throws XMPPException 
      * @throws InterruptedException
      * @throws FacebookException
      */
-    public void login(String FB_SESSION_KEY, String apiKey, String apiSecret, String domain, String resource, int port) throws XMPPException, InterruptedException, FacebookException {
+    public void xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port) throws XMPPException, InterruptedException, FacebookException {
         try {
-            SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM",
-                    FacebookConnectSASLMechanism.class);
-            SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
-            ConnectionConfiguration config = null;
-            //you can instanciate on config in all the applications as you don't need it for each user.
-            config = new ConnectionConfiguration(domain, port);
-            config.setSecurityMode(securityMode);
-            config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
-            config.setCompressionEnabled(isCompressionEnabled);
-            config.setReconnectionAllowed(isReconnectionAllowed);
-            //config.
-            //why we need a new instance of connection? why you don't set it in the context insted of instanciating new one every time?
-            connection = new XMPPConnection(config);
-            messageListenerImp = new MessageListenerImp();
             connection.connect();
-            //why we need facebook instance here ?
-            facebook = new FacebookJsonRestClient(apiKey, apiSecret, FB_SESSION_KEY);
-            connection.login(apiKey + "|" + FB_SESSION_KEY, apiSecret, resource);
+            facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
+            connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
             Presence packet = new Presence(Presence.Type.available);
             connection.sendPacket(packet);
             messageListenerImp.setTo(connection.getUser().split("/")[0]);
@@ -78,13 +68,33 @@ public class ChatClient {
             System.out.println(e.getMessage());
         }
     }
-    /*
-     * to get all profile pictures for all users
+
+    /**
+     *
+     *
+     * @return LoggedIn User Details
+     * @throws FacebookException
+     * @throws JSONException
+     * @throws FileNotFoundException
      */
+    public JSONObject getLoggedInUserDetails() throws FacebookException, JSONException, FileNotFoundException {
+        ArrayList<Long> friendsID = new ArrayList<Long>();
+        friendsID.add(facebook.users_getLoggedInUser());
+        ArrayList<ProfileField> pf = new ArrayList<ProfileField>();
+        pf.add(ProfileField.PIC_SQUARE);
+        pf.add(ProfileField.NAME);
+        JSONObject userdetail = facebook.users_getInfo(friendsID, pf).getJSONObject(0);
+        return userdetail;
+    }
 
+    /**
+     * 
+     * @return jsonArray contain all friends each with his/her {id,pic,name}
+     * @throws FacebookException
+     * @throws JSONException
+     * @throws FileNotFoundException
+     */
     public JSONArray getBuddyList() throws FacebookException, JSONException, FileNotFoundException {
-        //ArrayList<FriendBuddy> list = new ArrayList<FriendBuddy>();
-
         ArrayList<Long> friendsID = new ArrayList<Long>();
         JSONArray friendsid = this.facebook.friends_get();
         for (int i = 0; i < friendsid.length(); i++) {
@@ -98,25 +108,32 @@ public class ChatClient {
         return friendsid;
     }
 
+    /**
+     *
+     * @return jsonArray contain all online friends each with his/her {id,pic,name}
+     * @throws JSONException
+     * @throws FacebookException
+     * @throws FileNotFoundException
+     */
     public JSONArray getOnlineUser() throws JSONException, FacebookException, FileNotFoundException {
         JSONArray friends = getBuddyList();
-        JSONArray onlineFriends=new JSONArray();
+        JSONArray onlineFriends = new JSONArray();
         Roster roster = this.connection.getRoster();
         for (int i = 0; i < friends.length(); i++) {
             JSONObject jSONObject = friends.getJSONObject(i);
-            Presence presence = roster.getPresence("-"+jSONObject.get("uid")+"@chat.facebook.com");
+            Presence presence = roster.getPresence("-" + jSONObject.get("uid") + "@chat.facebook.com");
             if (presence.getType() == Presence.Type.available) {
                 onlineFriends.put(jSONObject);
             }
-            
+
         }
         return onlineFriends;
     }
 
     /**
-     * to send message for spcific user
-     * @param message
-     * @param to
+     * to send message for specific user
+     * @param message message text
+     * @param to friend which message send to
      * @throws XMPPException
      */
     public void sendMessage(String message, String to) throws XMPPException {

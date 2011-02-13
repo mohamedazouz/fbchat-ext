@@ -17,61 +17,63 @@ import org.json.JSONObject;
 
 /**
  *
+ *
  * @author Activedd2
  *
- * this class is to load the receiving message to the user
+ * creating json file for each user contains its receiving messages
  */
 public class JsonCreate {
 
-    /*
-     * this function is to create  json file
+    private final int LAST_MODIFICATION_SECODS = 4;
+
+    /**
+     * Store receiving messages in 1 json file and append to file if its last modification within 2 seconds
      *
-     * to check it also if the user put more than messsage within two seconds
-     * 
+     * @param f message sender
+     * @param msg message text
+     * @param to message receiver
+     * @throws JSONException
+     * @throws FileNotFoundException
+     * @throws IOException
      */
     public void createJsonFile(String f, String msg, String to) throws JSONException, FileNotFoundException, IOException {
-        //please care about naming convention. i don't like Date d or long nownow.
-        Date d = new Date();
-        JSONArray jSONArray = null;
-        JSONObject jSONObject = new JSONObject();
-        //File file = new File("/media/D/Azouz/NetBeansProjects/proxy_facebook_chat/web/recentchat/" + to.subSequence(1, to.lastIndexOf("@")) + ".json");
+
+        Date currentDate = new Date();
+        JSONArray lastReceivedMessages = null;
+        JSONObject receivedMessage = new JSONObject();
         ProtectionDomain domain = this.getClass().getProtectionDomain();
-        File filea = new File(domain.getCodeSource().getLocation().getPath());
-        String path=filea.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getCanonicalFile().getPath();
-        File file = new File(path+"/web/chat/"+to.subSequence(1, to.lastIndexOf("@")) + ".json");
-//        System.out.println("Location: " + domain.getCodeSource().getLocation().getPath() );
-//        System.out.println("path " +path );
-        long nownow = d.getTime();
-        //what is this. ?
-        d.getTime();
-        int now = d.getSeconds();
-//        System.out.println("now=>" + now);
-        d = new Date(file.lastModified());
-        int last = d.getSeconds();
-//        System.out.println("from=>" + last);
-        int remain = Math.abs(last - now);
-//        System.out.println("total=>" + remain);
+        /*File filea = new File(domain.getCodeSource().getLocation().getPath());
+        String path = filea.getParentFile().getParentFile().getPath();*/
+        String path = domain.getCodeSource().getLocation().getPath();
+        String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
+        File file = new File(p_realPath + "chat/" + to.subSequence(1, to.lastIndexOf("@")) + ".json");
+        long currentTime = currentDate.getTime();
+        int currentSeconds = currentDate.getSeconds();
+        currentDate = new Date(file.lastModified());
+        int last = currentDate.getSeconds();
+        System.out.println("from=>" + last);
+        int remainingSeconds = Math.abs(last - currentSeconds);
         String tot = "";
-        if (remain < 2 && file.exists()) {
+        if (remainingSeconds < LAST_MODIFICATION_SECODS && file.exists()) {
             System.out.println("allah b2aa");
             Scanner sc = new Scanner(file);
             while (sc.hasNext()) {
                 tot += sc.nextLine();
             }
-            jSONArray = new JSONArray(tot);
+            lastReceivedMessages = new JSONArray(tot);
             sc.close();
         }
-        jSONObject.put("msg", msg);
-        jSONObject.put("from", f);
-        jSONObject.put("time", nownow);
-        if (jSONArray == null) {
-            jSONArray = new JSONArray();
+        receivedMessage.put("msg", msg);
+        receivedMessage.put("from", f);
+        receivedMessage.put("time", currentTime);
+        if (lastReceivedMessages == null) {
+            lastReceivedMessages = new JSONArray();
         }
-        jSONArray.put(jSONObject);
+        lastReceivedMessages.put(receivedMessage);
         PrintWriter out = new PrintWriter(file);
-        String json = jSONArray.toString(5);
+        String json = lastReceivedMessages.toString(5);
         out.append(json);
         out.close();
-//        System.out.println(jSONArray);
+        System.out.println(lastReceivedMessages);
     }
 }

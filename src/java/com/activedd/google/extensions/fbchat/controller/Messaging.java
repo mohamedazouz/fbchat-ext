@@ -35,8 +35,10 @@ public class Messaging extends MultiActionController {
      * @throws UnsupportedEncodingException
      */
     public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException {
-        //TO DO: send a message,
+        //send a message
         //get to ID url parameter and msg
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         String to = "-";
@@ -58,10 +60,10 @@ public class Messaging extends MultiActionController {
      * @throws JSONException
      */
     public void onlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, FacebookException, JSONException {
-        //TO DO: get list of online friends.
+        //get list of online friends.
         //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
-
-        
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
@@ -81,8 +83,9 @@ public class Messaging extends MultiActionController {
      * @throws FacebookException
      * @throws JSONException
      */
-
     public void friendlist(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException, FacebookException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
@@ -90,5 +93,4 @@ public class Messaging extends MultiActionController {
         jSONArray.write(response.getWriter());
         response.getWriter().close();
     }
-
 }

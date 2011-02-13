@@ -25,7 +25,7 @@ public class Connect extends MultiActionController {
     HttpSession session;
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
-//    private String apiId;
+    private String apiId;
     private String resource;
     private String domain;
     private int port;
@@ -49,7 +49,7 @@ public class Connect extends MultiActionController {
         session = request.getSession(true);
         String sessionkey = request.getParameter("sessionkey");
         //String sessionkey = (String) session.getAttribute("sessionkey");
-        chatClient.xmppConnectAndLogin(sessionkey, apiKey, apiSecret, domain, resource, port);
+        chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
         session.setAttribute("client", chatClient);
         JSONObject jSONObject = chatClient.getLoggedInUserDetails();
         jSONObject.write(response.getWriter());
@@ -78,17 +78,11 @@ public class Connect extends MultiActionController {
         this.apiKey = apiKey;
     }
 
-    /**
-     * 
-     * @param apiSecret
-     */
-    public void setApiSecret(String apiSecret) {
-        this.apiSecret = apiSecret;
-    }
+   
 
-//    public void setApiID(String apiId) {
-//        this.apiId = apiId;
-//    }
+    public void setApiID(String apiId) {
+        this.apiId = apiId;
+    }
     private ChatClient chatClient;
 
     /**
@@ -117,5 +111,19 @@ public class Connect extends MultiActionController {
      */
     public void setConfiguration(ServerConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * @return the apiSecret
+     */
+    public String getApiSecret() {
+        return apiSecret;
+    }
+
+    /**
+     * @param apiSecret the apiSecret to set
+     */
+    public void setApiSecret(String apiSecret) {
+        this.apiSecret = apiSecret;
     }
 }

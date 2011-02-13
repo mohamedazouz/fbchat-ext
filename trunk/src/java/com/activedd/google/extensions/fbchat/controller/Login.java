@@ -61,7 +61,7 @@ public class Login extends MultiActionController {
         //get the request token from the request.
         String token = request.getParameter("auth_token");
         //facebook object is isntanciated in the application context once.
-//        facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+        //facebook = new FacebookJsonRestClient(apiKey, apiSecret);
         //generates the authintication token for the user.
         String FB_SESSION_KEY = facebook.auth_getSession(token);
         session.setAttribute("sessionkey", FB_SESSION_KEY);

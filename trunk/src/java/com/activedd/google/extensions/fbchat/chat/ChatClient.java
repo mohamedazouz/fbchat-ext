@@ -10,14 +10,13 @@ import java.io.*;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import com.google.code.facebookapi.ProfileField;
+import org.jivesoftware.smack.ChatManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,16 +56,12 @@ public class ChatClient {
      * @throws FacebookException
      */
     public void xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port) throws XMPPException, InterruptedException, FacebookException {
-        try {
-            connection.connect();
-            facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
-            connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
-            Presence packet = new Presence(Presence.Type.available);
-            connection.sendPacket(packet);
-            messageListenerImp.setTo(connection.getUser().split("/")[0]);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        connection.connect();
+        facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
+        connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
+        Presence packet = new Presence(Presence.Type.available);
+        connection.sendPacket(packet);
+        messageListenerImp.setTo(connection.getUser().split("/")[0]);
     }
 
     /**
@@ -98,8 +93,10 @@ public class ChatClient {
         ArrayList<Long> friendsID = new ArrayList<Long>();
         JSONArray friendsid = this.facebook.friends_get();
         for (int i = 0; i < friendsid.length(); i++) {
-            Object object = friendsid.get(i);
-            friendsID.add(new Long(object.toString()));
+            String friendId = friendsid.getString(i);
+            ChatManager chatmanager = connection.getChatManager();
+            Chat newChat = chatmanager.createChat("-" + friendId + "@chat.facebook.com", messageListenerImp);
+            friendsID.add(new Long(friendId.toString()));
         }
         ArrayList<ProfileField> pf = new ArrayList<ProfileField>();
         pf.add(ProfileField.PIC_SQUARE);

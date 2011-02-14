@@ -33,6 +33,7 @@ public class MessageListenerImp implements MessageListener {
         try {
 
 
+
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
 //                setJsonCreate(new JsonCreate());
                 jsonCreate.createJsonFile(chat.getParticipant(), message.getBody(), to);

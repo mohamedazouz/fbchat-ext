@@ -24,7 +24,6 @@ public class Login extends MultiActionController {
     HttpSession session;
     private FacebookJsonRestClient facebook;
     private String apiKey;  //Application Key
-    //useless.
     private String apiSecret;  //Application Secert key
     private String apiId;
 

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.jivesoftware.smack.XMPPException;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
@@ -59,7 +60,7 @@ public class Messaging extends MultiActionController {
      * @throws FacebookException
      * @throws JSONException
      */
-    public void onlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, FacebookException, JSONException {
+    public void onlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, FacebookException, JSONException, XMPPException {
         //get list of online friends.
         //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
         request.setCharacterEncoding("UTF-8");
@@ -68,6 +69,13 @@ public class Messaging extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         JSONArray jSONArray = chatClient.getOnlineUser();
+        for (int i = 0; i < jSONArray.length(); i++) {
+            JSONObject friend = jSONArray.getJSONObject(i);
+            String to = "-";
+            String friendId = friend.getString("uid");
+            to += friend + "@chat.facebook.com";
+            chatClient.sendMessage("", to);
+        }
         jSONArray.write(response.getWriter());
         response.getWriter().close();
     }

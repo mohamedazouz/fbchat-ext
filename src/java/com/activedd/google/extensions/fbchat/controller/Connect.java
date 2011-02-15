@@ -65,6 +65,7 @@ public class Connect extends MultiActionController {
      */
     public void disconnect(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: go offline.
+        chatClient=(ChatClient) session.getAttribute("client");
         chatClient.disconnect();
         session.removeAttribute("client");
         session.removeAttribute("sessionkey");

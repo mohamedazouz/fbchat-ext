@@ -17,27 +17,6 @@
     </head>
 
     <body>
-        <h1>YOur UsErS!</h1>
-        <a href="index.jsp">back</a>
-        <form action="ReadyChat" method="post">
-            <div id="chooseform">
-                
-                    <c:forEach items="${buddList.list}" var="l">
-                        <div >
-                            pic : <img src="${l.pic}" />
-                            Name : ${l.name}
-                            status : ${l.staus}
-                        </div>
-                    </c:forEach>
-                    
-                <button id="choose" onclick="getchat();">chat</button>
-            </div>
-
-            <div id="chatarea">
-                <textarea id="chatext" name="chatext"></textarea>
-            </div>
-            <input type="submit" id="choose" value="chat">
-        </form>
-
+     
     </body>
 </html>

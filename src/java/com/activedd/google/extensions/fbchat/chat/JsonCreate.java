@@ -51,11 +51,10 @@ public class JsonCreate {
         int currentSeconds = currentDate.getSeconds();
         currentDate = new Date(file.lastModified());
         int last = currentDate.getSeconds();
-        System.out.println("from=>" + last);
+        
         int remainingSeconds = Math.abs(last - currentSeconds);
         String tot = "";
         if (remainingSeconds < LAST_MODIFICATION_SECODS && file.exists()) {
-            System.out.println("allah b2aa");
             Scanner sc = new Scanner(file);
             while (sc.hasNext()) {
                 tot += sc.nextLine();
@@ -74,6 +73,5 @@ public class JsonCreate {
         String json = lastReceivedMessages.toString(5);
         out.append(json);
         out.close();
-        System.out.println(lastReceivedMessages);
     }
 }

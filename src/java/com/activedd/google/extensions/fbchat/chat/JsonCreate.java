@@ -24,7 +24,7 @@ import org.json.JSONObject;
  */
 public class JsonCreate {
 
-    private final int LAST_MODIFICATION_SECODS = 2;
+    private final int LAST_MODIFICATION_SECODS = 4;
 
     /**
      * Store receiving messages in 1 json file and append to file if its last modification within 2 seconds

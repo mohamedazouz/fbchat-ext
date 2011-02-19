@@ -52,7 +52,7 @@ public class Login extends MultiActionController {
      * @param request
      * @param response
      */
-    public ModelAndView authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException {
+    public void authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException, IOException {
         //this url that will facebook redirects to after authenticating application from facebook.
         //      and set the user key in the httpsession.
         //creates a new session if there is not session.
@@ -64,7 +64,8 @@ public class Login extends MultiActionController {
         //generates the authintication token for the user.
         String FB_SESSION_KEY = facebook.auth_getSession(token);
         session.setAttribute("sessionkey", FB_SESSION_KEY);
-        return new ModelAndView("thankYou");
+//        return new ModelAndView("thankYou");
+        response.sendRedirect("thankyou.htm");
     }
 
     /**

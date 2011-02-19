@@ -11,9 +11,11 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>FaceBook Chat Login</title>
     </head>
     <body>
-        <h1>Thanks for login</h1>
+        <h1>FaceBook Chat Chrome Extension</h1>
+        <h2>Thanks for login</h2>
+        <p>Please wait until logging in with extension.</p>
     </body>
 </html>

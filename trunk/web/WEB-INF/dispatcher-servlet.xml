@@ -20,6 +20,7 @@
         <property name="mappings">
             <props>
                 <prop key="index.htm">indexController</prop>
+                <prop key="thankyou.htm">thankyou</prop>
                 <prop key="login/*.htm">Login</prop>
                 <prop key="connect/*.htm">Connect</prop>
                 <prop key="messaging/*.htm">Messaging</prop>
@@ -41,6 +42,9 @@
     <bean name="indexController"
           class="org.springframework.web.servlet.mvc.ParameterizableViewController"
           p:viewName="index" />
+    <bean name="thankyou"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="thankYou" />
 
     <bean name="Login" class="com.activedd.google.extensions.fbchat.controller.Login" >
         <property name="apiID" value="${fbapp.appID}"/>

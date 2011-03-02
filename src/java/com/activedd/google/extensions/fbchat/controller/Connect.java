@@ -8,7 +8,6 @@ import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,7 +25,6 @@ public class Connect extends MultiActionController {
     HttpSession session;
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
-    private String apiId;
     private String resource;
     private String domain;
     private int port;
@@ -122,9 +120,6 @@ public class Connect extends MultiActionController {
         this.apiKey = apiKey;
     }
 
-    public void setApiID(String apiId) {
-        this.apiId = apiId;
-    }
     private ChatClient chatClient;
 
     /**

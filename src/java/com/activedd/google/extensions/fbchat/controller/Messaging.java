@@ -43,23 +43,8 @@ public class Messaging extends MultiActionController {
         response.setCharacterEncoding("UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        PrintWriter out = response.getWriter();
         if (chatClient == null) {
-            String output = " <div id='fb-root'></div>"
-                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
-                    + " <script> "
-                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
-                    + "FB.getLoginStatus(function(response) {"
-                    + "    if (response.session) {"
-                    + "      FB.logout();"
-                    + "    } else {"
-                    + "        "
-                    + "} "
-                    + "  });"
-                    + "</script>";
-            out.println(output);
-            out.close();
-            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+            response.sendRedirect("../logout.htm");
         } else {
             String to = "-";
             String friend = request.getParameter("to");
@@ -88,23 +73,9 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        PrintWriter out = response.getWriter();
+        
         if (chatClient == null) {
-            String output = " <div id='fb-root'></div>"
-                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
-                    + " <script> "
-                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
-                    + "FB.getLoginStatus(function(response) {"
-                    + "    if (response.session) {"
-                    + "      FB.logout();"
-                    + "    } else {"
-                    + "        "
-                    + "} "
-                    + "  });"
-                    + "</script>";
-            out.println(output);
-            out.close();
-            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+           response.sendRedirect("../logout.htm");
         } else {
             JSONArray jSONArray = chatClient.getOnlineUser();
             for (int i = 0; i < jSONArray.length(); i++) {
@@ -136,22 +107,8 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        PrintWriter out = response.getWriter();
         if (chatClient == null) {
-            String output = " <div id='fb-root'></div>"
-                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
-                    + " <script> "
-                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
-                    + "FB.getLoginStatus(function(response) {"
-                    + "    if (response.session) {"
-                    + "      FB.logout();"
-                    + "    } else {"
-                    + "        "
-                    + "} "
-                    + "  });"
-                    + "</script>";
-            out.println(output);
-            out.close();
+            response.sendRedirect("../logout.htm");
         } else {
             JSONArray jSONArray = chatClient.getBuddyList();
             jSONArray.write(response.getWriter());

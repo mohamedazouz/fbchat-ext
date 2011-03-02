@@ -69,9 +69,9 @@ public class Connect extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient != null) {
+            chatClient.disconnect();
         }
-        chatClient.disconnect();
-        PrintWriter out = response.getWriter();
+     /*   PrintWriter out = response.getWriter();
         String output = " <div id='fb-root'></div>"
                 + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
                 + " <script> "
@@ -85,33 +85,19 @@ public class Connect extends MultiActionController {
                 + "  });"
                 + "</script>";
         //"FB.logout(function(response) {alert(JSON.stringify(response))});"
-        out.println(output);
+        out.println(output);*/
         session.removeAttribute("client");
         session.removeAttribute("sessionkey");
-        out.close();
+        response.sendRedirect("../logout.htm");
+     //   out.close();
     }
 
     public void idle(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //TO DO: go offline.
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        PrintWriter out = response.getWriter();
         if (chatClient == null) {
-            String output = " <div id='fb-root'></div>"
-                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
-                    + " <script> "
-                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
-                    + "FB.getLoginStatus(function(response) {"
-                    + "    if (response.session) {"
-                    + "      FB.logout();"
-                    + "    } else {"
-                    + "        "
-                    + "} "
-                    + "  });"
-                    + "</script>";
-            out.println(output);
-            out.close();
-            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+            response.sendRedirect("../logout.htm");
         } else {
             chatClient.setIdle();
         }
@@ -121,23 +107,8 @@ public class Connect extends MultiActionController {
         //TO DO: go offline.
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        PrintWriter out = response.getWriter();
         if (chatClient == null) {
-            String output = " <div id='fb-root'></div>"
-                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
-                    + " <script> "
-                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
-                    + "FB.getLoginStatus(function(response) {"
-                    + "    if (response.session) {"
-                    + "      FB.logout();"
-                    + "    } else {"
-                    + "        "
-                    + "} "
-                    + "  });"
-                    + "</script>";
-            out.println(output);
-            out.close();
-            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+            response.sendRedirect("../logout.htm");
         } else {
             chatClient.setOnLinee();
         }

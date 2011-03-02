@@ -8,6 +8,7 @@ import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -63,13 +64,83 @@ public class Connect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void disconnect(HttpServletRequest request, HttpServletResponse response) {
+    public void disconnect(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //TO DO: go offline.
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
+        if (chatClient != null) {
+        }
         chatClient.disconnect();
+        PrintWriter out = response.getWriter();
+        String output = " <div id='fb-root'></div>"
+                + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
+                + " <script> "
+                + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
+                + "FB.getLoginStatus(function(response) {"
+                + "    if (response.session) {"
+                + "FB.logout();"
+                + "    } else {"
+                + "             "
+                + "} "
+                + "  });"
+                + "</script>";
+        //"FB.logout(function(response) {alert(JSON.stringify(response))});"
+        out.println(output);
         session.removeAttribute("client");
         session.removeAttribute("sessionkey");
+        out.close();
+    }
+
+    public void idle(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //TO DO: go offline.
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        PrintWriter out = response.getWriter();
+        if (chatClient == null) {
+            String output = " <div id='fb-root'></div>"
+                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
+                    + " <script> "
+                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
+                    + "FB.getLoginStatus(function(response) {"
+                    + "    if (response.session) {"
+                    + "      FB.logout();"
+                    + "    } else {"
+                    + "        "
+                    + "} "
+                    + "  });"
+                    + "</script>";
+            out.println(output);
+            out.close();
+            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+        } else {
+            chatClient.setIdle();
+        }
+    }
+
+    public void online(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //TO DO: go offline.
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        PrintWriter out = response.getWriter();
+        if (chatClient == null) {
+            String output = " <div id='fb-root'></div>"
+                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
+                    + " <script> "
+                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
+                    + "FB.getLoginStatus(function(response) {"
+                    + "    if (response.session) {"
+                    + "      FB.logout();"
+                    + "    } else {"
+                    + "        "
+                    + "} "
+                    + "  });"
+                    + "</script>";
+            out.println(output);
+            out.close();
+            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+        } else {
+            chatClient.setOnLinee();
+        }
     }
 
     /**

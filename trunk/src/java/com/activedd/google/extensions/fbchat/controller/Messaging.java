@@ -7,6 +7,7 @@ package com.activedd.google.extensions.fbchat.controller;
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,18 +36,37 @@ public class Messaging extends MultiActionController {
      * @param response
      * @throws UnsupportedEncodingException
      */
-    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException {
+    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException, IOException {
         //send a message
         //get to ID url parameter and msg
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        String to = "-";
-        String friend = request.getParameter("to");
-        to += friend + "@chat.facebook.com";
-        String msg = request.getParameter("msg");
-        chatClient.sendMessage(msg, to);
+        PrintWriter out = response.getWriter();
+        if (chatClient == null) {
+            String output = " <div id='fb-root'></div>"
+                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
+                    + " <script> "
+                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
+                    + "FB.getLoginStatus(function(response) {"
+                    + "    if (response.session) {"
+                    + "      FB.logout();"
+                    + "    } else {"
+                    + "        "
+                    + "} "
+                    + "  });"
+                    + "</script>";
+            out.println(output);
+            out.close();
+            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+        } else {
+            String to = "-";
+            String friend = request.getParameter("to");
+            to += friend + "@chat.facebook.com";
+            String msg = request.getParameter("msg");
+            chatClient.sendMessage(msg, to);
+        }
     }
 
     /**
@@ -68,16 +88,35 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        JSONArray jSONArray = chatClient.getOnlineUser();
-        for (int i = 0; i < jSONArray.length(); i++) {
-            JSONObject friend = jSONArray.getJSONObject(i);
-            String to = "-";
-            String friendId = friend.getString("uid");
-            to += friend + "@chat.facebook.com";
-            chatClient.sendMessage("", to);
+        PrintWriter out = response.getWriter();
+        if (chatClient == null) {
+            String output = " <div id='fb-root'></div>"
+                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
+                    + " <script> "
+                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
+                    + "FB.getLoginStatus(function(response) {"
+                    + "    if (response.session) {"
+                    + "      FB.logout();"
+                    + "    } else {"
+                    + "        "
+                    + "} "
+                    + "  });"
+                    + "</script>";
+            out.println(output);
+            out.close();
+            //output="FB.logout(function(response) {alert(JSON.stringify(response))});";
+        } else {
+            JSONArray jSONArray = chatClient.getOnlineUser();
+            for (int i = 0; i < jSONArray.length(); i++) {
+                JSONObject friend = jSONArray.getJSONObject(i);
+                String to = "-";
+                String friendId = friend.getString("uid");
+                to += friend + "@chat.facebook.com";
+                chatClient.sendMessage("", to);
+            }
+            jSONArray.write(response.getWriter());
+            response.getWriter().close();
         }
-        jSONArray.write(response.getWriter());
-        response.getWriter().close();
     }
 
     /**
@@ -97,8 +136,26 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        JSONArray jSONArray = chatClient.getBuddyList();
-        jSONArray.write(response.getWriter());
-        response.getWriter().close();
+        PrintWriter out = response.getWriter();
+        if (chatClient == null) {
+            String output = " <div id='fb-root'></div>"
+                    + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
+                    + " <script> "
+                    + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
+                    + "FB.getLoginStatus(function(response) {"
+                    + "    if (response.session) {"
+                    + "      FB.logout();"
+                    + "    } else {"
+                    + "        "
+                    + "} "
+                    + "  });"
+                    + "</script>";
+            out.println(output);
+            out.close();
+        } else {
+            JSONArray jSONArray = chatClient.getBuddyList();
+            jSONArray.write(response.getWriter());
+            response.getWriter().close();
+        }
     }
 }

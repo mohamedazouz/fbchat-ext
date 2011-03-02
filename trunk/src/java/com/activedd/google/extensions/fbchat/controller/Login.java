@@ -58,14 +58,16 @@ public class Login extends MultiActionController {
         //creates a new session if there is not session.
         session = request.getSession(true);
         //get the request token from the request.
-        String token = request.getParameter("auth_token");
-        //facebook object is isntanciated in the application context once.
-        //facebook = new FacebookJsonRestClient(apiKey, apiSecret);
-        //generates the authintication token for the user.
-        String FB_SESSION_KEY = facebook.auth_getSession(token);
-        session.setAttribute("sessionkey", FB_SESSION_KEY);
+      //  if (session.getAttribute("sessionkey") == null) {
+            String token = request.getParameter("auth_token");
+            //facebook object is isntanciated in the application context once.
+            //facebook = new FacebookJsonRestClient(apiKey, apiSecret);
+            //generates the authintication token for the user.
+            String FB_SESSION_KEY = facebook.auth_getSession(token);
+            session.setAttribute("sessionkey", FB_SESSION_KEY);
+        //}
 //        return new ModelAndView("thankYou");
-        response.sendRedirect("thankyou.htm");
+        response.sendRedirect("../thankyou.htm");
     }
 
     /**
@@ -80,9 +82,9 @@ public class Login extends MultiActionController {
         //check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
         response.setContentType("application/json;charset=UTF-8");
         //must instanciate the session again from the request.
-        session=request.getSession(false);
+        session = request.getSession(false);
         //if there is no session in the request, stop proceeding the function.
-        if(session == null){
+        if (session == null) {
             return;
         }
         String sessionkey = (String) session.getAttribute("sessionkey");

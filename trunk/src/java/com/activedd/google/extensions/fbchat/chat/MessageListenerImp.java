@@ -31,9 +31,6 @@ public class MessageListenerImp implements MessageListener {
      */
     public void processMessage(Chat chat, Message message) {
         try {
-
-
-
             if (message.getType() == Message.Type.chat && message.getBody() != null) {
 //                setJsonCreate(new JsonCreate());
                 jsonCreate.createJsonFile(chat.getParticipant(), message.getBody(), to);
@@ -42,12 +39,11 @@ public class MessageListenerImp implements MessageListener {
             Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private JsonCreate jsonCreate =new JsonCreate();
+    private JsonCreate jsonCreate = new JsonCreate();
 
 //    public void setJsonCreate(JsonCreate jsonCreate) {
 //        this.jsonCreate = jsonCreate;
 //    }
-
     /**
      * @return the to
      */
@@ -61,7 +57,6 @@ public class MessageListenerImp implements MessageListener {
     public void setTo(String to) {
         this.to = to;
     }
-
     /**
      * @return the jsonCreate
      */

@@ -8,6 +8,7 @@ import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,6 +26,7 @@ public class Connect extends MultiActionController {
     HttpSession session;
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
+    private String apiId;
     private String resource;
     private String domain;
     private int port;
@@ -68,45 +70,47 @@ public class Connect extends MultiActionController {
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient != null) {
             chatClient.disconnect();
+            session.removeAttribute("client");
+            session.removeAttribute("sessionkey");
         }
-     /*   PrintWriter out = response.getWriter();
-        String output = " <div id='fb-root'></div>"
-                + " <script src='http://connect.facebook.net/en_US/all.js'></script>"
-                + " <script> "
-                + "FB.init({appId  : '172430629459688',status : true,cookie : true,xfbml  : true }); "
-                + "FB.getLoginStatus(function(response) {"
-                + "    if (response.session) {"
-                + "FB.logout();"
-                + "    } else {"
-                + "             "
-                + "} "
-                + "  });"
-                + "</script>";
-        //"FB.logout(function(response) {alert(JSON.stringify(response))});"
-        out.println(output);*/
-        session.removeAttribute("client");
-        session.removeAttribute("sessionkey");
-        response.sendRedirect("../logout.htm");
-     //   out.close();
+
+        //   out.close();
     }
 
-    public void idle(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //TO DO: go offline.
+    /**
+     * idle page which set user status idle.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void idle(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+        //TO DO: go away/idle.
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient == null) {
-            response.sendRedirect("../logout.htm");
+            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
         } else {
             chatClient.setIdle();
         }
     }
 
-    public void online(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     * online page which make user status online "Available".
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void online(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: go offline.
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient == null) {
-            response.sendRedirect("../logout.htm");
+            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
         } else {
             chatClient.setOnLinee();
         }
@@ -120,6 +124,9 @@ public class Connect extends MultiActionController {
         this.apiKey = apiKey;
     }
 
+    public void setApiID(String apiId) {
+        this.apiId = apiId;
+    }
     private ChatClient chatClient;
 
     /**

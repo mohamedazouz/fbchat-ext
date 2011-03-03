@@ -66,7 +66,6 @@ public class Login extends MultiActionController {
             String FB_SESSION_KEY = facebook.auth_getSession(token);
             session.setAttribute("sessionkey", FB_SESSION_KEY);
         //}
-//        return new ModelAndView("thankYou");
         response.sendRedirect("../thankyou.htm");
     }
 

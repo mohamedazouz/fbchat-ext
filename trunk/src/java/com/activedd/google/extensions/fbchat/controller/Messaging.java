@@ -36,7 +36,7 @@ public class Messaging extends MultiActionController {
      * @param response
      * @throws UnsupportedEncodingException
      */
-    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException, IOException {
+    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException, IOException, JSONException {
         //send a message
         //get to ID url parameter and msg
         request.setCharacterEncoding("UTF-8");
@@ -44,12 +44,15 @@ public class Messaging extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient == null) {
-            response.sendRedirect("../logout.htm");
+            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
         } else {
             String to = "-";
             String friend = request.getParameter("to");
             to += friend + "@chat.facebook.com";
             String msg = request.getParameter("msg");
+
             chatClient.sendMessage(msg, to);
         }
     }
@@ -73,11 +76,12 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        
+        JSONArray jSONArray = new JSONArray();
         if (chatClient == null) {
-           response.sendRedirect("../logout.htm");
+            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            jSONArray.put(jSONObject);
         } else {
-            JSONArray jSONArray = chatClient.getOnlineUser();
+            jSONArray = chatClient.getOnlineUser();
             for (int i = 0; i < jSONArray.length(); i++) {
                 JSONObject friend = jSONArray.getJSONObject(i);
                 String to = "-";
@@ -85,9 +89,9 @@ public class Messaging extends MultiActionController {
                 to += friend + "@chat.facebook.com";
                 chatClient.sendMessage("", to);
             }
-            jSONArray.write(response.getWriter());
-            response.getWriter().close();
         }
+        jSONArray.write(response.getWriter());
+        response.getWriter().close();
     }
 
     /**
@@ -107,12 +111,14 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
+        JSONArray jSONArray = new JSONArray();
         if (chatClient == null) {
-            response.sendRedirect("../logout.htm");
+            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            jSONArray.put(jSONObject);
         } else {
-            JSONArray jSONArray = chatClient.getBuddyList();
-            jSONArray.write(response.getWriter());
-            response.getWriter().close();
+            jSONArray = chatClient.getBuddyList();
         }
+        jSONArray.write(response.getWriter());
+        response.getWriter().close();
     }
 }

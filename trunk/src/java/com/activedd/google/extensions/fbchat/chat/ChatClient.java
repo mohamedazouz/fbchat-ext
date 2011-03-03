@@ -142,18 +142,22 @@ public class ChatClient {
      * to disconnect and logout from the server
      */
     public void disconnect() {
-        connection.disconnect();
-        //connection.disconnect(new Presence(Presence.Type.unavailable));
+        /**Presence packet = new Presence(Presence.Type.unavailable);
+        connection.sendPacket(packet);
+        connection.disconnect();*/
+        Presence packet = new Presence(Presence.Type.unavailable);
+        connection.disconnect(packet);
     }
 
     public void setIdle() {
-        Presence packet = new Presence(Presence.Type.unsubscribed);
+        Presence packet = new Presence(Presence.Type.available);
         packet.setMode(Presence.Mode.away);
         connection.sendPacket(packet);
     }
 
     public void setOnLinee() {
         Presence packet = new Presence(Presence.Type.available);
+        packet.setMode(Presence.Mode.chat);
         connection.sendPacket(packet);
     }
 }

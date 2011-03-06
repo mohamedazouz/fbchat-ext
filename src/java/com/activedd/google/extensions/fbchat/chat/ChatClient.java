@@ -28,16 +28,18 @@ import org.json.JSONObject;
  * this class is to manage whole chat client from connection , login to facebook chat and  sending messages
  * @
  */
-public class ChatClient {
+public final class ChatClient {
 
     private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fcebook
     private FacebookJsonRestClient facebook;
     // facebook client to get sessionkey and enable me to acces friends details like a photos and status
     private MessageListenerImp messageListenerImp;
+    private Timer SchTimer = new Timer();
 
     public ChatClient(ConnectionConfiguration config) {
         connection = new XMPPConnection(config);
         messageListenerImp = new MessageListenerImp();
+        SchTimer = this.StartTask();
     }
 
     /**
@@ -159,5 +161,44 @@ public class ChatClient {
         Presence packet = new Presence(Presence.Type.available);
         packet.setMode(Presence.Mode.chat);
         connection.sendPacket(packet);
+    }
+
+    public Timer StartTask() {
+        int delay = 1000 * 60;// 60 * 15; //milliseconds
+        final Timer timer = new Timer();
+        //milliseconds
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                disconnect();
+                timer.cancel();
+                timer.purge();
+            }
+        }, delay);
+        return timer;
+    }
+
+    public void cancelTask(Timer timer) {
+        timer.cancel();
+        timer.purge();
+    }
+
+    /**
+     * @return the SchTimer
+     */
+    public Timer getSchTimer() {
+        return SchTimer;
+    }
+
+    /**
+     * @param SchTimer the SchTimer to set
+     */
+    public void setSchTimer(Timer SchTimer) {
+        this.SchTimer = SchTimer;
+    }
+
+    public boolean isConnected() {
+        return connection.isConnected();
     }
 }

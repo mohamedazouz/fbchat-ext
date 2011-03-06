@@ -48,12 +48,19 @@ public class Messaging extends MultiActionController {
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } else {
-            String to = "-";
-            String friend = request.getParameter("to");
-            to += friend + "@chat.facebook.com";
-            String msg = request.getParameter("msg");
-
-            chatClient.sendMessage(msg, to);
+            if (!chatClient.isConnected()) {
+                JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+                jSONObject.write(response.getWriter());
+                response.getWriter().close();
+            } else {
+                String to = "-";
+                String friend = request.getParameter("to");
+                to += friend + "@chat.facebook.com";
+                String msg = request.getParameter("msg");
+                chatClient.sendMessage(msg, to);
+                chatClient.cancelTask(chatClient.getSchTimer());
+                chatClient.setSchTimer(chatClient.StartTask());
+            }
         }
     }
 
@@ -76,18 +83,24 @@ public class Messaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
+        JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
         JSONArray jSONArray = new JSONArray();
         if (chatClient == null) {
-            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
             jSONArray.put(jSONObject);
         } else {
-            jSONArray = chatClient.getOnlineUser();
-            for (int i = 0; i < jSONArray.length(); i++) {
-                JSONObject friend = jSONArray.getJSONObject(i);
-                String to = "-";
-                String friendId = friend.getString("uid");
-                to += friend + "@chat.facebook.com";
-                chatClient.sendMessage("", to);
+            if (!chatClient.isConnected()) {
+                jSONArray.put(jSONObject);
+            } else {
+                jSONArray = chatClient.getOnlineUser();
+                for (int i = 0; i < jSONArray.length(); i++) {
+                    JSONObject friend = jSONArray.getJSONObject(i);
+                    String to = "-";
+                    String friendId = friend.getString("uid");
+                    to += friend + "@chat.facebook.com";
+                    chatClient.sendMessage("", to);
+                }
+                chatClient.cancelTask(chatClient.getSchTimer());
+                chatClient.setSchTimer(chatClient.StartTask());
             }
         }
         jSONArray.write(response.getWriter());
@@ -112,11 +125,17 @@ public class Messaging extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         JSONArray jSONArray = new JSONArray();
+        JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
         if (chatClient == null) {
-            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
             jSONArray.put(jSONObject);
         } else {
-            jSONArray = chatClient.getBuddyList();
+            if (!chatClient.isConnected()) {
+                jSONArray.put(jSONObject);
+            } else {
+                jSONArray = chatClient.getBuddyList();
+                chatClient.cancelTask(chatClient.getSchTimer());
+                chatClient.setSchTimer(chatClient.StartTask());
+            }
         }
         jSONArray.write(response.getWriter());
         response.getWriter().close();

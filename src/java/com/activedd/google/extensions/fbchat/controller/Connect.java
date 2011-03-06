@@ -69,7 +69,6 @@ public class Connect extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient != null) {
-            chatClient.cancelTask(chatClient.getSchTimer());
             chatClient.disconnect();
             session.removeAttribute("client");
             session.removeAttribute("sessionkey");
@@ -104,8 +103,6 @@ public class Connect extends MultiActionController {
                 response.getWriter().close();
             } else {
                 chatClient.setIdle();
-                chatClient.cancelTask(chatClient.getSchTimer());
-                chatClient.setSchTimer(chatClient.StartTask());
             }
         }
     }
@@ -131,8 +128,6 @@ public class Connect extends MultiActionController {
                 response.getWriter().close();
             } else {
                 chatClient.setOnLinee();
-                chatClient.cancelTask(chatClient.getSchTimer());
-                chatClient.setSchTimer(chatClient.StartTask());
             }
         }
     }

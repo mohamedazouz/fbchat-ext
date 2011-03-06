@@ -64,14 +64,19 @@ public class Connect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void disconnect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void disconnect(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: go offline.
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
         if (chatClient != null) {
+            chatClient.cancelTask(chatClient.getSchTimer());
             chatClient.disconnect();
             session.removeAttribute("client");
             session.removeAttribute("sessionkey");
+        } else {
+            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
         }
 
         //   out.close();
@@ -93,7 +98,15 @@ public class Connect extends MultiActionController {
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } else {
-            chatClient.setIdle();
+            if (!chatClient.isConnected()) {
+                JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+                jSONObject.write(response.getWriter());
+                response.getWriter().close();
+            } else {
+                chatClient.setIdle();
+                chatClient.cancelTask(chatClient.getSchTimer());
+                chatClient.setSchTimer(chatClient.StartTask());
+            }
         }
     }
 
@@ -112,7 +125,15 @@ public class Connect extends MultiActionController {
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } else {
-            chatClient.setOnLinee();
+            if (!chatClient.isConnected()) {
+                JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+                jSONObject.write(response.getWriter());
+                response.getWriter().close();
+            } else {
+                chatClient.setOnLinee();
+                chatClient.cancelTask(chatClient.getSchTimer());
+                chatClient.setSchTimer(chatClient.StartTask());
+            }
         }
     }
 

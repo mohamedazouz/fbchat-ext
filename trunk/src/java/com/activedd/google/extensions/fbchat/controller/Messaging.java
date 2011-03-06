@@ -58,8 +58,6 @@ public class Messaging extends MultiActionController {
                 to += friend + "@chat.facebook.com";
                 String msg = request.getParameter("msg");
                 chatClient.sendMessage(msg, to);
-                chatClient.cancelTask(chatClient.getSchTimer());
-                chatClient.setSchTimer(chatClient.StartTask());
             }
         }
     }
@@ -99,8 +97,6 @@ public class Messaging extends MultiActionController {
                     to += friend + "@chat.facebook.com";
                     chatClient.sendMessage("", to);
                 }
-                chatClient.cancelTask(chatClient.getSchTimer());
-                chatClient.setSchTimer(chatClient.StartTask());
             }
         }
         jSONArray.write(response.getWriter());
@@ -133,8 +129,6 @@ public class Messaging extends MultiActionController {
                 jSONArray.put(jSONObject);
             } else {
                 jSONArray = chatClient.getBuddyList();
-                chatClient.cancelTask(chatClient.getSchTimer());
-                chatClient.setSchTimer(chatClient.StartTask());
             }
         }
         jSONArray.write(response.getWriter());

@@ -104,6 +104,7 @@ public final class ChatClient {
         pf.add(ProfileField.PIC_SQUARE);
         pf.add(ProfileField.NAME);
         friendsid = facebook.users_getInfo(friendsID, pf);
+        SchTimer = this.StartTask();
         return friendsid;
     }
 
@@ -126,6 +127,7 @@ public final class ChatClient {
             }
 
         }
+        SchTimer = this.StartTask();
         return onlineFriends;
     }
 
@@ -138,6 +140,7 @@ public final class ChatClient {
     public void sendMessage(String message, String to) throws XMPPException {
         Chat chat = connection.getChatManager().createChat(to, messageListenerImp);
         chat.sendMessage(message);
+        SchTimer = this.StartTask();
     }
 
     /**
@@ -148,6 +151,8 @@ public final class ChatClient {
         connection.sendPacket(packet);
         connection.disconnect();*/
         Presence packet = new Presence(Presence.Type.unavailable);
+        SchTimer.cancel();
+        SchTimer.purge();
         connection.disconnect(packet);
     }
 
@@ -155,18 +160,22 @@ public final class ChatClient {
         Presence packet = new Presence(Presence.Type.available);
         packet.setMode(Presence.Mode.away);
         connection.sendPacket(packet);
+        SchTimer = this.StartTask();
     }
 
     public void setOnLinee() {
         Presence packet = new Presence(Presence.Type.available);
         packet.setMode(Presence.Mode.chat);
         connection.sendPacket(packet);
+        SchTimer = this.StartTask();
     }
 
     public Timer StartTask() {
-        int delay = 1000 * 60;// 60 * 15; //milliseconds
+        int delay = 1000 * 60 * 15; //millisecondss
+        SchTimer.cancel();
+        SchTimer.purge();
         final Timer timer = new Timer();
-        //milliseconds
+
         timer.schedule(new TimerTask() {
 
             @Override
@@ -177,28 +186,9 @@ public final class ChatClient {
             }
         }, delay);
         return timer;
-    }
 
-    public void cancelTask(Timer timer) {
-        timer.cancel();
-        timer.purge();
     }
-
-    /**
-     * @return the SchTimer
-     */
-    public Timer getSchTimer() {
-        return SchTimer;
-    }
-
-    /**
-     * @param SchTimer the SchTimer to set
-     */
-    public void setSchTimer(Timer SchTimer) {
-        this.SchTimer = SchTimer;
-    }
-
-    public boolean isConnected() {
+    public boolean isConnected(){
         return connection.isConnected();
     }
 }

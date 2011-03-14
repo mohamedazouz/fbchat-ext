@@ -23,6 +23,8 @@
                         link.setAttribute("rel", "stylesheet");
                         link.setAttribute("type", "text/css");
                         document.getElementsByTagName("head")[0].appendChild(link);
+                        document.getElementById("en-doc").style.display='none'
+                        document.getElementById("ar-doc").style.display='block'
                     }
                 }
             }
@@ -33,7 +35,17 @@
             <div>
                 <img src="images/thanks.png" width="232" height="69" alt="thanks" />
             </div>
-            <div class="list f">
+            <div class="list f" id="en-doc">
+                <ul>
+                    <li>saving many registers on the stack at once</li>
+                    <li>moving large blocks of memory</li>
+                    <li>complex and/or floating-point arithmetic</li>
+                    <li>performing an atomic test-and-set instruction</li>
+                    <li>instructions that combine ALU with an operand from memory rather than a register</li>
+                    <li>complex and/or floating-point arithmetic</li>
+                </ul>
+            </div>
+            <div class="list f" id="ar-doc" style="display: none;">
                 <ul>
                     <li>saving many registers on the stack at once</li>
                     <li>moving large blocks of memory</li>

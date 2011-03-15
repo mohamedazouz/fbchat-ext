@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : thankYou
     Created on : Jan 24, 2011, 11:47:23 AM
     Author     : prog
@@ -37,22 +37,22 @@
             </div>
             <div class="list f" id="en-doc">
                 <ul>
-                    <li>saving many registers on the stack at once</li>
-                    <li>moving large blocks of memory</li>
-                    <li>complex and/or floating-point arithmetic</li>
-                    <li>performing an atomic test-and-set instruction</li>
-                    <li>instructions that combine ALU with an operand from memory rather than a register</li>
-                    <li>complex and/or floating-point arithmetic</li>
+                    <li>click on the FB Chat extension icon next to the URL bar</li>
+                    <li>The extension will redirect you to the Facebook for authentication</li>
+                    <li>After logging in you will find two tabs</li>
+                    <li>The online friends tab will show your online friends</li>
+                    <li>The friends list tab will show you all your friends</li>
+                    <li>You can send a massages to your offline friends , and they will see them in their Facebook inbox </li>
                 </ul>
             </div>
             <div class="list f" id="ar-doc" style="display: none;">
                 <ul>
-                    <li>saving many registers on the stack at once</li>
-                    <li>moving large blocks of memory</li>
-                    <li>complex and/or floating-point arithmetic</li>
-                    <li>performing an atomic test-and-set instruction</li>
-                    <li>instructions that combine ALU with an operand from memory rather than a register</li>
-                    <li>complex and/or floating-point arithmetic</li>
+                    <li>قم بالضغط على أيقونة الإضافة التي بجانب شريط العنوان</li>
+                    <li>للتوثيق Facebook الإضافة ستقوم بتوجيهك لل</li>
+                    <li>بعد تسجيل الدخول ستجد نافذتان</li>
+                    <li>نافذة الأصدقاء المتصلين تقوم بإظهار أصدقائك المتصلين حاليا</li>
+                    <li>نافذة قائمة الأصدقاء تقوم بإظهار جميع أصدقائك</li>
+                    <li>Facebook يمكنك إرسال رسائل للأصدقاء الغير متصلين حاليا وستصلهم في صندوق بريدهم على ال </li>
                 </ul>
             </div>
             <div class="f-r">

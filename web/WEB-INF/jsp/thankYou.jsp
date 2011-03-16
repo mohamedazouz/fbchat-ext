@@ -23,8 +23,9 @@
                         link.setAttribute("rel", "stylesheet");
                         link.setAttribute("type", "text/css");
                         document.getElementsByTagName("head")[0].appendChild(link);
-                        document.getElementById("en-doc").style.display='none'
-                        document.getElementById("ar-doc").style.display='block'
+                        document.getElementById("en-doc").style.display='none';
+                        document.getElementById("ar-doc").style.display='block';
+                        document.getElementById("thanksIMG").src='images/thanks_ar.png';
                     }
                 }
             }
@@ -33,11 +34,11 @@
     <body onload="setArabicCSS();">
         <div class="main-container">
             <div>
-                <img src="images/thanks.png" width="232" height="69" alt="thanks" />
+                <img id="thanksIMG" src="images/thanks.png" width="232" height="69" alt="thanks" />
             </div>
             <div class="list f" id="en-doc">
                 <ul>
-                    <li>click on the FB Chat extension icon next to the URL bar</li>
+                    <li>Click on the FB Chat extension icon next to the URL bar</li>
                     <li>The extension will redirect you to the Facebook for authentication</li>
                     <li>After logging in you will find two tabs</li>
                     <li>The online friends tab will show your online friends</li>
@@ -48,11 +49,13 @@
             <div class="list f" id="ar-doc" style="display: none;">
                 <ul>
                     <li>قم بالضغط على أيقونة الإضافة التي بجانب شريط العنوان</li>
-                    <li>للتوثيق Facebook الإضافة ستقوم بتوجيهك لل</li>
+                    <li>الاضافة ستقوم بتوجيهك لل FaceBook للتوثيق</li>
                     <li>بعد تسجيل الدخول ستجد نافذتان</li>
                     <li>نافذة الأصدقاء المتصلين تقوم بإظهار أصدقائك المتصلين حاليا</li>
                     <li>نافذة قائمة الأصدقاء تقوم بإظهار جميع أصدقائك</li>
-                    <li>Facebook يمكنك إرسال رسائل للأصدقاء الغير متصلين حاليا وستصلهم في صندوق بريدهم على ال </li>
+                    <li>
+                        يمكنك إرسال رسائل للأصدقاء الغير متصلين حاليا وستصلهم في صندوق بريدهم على ال FaceBook
+                    </li>
                 </ul>
             </div>
             <div class="f-r">

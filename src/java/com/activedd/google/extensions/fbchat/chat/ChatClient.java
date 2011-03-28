@@ -17,6 +17,7 @@ import org.jivesoftware.smack.packet.Presence;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import com.google.code.facebookapi.ProfileField;
 import org.jivesoftware.smack.ChatManager;
+import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -143,10 +144,14 @@ public final class ChatClient {
      * @param to friend which message send to
      * @throws XMPPException
      */
-    public void sendMessage(String message, String to) throws XMPPException {
+    public void sendMessage(String msg, String to) throws XMPPException {
 //        Chat chat = connection.getChatManager().createChat(to, messageListenerImp);
-        Chat chat = connection.getChatManager().createChat(to, null);
-        chat.sendMessage(message);
+        //Chat chat = connection.getChatManager().createChat(to, null);
+        //chat.sendMessage(message);
+        Message message = new Message();
+        message.setBody(msg);
+        message.setTo(to);
+        connection.sendPacket(message);
         SchTimer = this.StartTask();
     }
 

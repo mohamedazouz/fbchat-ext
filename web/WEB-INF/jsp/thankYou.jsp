@@ -59,7 +59,8 @@
                 </ul>
             </div>
             <div class="f-r">
-                <img src="images/facebook_image.png" width="521" height="287" />
+<!--                <img src="images/facebook_image.png" width="521" height="287" />-->
+                <iframe title="YouTube video player" width="521" height="287" src="http://www.youtube.com/embed/cpqKeWzlu8E" frameborder="0" allowfullscreen></iframe>
             </div>
         </div>
     </body>

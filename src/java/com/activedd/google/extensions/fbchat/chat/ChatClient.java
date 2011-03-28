@@ -33,12 +33,16 @@ public final class ChatClient {
     private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fcebook
     private FacebookJsonRestClient facebook;
     // facebook client to get sessionkey and enable me to acces friends details like a photos and status
-    private MessageListenerImp messageListenerImp;
+//    private MessageListenerImp messageListenerImp;
+    private PacketFilterImp packetFilterImpl;
+    private PacketListenerImp packetListenerImp;
     private Timer SchTimer = new Timer();
 
     public ChatClient(ConnectionConfiguration config) {
         connection = new XMPPConnection(config);
-        messageListenerImp = new MessageListenerImp();
+//        messageListenerImp = new MessageListenerImp();
+        packetFilterImpl = new PacketFilterImp();
+        packetListenerImp = new PacketListenerImp();
         SchTimer = this.StartTask();
     }
 
@@ -61,9 +65,11 @@ public final class ChatClient {
         connection.connect();
         facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
         connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
-        Presence packet = new Presence(Presence.Type.available);
-        connection.sendPacket(packet);
-        messageListenerImp.setTo(connection.getUser().split("/")[0]);
+        connection.addPacketListener(packetListenerImp, packetFilterImpl);
+        //Presence packet = new Presence(Presence.Type.available);
+        // connection.sendPacket(packet);
+        //messageListenerImp.setTo(connection.getUser().split("/")[0]);
+
     }
 
     /**
@@ -96,8 +102,8 @@ public final class ChatClient {
         JSONArray friendsid = this.facebook.friends_get();
         for (int i = 0; i < friendsid.length(); i++) {
             String friendId = friendsid.getString(i);
-            ChatManager chatmanager = connection.getChatManager();
-            Chat newChat = chatmanager.createChat("-" + friendId + "@chat.facebook.com", messageListenerImp);
+            //ChatManager chatmanager = connection.getChatManager();
+            //  Chat newChat = chatmanager.createChat("-" + friendId + "@chat.facebook.com", messageListenerImp);
             friendsID.add(new Long(friendId.toString()));
         }
         ArrayList<ProfileField> pf = new ArrayList<ProfileField>();
@@ -138,7 +144,8 @@ public final class ChatClient {
      * @throws XMPPException
      */
     public void sendMessage(String message, String to) throws XMPPException {
-        Chat chat = connection.getChatManager().createChat(to, messageListenerImp);
+//        Chat chat = connection.getChatManager().createChat(to, messageListenerImp);
+        Chat chat = connection.getChatManager().createChat(to, null);
         chat.sendMessage(message);
         SchTimer = this.StartTask();
     }
@@ -188,7 +195,8 @@ public final class ChatClient {
         return timer;
 
     }
-    public boolean isConnected(){
+
+    public boolean isConnected() {
         return connection.isConnected();
     }
 }

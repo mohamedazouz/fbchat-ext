@@ -128,8 +128,16 @@ public final class ChatClient {
         Roster roster = this.connection.getRoster();
         for (int i = 0; i < friends.length(); i++) {
             JSONObject jSONObject = friends.getJSONObject(i);
-            Presence presence = roster.getPresence("-" + jSONObject.get("uid") + "@chat.facebook.com");
+            String user = "-" + jSONObject.get("uid") + "@chat.facebook.com";
+            Presence presence = roster.getPresence(user);
             if (presence.getType() == Presence.Type.available) {
+
+                if (roster.getPresence(user).getMode() == Presence.Mode.away) {
+                    jSONObject.accumulate("status","away");
+                }else
+                {
+                    jSONObject.accumulate("status","online");
+                }
                 onlineFriends.put(jSONObject);
             }
 

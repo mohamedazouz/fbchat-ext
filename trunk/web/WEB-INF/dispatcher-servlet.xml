@@ -69,5 +69,7 @@
 
     <bean name="Messaging" class="com.activedd.google.extensions.fbchat.controller.Messaging" >
     </bean>
+   
+   
 
 </beans>

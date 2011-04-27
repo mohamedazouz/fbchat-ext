@@ -19,6 +19,19 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/login/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>*.htm</url-pattern>
@@ -27,11 +40,6 @@
         <filter-name>encodingFilter</filter-name>
         <url-pattern>*.json</url-pattern>
     </filter-mapping>
-    <servlet>
-        <servlet-name>dispatcher</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>

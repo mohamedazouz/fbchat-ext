@@ -35,8 +35,6 @@ public class ServerConfiguration {
         config.setSASLAuthenticationEnabled(isSaslAuthenticationEnabled);
         config.setCompressionEnabled(isCompressionEnabled);
         config.setReconnectionAllowed(isReconnectionAllowed);
-        /*connection = new XMPPConnection(config);
-        connection.connect();*/
     }
 
     public ConnectionConfiguration getConfiguration() {

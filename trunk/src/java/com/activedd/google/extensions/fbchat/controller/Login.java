@@ -7,6 +7,7 @@ package com.activedd.google.extensions.fbchat.controller;
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import java.io.IOException;
+import java.lang.NullPointerException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -58,15 +59,21 @@ public class Login extends MultiActionController {
         //creates a new session if there is not session.
         session = request.getSession(true);
         //get the request token from the request.
-      //  if (session.getAttribute("sessionkey") == null) {
+        if (request.getParameter("auth_token") != null) {
             String token = request.getParameter("auth_token");
+
             //facebook object is isntanciated in the application context once.
             //facebook = new FacebookJsonRestClient(apiKey, apiSecret);
             //generates the authintication token for the user.
             String FB_SESSION_KEY = facebook.auth_getSession(token);
             session.setAttribute("sessionkey", FB_SESSION_KEY);
-        //}
-        response.sendRedirect("../thankyou.htm");
+            //}
+            response.sendRedirect("../thankyou.htm");
+        } else {
+            throw new NullPointerException();
+        }
+
+
     }
 
     /**

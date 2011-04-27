@@ -37,5 +37,8 @@
         <constructor-arg value="${fbapp.appKey}" />
         <constructor-arg value="${fbapp.apiSecretkey}"/>
     </bean>
+    <bean name="LoginFilter" class="com.activedd.google.extensions.fbchat.filter.LoginFilter" >
+        <property name="extUrl" value="${fbapp.extLink}"/>
+    </bean>
     
 </beans>

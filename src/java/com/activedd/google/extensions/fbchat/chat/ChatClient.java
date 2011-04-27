@@ -41,7 +41,6 @@ public final class ChatClient {
 
     public ChatClient(ConnectionConfiguration config) {
         connection = new XMPPConnection(config);
-//        messageListenerImp = new MessageListenerImp();
         packetFilterImpl = new PacketFilterImp();
         packetListenerImp = new PacketListenerImp();
         SchTimer = this.StartTask();
@@ -67,10 +66,6 @@ public final class ChatClient {
         facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
         connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
         connection.addPacketListener(packetListenerImp, packetFilterImpl);
-        //Presence packet = new Presence(Presence.Type.available);
-        // connection.sendPacket(packet);
-        //messageListenerImp.setTo(connection.getUser().split("/")[0]);
-
     }
 
     /**
@@ -103,8 +98,6 @@ public final class ChatClient {
         JSONArray friendsid = this.facebook.friends_get();
         for (int i = 0; i < friendsid.length(); i++) {
             String friendId = friendsid.getString(i);
-            //ChatManager chatmanager = connection.getChatManager();
-            //  Chat newChat = chatmanager.createChat("-" + friendId + "@chat.facebook.com", messageListenerImp);
             friendsID.add(new Long(friendId.toString()));
         }
         ArrayList<ProfileField> pf = new ArrayList<ProfileField>();
@@ -153,9 +146,6 @@ public final class ChatClient {
      * @throws XMPPException
      */
     public void sendMessage(String msg, String to) throws XMPPException {
-//        Chat chat = connection.getChatManager().createChat(to, messageListenerImp);
-        //Chat chat = connection.getChatManager().createChat(to, null);
-        //chat.sendMessage(message);
         Message message = new Message();
         message.setBody(msg);
         message.setTo(to);

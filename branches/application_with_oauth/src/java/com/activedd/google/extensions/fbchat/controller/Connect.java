@@ -49,6 +49,7 @@ public class Connect extends MultiActionController {
         //create a new session if there is no session associated with request.
         session = request.getSession(true);
         String sessionkey = request.getParameter("sessionkey");
+        sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
         //String sessionkey = (String) session.getAttribute("sessionkey");
         chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
         session.setAttribute("client", chatClient);

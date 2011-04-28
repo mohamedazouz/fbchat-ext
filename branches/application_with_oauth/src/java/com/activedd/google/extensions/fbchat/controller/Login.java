@@ -6,21 +6,15 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.google.code.facebookapi.FacebookException;
 import com.google.code.facebookapi.FacebookJsonRestClient;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.NullPointerException;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Scanner;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 /**
@@ -47,8 +41,6 @@ public class Login extends MultiActionController {
      * @param response
      */
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        System.out.println("appid from prop:"+apiId);
-        //String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access";
         String redirct = generateLoginURL();
         response.sendRedirect(redirct);
     }
@@ -67,6 +59,7 @@ public class Login extends MultiActionController {
         //      and set the user key in the httpsession.
         //creates a new session if there is not session.
         session = request.getSession(true);
+        StringBuilder sessionkey=new StringBuilder("");
         //get the request token from the request.
         if (request.getParameter("code") != null) {
             String token = request.getParameter("code");
@@ -74,9 +67,16 @@ public class Login extends MultiActionController {
             //facebook object is isntanciated in the application context once.
             //facebook = new FacebookJsonRestClient(apiKey, apiSecret);
             //generates the authintication token for the user.
-            session.setAttribute("token", token);
-            response.sendRedirect("../thankyou.htm");
 
+            String link = generateGetSessionKeyUrl(token);
+            URL url = new URL(link);
+            Scanner s = new Scanner(url.openStream());
+            while (s.hasNextLine()) {
+                sessionkey.append(s.nextLine());
+            }
+            sessionkey=sessionkey.delete(0,sessionkey.indexOf("=")+1);
+            session.setAttribute("sessionkey", sessionkey.toString());
+            response.sendRedirect("../thankyou.htm");
         } else {
             throw new NullPointerException();
         }
@@ -102,21 +102,16 @@ public class Login extends MultiActionController {
         if (session == null) {
             return;
         }
-        String token = (String) session.getAttribute("token");
-        session.removeAttribute("token");
+        String token = (String) session.getAttribute("sessionkey");
+        session.removeAttribute("sessionkey");
         JSONObject jSONObject = new JSONObject();
         if (token != null) {
-            jSONObject.put("token", token);
+            jSONObject.put("sessionkey", token);
         }
         jSONObject.write(response.getWriter());
         response.getWriter().close();
     }
-    /*
-     * $token_url = "https://graph.facebook.com/oauth/access_token?client_id="
-    . $app_id . "&redirect_uri=" . urlencode($my_url) . "&client_secret="
-    . $app_secret . "&code=" . $code;
-     */
-
+ 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
@@ -134,19 +129,14 @@ public class Login extends MultiActionController {
     }
 
     private String generateLoginURL() {
-
-
-        String nextPage = "next=http://www.facebook.com/login.php?api_key=" + apiKey + "&v=1.0/&&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=";
-
-
-        String permissions = permissionTokens;//,friends_online_presence,user_online_presence
-
-        String authurl = "http://www.facebook.com/login.php?api_key=" + apiId + "&connect_display=popup&v=1.0&" + nextPage + permissions;
-
-        authurl = "https://www.facebook.com/dialog/oauth?client_id=" + apiId + "&redirect_uri=" + redirectUrl + "&scope=" + permissions;
-        // String redirct = "http://www.facebook.com/login.php?api_key=172430629459688&connect_display=popup&v=1.0&next=http://www.facebook.com/login.php?api_key=76f98c6f348e8d27ed504ae74da69cea&v=1.0/&cancel_url=http://www.facebook.com/connect/login_failure.html&fbconnect=true&return_session=true&session_key_only=true&req_perms=user_photos,user_videos,publish_stream,status_update,xmpp_login,offline_access,read_friendlists";
-
+        String permissions = permissionTokens;
+        String authurl = authurl = "https://www.facebook.com/dialog/oauth?client_id=" + apiId + "&redirect_uri=" + redirectUrl + "&scope=" + permissions;
         return authurl;
+    }
+    private String generateGetSessionKeyUrl(String token){
+        String sessionKeyUrl="https://graph.facebook.com/oauth/access_token?client_id=" + apiId
+                    + "&redirect_uri=" + redirectUrl + "&client_secret=" + apiSecret + "&code=" + token;
+        return sessionKeyUrl;
     }
 
     /**
@@ -163,8 +153,4 @@ public class Login extends MultiActionController {
         this.permissionTokens = permissionTokens;
     }
 }
-//https://www.facebook.com/dialog/oauth?client_id=apiId&
-//    redirect_uri=http://41.178.64.38:8080/FBChatProxy/login/getauthkey.htm
-//        &scope=publish_stream,offline_access,manage_pages
-//access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
 

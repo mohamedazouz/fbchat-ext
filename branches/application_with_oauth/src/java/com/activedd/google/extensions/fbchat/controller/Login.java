@@ -25,7 +25,6 @@ public class Login extends MultiActionController {
 
     HttpSession session;
     private FacebookJsonRestClient facebook;
-    private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
     private String apiId;
     private String redirectUrl;
@@ -111,10 +110,7 @@ public class Login extends MultiActionController {
         jSONObject.write(response.getWriter());
         response.getWriter().close();
     }
- 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
+
 
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;

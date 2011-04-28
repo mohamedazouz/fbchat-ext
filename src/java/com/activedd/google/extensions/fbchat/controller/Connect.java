@@ -50,7 +50,7 @@ public class Connect extends MultiActionController {
         session = request.getSession(true);
         String sessionkey = request.getParameter("sessionkey");
         sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-        //String sessionkey = (String) session.getAttribute("sessionkey");
+        
         chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
         session.setAttribute("client", chatClient);
         JSONObject jSONObject = chatClient.getLoggedInUserDetails();

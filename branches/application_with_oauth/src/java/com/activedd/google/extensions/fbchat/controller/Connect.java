@@ -48,12 +48,20 @@ public class Connect extends MultiActionController {
         chatClient = new ChatClient(configuration.getConfiguration());
         //create a new session if there is no session associated with request.
         session = request.getSession(true);
-        String sessionkey = request.getParameter("sessionkey");
-        sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-        
-        chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
-        session.setAttribute("client", chatClient);
-        JSONObject jSONObject = chatClient.getLoggedInUserDetails();
+        JSONObject jSONObject = new JSONObject();
+        if (request.getParameter("sessionkey") != null) {
+            String sessionkey = request.getParameter("sessionkey");
+            try {
+                sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
+                chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                session.setAttribute("client", chatClient);
+                jSONObject = chatClient.getLoggedInUserDetails();
+            } catch (Exception e) {
+                jSONObject.put("error", "invalid session key");
+            }
+        } else {
+            jSONObject.put("error", "no sessionkey found");
+        }
         jSONObject.write(response.getWriter());
         response.getWriter().close();
 

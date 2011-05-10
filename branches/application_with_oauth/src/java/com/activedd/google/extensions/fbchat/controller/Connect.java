@@ -7,8 +7,10 @@ package com.activedd.google.extensions.fbchat.controller;
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import com.google.code.facebookapi.FacebookException;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.ProtectionDomain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -56,6 +58,7 @@ public class Connect extends MultiActionController {
                 chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
                 session.setAttribute("client", chatClient);
                 jSONObject = chatClient.getLoggedInUserDetails();
+                this.deleteUserChatFile(jSONObject.getString("uid"));
             } catch (Exception e) {
                 jSONObject.put("error", "invalid session key");
             }
@@ -194,5 +197,16 @@ public class Connect extends MultiActionController {
      */
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
+    }
+
+    private void deleteUserChatFile(String uid) {
+        ProtectionDomain domain = this.getClass().getProtectionDomain();
+        String path = domain.getCodeSource().getLocation().getPath();
+        String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
+        File file = new File(p_realPath + "chat/" + uid + ".json");
+
+        if (file.exists()) {
+            file.delete();
+        }
     }
 }

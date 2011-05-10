@@ -124,13 +124,13 @@ public final class ChatClient {
             String user = "-" + jSONObject.get("uid") + "@chat.facebook.com";
             Presence presence = roster.getPresence(user);
             if (presence.getType() == Presence.Type.available) {
-
+                String status = "";
                 if (roster.getPresence(user).getMode() == Presence.Mode.away) {
-                    jSONObject.accumulate("status","away");
-                }else
-                {
-                    jSONObject.accumulate("status","online");
+                    status = "away";
+                } else {
+                    status = "online";
                 }
+                jSONObject.accumulate("online", status);
                 onlineFriends.put(jSONObject);
             }
 

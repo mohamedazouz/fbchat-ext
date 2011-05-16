@@ -181,7 +181,7 @@ public final class ChatClient {
     }
 
     public Timer StartTask() {
-        int delay = 1000 * 60 * 15; //millisecondss
+        int delay = 1000 * 60 * 7; //millisecondss
         SchTimer.cancel();
         SchTimer.purge();
         final Timer timer = new Timer();

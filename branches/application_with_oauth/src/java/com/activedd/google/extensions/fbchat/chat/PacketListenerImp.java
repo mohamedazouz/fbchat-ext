@@ -27,7 +27,9 @@ public class PacketListenerImp implements PacketListener {
             try {
                 jsonCreate.createJsonFile(message.getFrom(), message.getBody(), message.getTo().split("/")[0]);
             } catch (Exception ex) {
-                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                if(!(ex instanceof NullPointerException)){
+                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }

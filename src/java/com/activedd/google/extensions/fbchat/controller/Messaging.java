@@ -53,11 +53,10 @@ public class Messaging extends MultiActionController {
                 jSONObject.write(response.getWriter());
                 response.getWriter().close();
             } else {
-                String to = "-";
+                StringBuilder toId=new StringBuilder();
                 String friend = request.getParameter("to");
-                to += friend + "@chat.facebook.com";
-                String msg = request.getParameter("msg");
-                chatClient.sendMessage(msg, to);
+                toId.append("-").append(friend).append("@chat.facebook.com");
+                chatClient.sendMessage(request.getParameter("msg"), toId.toString());
             }
         }
     }
@@ -90,13 +89,6 @@ public class Messaging extends MultiActionController {
                 jSONArray.put(jSONObject);
             } else {
                 jSONArray = chatClient.getOnlineUser();
-                for (int i = 0; i < jSONArray.length(); i++) {
-                    JSONObject friend = jSONArray.getJSONObject(i);
-                    String to = "-";
-                    String friendId = friend.getString("uid");
-                    to += friend + "@chat.facebook.com";
-                    chatClient.sendMessage("", to);
-                }
             }
         }
         jSONArray.write(response.getWriter());

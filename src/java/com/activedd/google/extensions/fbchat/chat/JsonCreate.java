@@ -42,8 +42,6 @@ public class JsonCreate {
         JSONArray lastReceivedMessages = null;
         JSONObject receivedMessage = new JSONObject();
         ProtectionDomain domain = this.getClass().getProtectionDomain();
-        /*File filea = new File(domain.getCodeSource().getLocation().getPath());
-        String path = filea.getParentFile().getParentFile().getPath();*/
         String path = domain.getCodeSource().getLocation().getPath();
         String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
         File file = new File(p_realPath + "chat/" + to.subSequence(1, to.lastIndexOf("@")) + ".json");
@@ -51,15 +49,19 @@ public class JsonCreate {
         int currentSeconds = currentDate.getSeconds();
         currentDate = new Date(file.lastModified());
         int last = currentDate.getSeconds();
-        
+
         int remainingSeconds = Math.abs(last - currentSeconds);
-        String tot = "";
+        StringBuilder tot = new StringBuilder("");
         if (remainingSeconds < LAST_MODIFICATION_SECODS && file.exists()) {
             Scanner sc = new Scanner(file);
             while (sc.hasNext()) {
-                tot += sc.nextLine();
+                tot.append(sc.nextLine());
             }
-            lastReceivedMessages = new JSONArray(tot);
+            try {
+                lastReceivedMessages = new JSONArray(tot.toString());
+            } catch (Exception e) {
+                lastReceivedMessages=new JSONArray();
+            }
             sc.close();
         }
         receivedMessage.put("msg", msg);

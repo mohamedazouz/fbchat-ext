@@ -8,12 +8,14 @@ import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import com.google.code.facebookapi.FacebookException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.ProtectionDomain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.catalina.connector.CoyoteWriter;
 import org.jivesoftware.smack.XMPPException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -199,14 +201,15 @@ public class Connect extends MultiActionController {
         this.apiSecret = apiSecret;
     }
 
-    private void deleteUserChatFile(String uid) {
+    private void deleteUserChatFile(String uid) throws FileNotFoundException {
         ProtectionDomain domain = this.getClass().getProtectionDomain();
         String path = domain.getCodeSource().getLocation().getPath();
         String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
         File file = new File(p_realPath + "chat/" + uid + ".json");
-
         if (file.exists()) {
-            file.delete();
+            PrintWriter writer =new PrintWriter(file);
+            writer.print("[]");
+            writer.close();
         }
     }
 }

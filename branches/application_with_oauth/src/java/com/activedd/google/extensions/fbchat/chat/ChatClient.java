@@ -157,9 +157,6 @@ public final class ChatClient {
      * to disconnect and logout from the server
      */
     public void disconnect() {
-        /**Presence packet = new Presence(Presence.Type.unavailable);
-        connection.sendPacket(packet);
-        connection.disconnect();*/
         Presence packet = new Presence(Presence.Type.unavailable);
         SchTimer.cancel();
         SchTimer.purge();

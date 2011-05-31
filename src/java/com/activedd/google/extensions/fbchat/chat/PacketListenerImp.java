@@ -4,14 +4,11 @@
  */
 package com.activedd.google.extensions.fbchat.chat;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
-import org.json.JSONException;
 
 /**
  *

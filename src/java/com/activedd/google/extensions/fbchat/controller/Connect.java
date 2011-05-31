@@ -6,17 +6,10 @@ package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
-import com.google.code.facebookapi.FacebookException;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.ProtectionDomain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.catalina.connector.CoyoteWriter;
-import org.jivesoftware.smack.XMPPException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
@@ -44,31 +37,37 @@ public class Connect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void connect(HttpServletRequest request, HttpServletResponse response) throws XMPPException, InterruptedException, FacebookException, IOException, FacebookException, FacebookException, FacebookException, FacebookException, JSONException {
+    public void connect(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        chatClient = new ChatClient(configuration.getConfiguration());
-        //create a new session if there is no session associated with request.
-        session = request.getSession(true);
-        JSONObject jSONObject = new JSONObject();
-        if (request.getParameter("sessionkey") != null) {
-            String sessionkey = request.getParameter("sessionkey");
-            try {
-                sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
-                session.setAttribute("client", chatClient);
-                jSONObject = chatClient.getLoggedInUserDetails();
-                this.deleteUserChatFile(jSONObject.getString("uid"));
-            } catch (Exception e) {
-                jSONObject.put("error", "invalid session key");
+        try {
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            boolean flg = true;
+            chatClient = new ChatClient(configuration.getConfiguration());
+            //create a new session if there is no session associated with request.
+            session = request.getSession(true);
+            JSONObject jSONObject = null;
+            if (request.getParameter("sessionkey") != null) {
+                String sessionkey = request.getParameter("sessionkey");
+                try {
+                    sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
+                    chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                    session.setAttribute("client", chatClient);
+                    jSONObject = chatClient.getLoggedInUserDetails();
+                } catch (Exception e) {
+                    flg = false;
+                }
+            } else {
+                flg = false;
             }
-        } else {
-            jSONObject.put("error", "no sessionkey found");
+            if (!flg) {
+                jSONObject = new JSONObject("{error:no sessionkey found}");
+            }
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
+        } catch (Exception e) {
         }
-        jSONObject.write(response.getWriter());
-        response.getWriter().close();
 
     }
 
@@ -87,12 +86,10 @@ public class Connect extends MultiActionController {
             session.removeAttribute("client");
             session.removeAttribute("sessionkey");
         } else {
-            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+            JSONObject jSONObject = new JSONObject("{error:no sessionkey found}");
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         }
-
-        //   out.close();
     }
 
     /**
@@ -102,22 +99,18 @@ public class Connect extends MultiActionController {
      * @param response
      * @throws IOException
      */
-    public void idle(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
-        //TO DO: go away/idle.
-        session = request.getSession();
-        chatClient = (ChatClient) session.getAttribute("client");
-        if (chatClient == null) {
-            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
-            jSONObject.write(response.getWriter());
-            response.getWriter().close();
-        } else {
-            if (!chatClient.isConnected()) {
+    public void idle(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            session = request.getSession();
+            chatClient = (ChatClient) session.getAttribute("client");
+            if (chatClient == null || !chatClient.isConnected()) {
                 JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
                 jSONObject.write(response.getWriter());
                 response.getWriter().close();
             } else {
                 chatClient.setIdle();
             }
+        } catch (Exception e) {
         }
     }
 
@@ -127,22 +120,18 @@ public class Connect extends MultiActionController {
      * @param response
      * @throws IOException
      */
-    public void online(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
-        //TO DO: go offline.
-        session = request.getSession();
-        chatClient = (ChatClient) session.getAttribute("client");
-        if (chatClient == null) {
-            JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
-            jSONObject.write(response.getWriter());
-            response.getWriter().close();
-        } else {
-            if (!chatClient.isConnected()) {
+    public void online(HttpServletRequest request, HttpServletResponse response){
+        try {
+            session = request.getSession();
+            chatClient = (ChatClient) session.getAttribute("client");
+            if (chatClient == null || !chatClient.isConnected()) {
                 JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
                 jSONObject.write(response.getWriter());
                 response.getWriter().close();
             } else {
                 chatClient.setOnLinee();
             }
+        } catch (Exception e) {
         }
     }
 
@@ -199,17 +188,5 @@ public class Connect extends MultiActionController {
      */
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
-    }
-
-    private void deleteUserChatFile(String uid) throws FileNotFoundException {
-        ProtectionDomain domain = this.getClass().getProtectionDomain();
-        String path = domain.getCodeSource().getLocation().getPath();
-        String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
-        File file = new File(p_realPath + "chat/" + uid + ".json");
-        if (file.exists()) {
-            PrintWriter writer =new PrintWriter(file);
-            writer.print("[]");
-            writer.close();
-        }
     }
 }

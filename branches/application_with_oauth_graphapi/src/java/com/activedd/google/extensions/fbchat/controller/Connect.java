@@ -23,7 +23,6 @@ public class Connect extends MultiActionController {
     HttpSession session;
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
-    private String apiId;
     private String resource;
     private String domain;
     private int port;
@@ -64,6 +63,50 @@ public class Connect extends MultiActionController {
             if (!flg) {
                 jSONObject = new JSONObject("{error:no sessionkey found}");
             }
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
+        } catch (Exception e) {
+        }
+
+    }
+
+    /**
+     * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
+     *
+     * you should send me a session key in url as parameter named "sessionkey"
+     *
+     * @param request
+     * @param response
+     */
+    public void newconnect(HttpServletRequest request, HttpServletResponse response) {
+        //TO DO: go online on facebook.
+        //get the seesion key from url as parameter
+        try {
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            boolean flg = true;
+            chatClient = new ChatClient(configuration.getConfiguration());
+            //create a new session if there is no session associated with request.
+            session = request.getSession(true);
+            JSONObject jSONObject = null;
+            int status=0;
+            if (request.getParameter("sessionkey") != null) {
+                String sessionkey = request.getParameter("sessionkey");
+                try {
+                    sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
+                    chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                    session.setAttribute("client", chatClient);
+                    status=200;
+                } catch (Exception e) {
+                    flg = false;
+                }
+            } else {
+                flg = false;
+            }
+            if (!flg) {
+                status=500;
+            }
+            jSONObject = new JSONObject("{status:"+status+"}");
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception e) {
@@ -120,7 +163,7 @@ public class Connect extends MultiActionController {
      * @param response
      * @throws IOException
      */
-    public void online(HttpServletRequest request, HttpServletResponse response){
+    public void online(HttpServletRequest request, HttpServletResponse response) {
         try {
             session = request.getSession();
             chatClient = (ChatClient) session.getAttribute("client");
@@ -141,10 +184,6 @@ public class Connect extends MultiActionController {
      */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
-    }
-
-    public void setApiID(String apiId) {
-        this.apiId = apiId;
     }
     private ChatClient chatClient;
 

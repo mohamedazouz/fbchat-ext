@@ -5,7 +5,6 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.google.code.facebookapi.FacebookException;
-import com.google.code.facebookapi.FacebookJsonRestClient;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,7 +23,6 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class Login extends MultiActionController {
 
     HttpSession session;
-    private FacebookJsonRestClient facebook;
     private String apiSecret;  //Application Secert key
     private String apiId;
     private String redirectUrl;
@@ -62,11 +60,7 @@ public class Login extends MultiActionController {
         //get the request token from the request.
         if (request.getParameter("code") != null) {
             String token = request.getParameter("code");
-
-            //facebook object is isntanciated in the application context once.
-            //facebook = new FacebookJsonRestClient(apiKey, apiSecret);
             //generates the authintication token for the user.
-
             String link = generateGetSessionKeyUrl(token);
             URL url = new URL(link);
             Scanner s = new Scanner(url.openStream());
@@ -118,10 +112,6 @@ public class Login extends MultiActionController {
 
     public void setApiID(String apiId) {
         this.apiId = apiId;
-    }
-
-    public void setFacebook(FacebookJsonRestClient facebook) {
-        this.facebook = facebook;
     }
 
     private String generateLoginURL() {

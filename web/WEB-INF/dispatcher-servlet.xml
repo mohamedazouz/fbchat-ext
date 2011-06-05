@@ -55,11 +55,9 @@
         <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
         <property name="redirectUrl" value="${fbapp.redirectUrl}"/>
         <property name="permissionTokens" value="${fbapp.permission}"/>
-        <property name="facebook" ref="facebook"/>
     </bean>
 
     <bean name="Connect" class="com.activedd.google.extensions.fbchat.controller.Connect" scope="request" >
-        <property name="apiID" value="${fbapp.appID}"/>
         <property name="apiKey" value="${fbapp.appKey}"/>
         <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
         <property name="resource" value="${fbapp.resource}"/>

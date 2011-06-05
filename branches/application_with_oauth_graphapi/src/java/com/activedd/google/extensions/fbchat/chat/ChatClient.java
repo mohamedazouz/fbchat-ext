@@ -15,6 +15,7 @@ import org.jivesoftware.smack.packet.Presence;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import com.google.code.facebookapi.ProfileField;
 import java.security.ProtectionDomain;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -132,6 +133,35 @@ public final class ChatClient {
                 onlineFriends.put(jSONObject);
             }
 
+        }
+        SchTimer = this.StartTask();
+        return onlineFriends;
+    }
+
+    public JSONArray getOnlineFriends() throws JSONException, FacebookException, FileNotFoundException {
+        JSONArray onlineFriends = new JSONArray();
+        Roster roster = connection.getRoster();
+        Collection<RosterEntry> enteries = roster.getEntries();
+        for (RosterEntry entry : enteries) {
+            String user = entry.getUser();
+            Presence presence = roster.getPresence(user);
+            if (presence.getType() == Presence.Type.available) {
+                JSONObject friend = new JSONObject();
+                friend.put("uid", user.substring(1, entry.getUser().indexOf("@")));
+                friend.put("name", entry.getName());
+                if (presence.getType() == Presence.Type.available) {
+                    String status = "";
+                    if (roster.getPresence(user).getMode() == Presence.Mode.away) {
+                        status = "away";
+                    } else {
+                        status = "online";
+                    }
+                    friend.put("online", status);
+                    onlineFriends.put(friend);
+                    friend = null;
+                }
+
+            }
         }
         SchTimer = this.StartTask();
         return onlineFriends;

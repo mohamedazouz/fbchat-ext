@@ -4,6 +4,10 @@
  */
 package com.activedd.google.extensions.fbchat.controller;
 
+/**
+ *
+ * @author ibrahim
+ */
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import java.io.IOException;
@@ -14,11 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
-/**
- *
- * @author prog
- */
-public class Connect extends MultiActionController {
+public class NewConnect extends MultiActionController {
 
     HttpSession session;
     private String apiKey;  //Application Key
@@ -27,48 +27,6 @@ public class Connect extends MultiActionController {
     private String domain;
     private int port;
     private ServerConfiguration configuration;
-
-    /**
-     * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
-     * 
-     * you should send me a session key in url as parameter named "sessionkey"
-     * 
-     * @param request
-     * @param response
-     */
-    public void connect(HttpServletRequest request, HttpServletResponse response) {
-        //TO DO: go online on facebook.
-        //get the seesion key from url as parameter
-        try {
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
-            boolean flg = true;
-            chatClient = new ChatClient(configuration.getConfiguration());
-            //create a new session if there is no session associated with request.
-            session = request.getSession(true);
-            JSONObject jSONObject = null;
-            if (request.getParameter("sessionkey") != null) {
-                String sessionkey = request.getParameter("sessionkey");
-                try {
-                    sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
-                    session.setAttribute("client", chatClient);
-                    jSONObject = chatClient.getLoggedInUserDetails();
-                } catch (Exception e) {
-                    flg = false;
-                }
-            } else {
-                flg = false;
-            }
-            if (!flg) {
-                jSONObject = new JSONObject("{error:no sessionkey found}");
-            }
-            jSONObject.write(response.getWriter());
-            response.getWriter().close();
-        } catch (Exception e) {
-        }
-
-    }
 
     /**
      * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
@@ -82,34 +40,33 @@ public class Connect extends MultiActionController {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
         try {
-            boolean flg = true;
             chatClient = new ChatClient(configuration.getConfiguration());
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
-            int status=0;
+            int status = 0;
+            String message = "";
             if (request.getParameter("sessionkey") != null) {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
                     chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
                     session.setAttribute("client", chatClient);
-                    status=200;
+                    status = 200;
+                    message = "success";
                 } catch (Exception e) {
-                    flg = false;
+                    status = 417;
+                    message = "Expectation Failed";
                 }
             } else {
-                flg = false;
+                status = 400;
+                message = "Bad Request";
             }
-            if (!flg) {
-                status=500;
-            }
-            jSONObject = new JSONObject("{status:"+status+"}");
+            jSONObject = new JSONObject("{status:" + status + ",message:" + message + "}");
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception e) {
         }
-
     }
 
     /**
@@ -134,50 +91,7 @@ public class Connect extends MultiActionController {
     }
 
     /**
-     * idle page which set user status idle.
      *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void idle(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            session = request.getSession();
-            chatClient = (ChatClient) session.getAttribute("client");
-            if (chatClient == null || !chatClient.isConnected()) {
-                JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
-                jSONObject.write(response.getWriter());
-                response.getWriter().close();
-            } else {
-                chatClient.setIdle();
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    /**
-     * online page which make user status online "Available".
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void online(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            session = request.getSession();
-            chatClient = (ChatClient) session.getAttribute("client");
-            if (chatClient == null || !chatClient.isConnected()) {
-                JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
-                jSONObject.write(response.getWriter());
-                response.getWriter().close();
-            } else {
-                chatClient.setOnLinee();
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    /**
-     * 
      * @param apiKey
      */
     public void setApiKey(String apiKey) {

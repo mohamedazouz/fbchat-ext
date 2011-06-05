@@ -85,6 +85,33 @@ public class Messaging extends MultiActionController {
     }
 
     /**
+     * onlinefriends page is to send all online friends with its name ,id and pic
+     *
+     *  nothing need to send via url as parameter
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws FacebookException
+     * @throws JSONException
+     */
+    public void getonlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, FacebookException, JSONException, XMPPException {
+        //get list of online friends.
+        //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+        JSONArray jSONArray = new JSONArray();
+        if (chatClient == null || !chatClient.isConnected()) {
+            jSONArray.put(jSONObject);
+        } else {
+            jSONArray = chatClient.getOnlineFriends();
+        }
+        jSONArray.write(response.getWriter());
+        response.getWriter().close();
+    }
+
+    /**
      * friendlist page is to send all friends with its name ,id and pic
      *
      *  nothing need to send via url as parameter

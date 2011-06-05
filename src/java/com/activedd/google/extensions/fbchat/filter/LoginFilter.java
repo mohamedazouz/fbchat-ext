@@ -112,21 +112,9 @@ public class LoginFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (Throwable t) {
-            // If an exception is thrown somewhere down the filter chain,
-            // we still want to execute our after processing, and then
-            // rethrow the problem after that.
-            //t.getMessage();
-            t.printStackTrace();
-//            if (t instanceof JSONException) {
-//                //((HttpServletResponse) response).sendRedirect("../login/login.htm");
-//            }
-            if (t.getCause() instanceof NullPointerException) {
-           //     extUrl = "https://chrome.google.com/extensions/detail/kbbbdceaanenabhggodldamnegaicgpo";
-                ((HttpServletResponse) response).sendRedirect(extUrl);
-            } else {
-                ((HttpServletResponse) response).sendRedirect("../login/login.htm");
-            }
+            
 
+            ((HttpServletResponse) response).sendRedirect("../login/login.htm");
 
         }
 

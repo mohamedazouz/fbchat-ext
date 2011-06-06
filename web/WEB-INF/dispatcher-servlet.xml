@@ -26,6 +26,7 @@
                 <prop key="connect/*.htm">Connect</prop>
                 <prop key="newconnect/*.htm">NewConnect</prop>
                 <prop key="messaging/*.htm">Messaging</prop>
+                <prop key="newmessaging/*.htm">NewMessaging</prop>
             </props>
         </property>
     </bean>
@@ -76,6 +77,8 @@
     </bean>
 
     <bean name="Messaging" class="com.activedd.google.extensions.fbchat.controller.Messaging" >
+    </bean>
+    <bean name="NewMessaging" class="com.activedd.google.extensions.fbchat.controller.NewMessaging" >
     </bean>
    
    

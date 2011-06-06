@@ -4,7 +4,6 @@
  */
 package com.activedd.google.extensions.fbchat.controller;
 
-import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -51,7 +50,7 @@ public class Login extends MultiActionController {
      * @param request
      * @param response
      */
-    public void authenticate(HttpServletRequest request, HttpServletResponse response) throws FacebookException, IOException, URISyntaxException {
+    public void authenticate(HttpServletRequest request, HttpServletResponse response) throws  IOException, URISyntaxException {
         //this url that will facebook redirects to after authenticating application from facebook.
         //      and set the user key in the httpsession.
         //creates a new session if there is not session.

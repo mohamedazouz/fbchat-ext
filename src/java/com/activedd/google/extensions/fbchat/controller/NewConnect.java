@@ -9,6 +9,7 @@ package com.activedd.google.extensions.fbchat.controller;
  * @author ibrahim
  */
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import com.activedd.google.extensions.fbchat.chat.ChatProxyClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,12 +21,14 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 public class NewConnect extends MultiActionController {
 
+
     HttpSession session;
     private String apiKey;  //Application Key
     private String apiSecret;  //Application Secert key
     private String resource;
     private String domain;
     private int port;
+    private ChatProxyClient chatClient;
     private ServerConfiguration configuration;
 
     /**
@@ -36,11 +39,11 @@ public class NewConnect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void newconnect(HttpServletRequest request, HttpServletResponse response) {
+    public void connect(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
         try {
-            chatClient = new ChatClient(configuration.getConfiguration());
+            chatClient = new ChatProxyClient(configuration.getConfiguration());
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
@@ -52,14 +55,14 @@ public class NewConnect extends MultiActionController {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
                     chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
                     session.setAttribute("client", chatClient);
-                    status = 200;
+                    status = 200;//http success code
                     message = "success";
                 } catch (Exception e) {
-                    status = 417;
+                    status = 417;//http exception failed code
                     message = "Expectation Failed";
                 }
             } else {
-                status = 400;
+                status = 400; //http bad request code
                 message = "Bad Request";
             }
             jSONObject = new JSONObject("{status:" + status + ",message:" + message + "}");
@@ -78,13 +81,13 @@ public class NewConnect extends MultiActionController {
     public void disconnect(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
         //TO DO: go offline.
         session = request.getSession();
-        chatClient = (ChatClient) session.getAttribute("client");
+        chatClient = (ChatProxyClient) session.getAttribute("client");
         if (chatClient != null) {
             chatClient.disconnect();
             session.removeAttribute("client");
             session.removeAttribute("sessionkey");
         } else {
-            JSONObject jSONObject = new JSONObject("{error:no sessionkey found}");
+            JSONObject jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         }
@@ -97,7 +100,6 @@ public class NewConnect extends MultiActionController {
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
-    private ChatClient chatClient;
 
     /**
      * @param resource the resource to set

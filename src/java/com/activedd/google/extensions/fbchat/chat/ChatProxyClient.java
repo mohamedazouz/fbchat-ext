@@ -115,11 +115,11 @@ public final class ChatProxyClient {
      * to disconnect and logout from the server
      */
     public void disconnect() {
+        deleteUserChatFile();//delete user file.
         Presence packet = new Presence(Presence.Type.unavailable);
         SchTimer.cancel();///cancel timer
         SchTimer.purge();
         connection.disconnect(packet);//disconnect from facebook server
-        deleteUserChatFile();//delete user file.
     }
 
     public Timer StartTask() {

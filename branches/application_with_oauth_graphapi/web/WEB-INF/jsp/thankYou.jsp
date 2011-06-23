@@ -43,7 +43,7 @@
                     <li>After logging in you will find two tabs</li>
                     <li>The online friends tab will show your online friends</li>
                     <li>The friends list tab will show you all your friends</li>
-                    <li>You can send a massages to your offline friends , and they will see them in their Facebook inbox </li>
+                    <li>You can send a messages to your offline friends , and they will see them in their Facebook inbox </li>
                 </ul>
             </div>
             <div class="list f" id="ar-doc" style="display: none;">

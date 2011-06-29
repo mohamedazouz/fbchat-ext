@@ -33,10 +33,6 @@
         <constructor-arg value="${fbapp.domain}" />
         <constructor-arg value="${fbapp.port}"/>
     </bean>
-    <bean id="facebook" class="com.google.code.facebookapi.FacebookJsonRestClient">
-        <constructor-arg value="${fbapp.appKey}" />
-        <constructor-arg value="${fbapp.apiSecretkey}"/>
-    </bean>
     <bean name="LoginFilter" class="com.activedd.google.extensions.fbchat.filter.LoginFilter" >
         <property name="extUrl" value="${fbapp.extLink}"/>
     </bean>

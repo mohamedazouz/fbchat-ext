@@ -7,7 +7,6 @@ package com.activedd.google.extensions.fbchat.controller;
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,22 +42,15 @@ public class Messaging extends MultiActionController {
         response.setCharacterEncoding("UTF-8");
         session = request.getSession();
         chatClient = (ChatClient) session.getAttribute("client");
-        if (chatClient == null) {
+        if (chatClient == null || !chatClient.isConnected()) {
             JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } else {
-            if (!chatClient.isConnected()) {
-                JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
-                jSONObject.write(response.getWriter());
-                response.getWriter().close();
-            } else {
-                String to = "-";
-                String friend = request.getParameter("to");
-                to += friend + "@chat.facebook.com";
-                String msg = request.getParameter("msg");
-                chatClient.sendMessage(msg, to);
-            }
+            StringBuilder toId = new StringBuilder();
+            String friend = request.getParameter("to");
+            toId.append("-").append(friend).append("@chat.facebook.com");
+            chatClient.sendMessage(request.getParameter("msg"), toId.toString());
         }
     }
 
@@ -83,21 +75,37 @@ public class Messaging extends MultiActionController {
         chatClient = (ChatClient) session.getAttribute("client");
         JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
         JSONArray jSONArray = new JSONArray();
-        if (chatClient == null) {
+        if (chatClient == null || !chatClient.isConnected()) {
             jSONArray.put(jSONObject);
         } else {
-            if (!chatClient.isConnected()) {
-                jSONArray.put(jSONObject);
-            } else {
-                jSONArray = chatClient.getOnlineUser();
-                for (int i = 0; i < jSONArray.length(); i++) {
-                    JSONObject friend = jSONArray.getJSONObject(i);
-                    String to = "-";
-                    String friendId = friend.getString("uid");
-                    to += friend + "@chat.facebook.com";
-                    chatClient.sendMessage("", to);
-                }
-            }
+            jSONArray = chatClient.getOnlineUser();
+        }
+        jSONArray.write(response.getWriter());
+        response.getWriter().close();
+    }
+
+    /**
+     * onlinefriends page is to send all online friends with its name ,id and pic
+     *
+     *  nothing need to send via url as parameter
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws FacebookException
+     * @throws JSONException
+     */
+    public void getonlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, FacebookException, JSONException, XMPPException {
+        //get list of online friends.
+        //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
+        session = request.getSession();
+        chatClient = (ChatClient) session.getAttribute("client");
+        JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
+        JSONArray jSONArray = new JSONArray();
+        if (chatClient == null || !chatClient.isConnected()) {
+            jSONArray.put(jSONObject);
+        } else {
+            jSONArray = chatClient.getOnlineFriends();
         }
         jSONArray.write(response.getWriter());
         response.getWriter().close();
@@ -122,14 +130,10 @@ public class Messaging extends MultiActionController {
         chatClient = (ChatClient) session.getAttribute("client");
         JSONArray jSONArray = new JSONArray();
         JSONObject jSONObject = new JSONObject("{'error':'no session response'}");
-        if (chatClient == null) {
+        if (chatClient == null || !chatClient.isConnected()) {
             jSONArray.put(jSONObject);
         } else {
-            if (!chatClient.isConnected()) {
-                jSONArray.put(jSONObject);
-            } else {
-                jSONArray = chatClient.getBuddyList();
-            }
+            jSONArray = chatClient.getBuddyList();
         }
         jSONArray.write(response.getWriter());
         response.getWriter().close();

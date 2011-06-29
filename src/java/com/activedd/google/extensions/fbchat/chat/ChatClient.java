@@ -7,8 +7,6 @@ package com.activedd.google.extensions.fbchat.chat;
 import com.google.code.facebookapi.FacebookException;
 import java.util.*;
 import java.io.*;
-
-import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
@@ -16,7 +14,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import com.google.code.facebookapi.FacebookJsonRestClient;
 import com.google.code.facebookapi.ProfileField;
-import org.jivesoftware.smack.ChatManager;
+import java.security.ProtectionDomain;
+import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -124,16 +123,45 @@ public final class ChatClient {
             String user = "-" + jSONObject.get("uid") + "@chat.facebook.com";
             Presence presence = roster.getPresence(user);
             if (presence.getType() == Presence.Type.available) {
-
+                String status = "";
                 if (roster.getPresence(user).getMode() == Presence.Mode.away) {
-                    jSONObject.accumulate("status","away");
-                }else
-                {
-                    jSONObject.accumulate("status","online");
+                    status = "away";
+                } else {
+                    status = "online";
                 }
+                jSONObject.accumulate("online", status);
                 onlineFriends.put(jSONObject);
             }
 
+        }
+        SchTimer = this.StartTask();
+        return onlineFriends;
+    }
+
+    public JSONArray getOnlineFriends() throws JSONException, FacebookException, FileNotFoundException {
+        JSONArray onlineFriends = new JSONArray();
+        Roster roster = connection.getRoster();
+        Collection<RosterEntry> enteries = roster.getEntries();
+        for (RosterEntry entry : enteries) {
+            String user = entry.getUser();
+            Presence presence = roster.getPresence(user);
+            if (presence.getType() == Presence.Type.available) {
+                JSONObject friend = new JSONObject();
+                friend.put("uid", user.substring(1, entry.getUser().indexOf("@")));
+                friend.put("name", entry.getName());
+                if (presence.getType() == Presence.Type.available) {
+                    String status = "";
+                    if (roster.getPresence(user).getMode() == Presence.Mode.away) {
+                        status = "away";
+                    } else {
+                        status = "online";
+                    }
+                    friend.put("online", status);
+                    onlineFriends.put(friend);
+                    friend = null;
+                }
+
+            }
         }
         SchTimer = this.StartTask();
         return onlineFriends;
@@ -157,13 +185,11 @@ public final class ChatClient {
      * to disconnect and logout from the server
      */
     public void disconnect() {
-        /**Presence packet = new Presence(Presence.Type.unavailable);
-        connection.sendPacket(packet);
-        connection.disconnect();*/
         Presence packet = new Presence(Presence.Type.unavailable);
         SchTimer.cancel();
         SchTimer.purge();
         connection.disconnect(packet);
+        deleteUserChatFile();
     }
 
     public void setIdle() {
@@ -181,7 +207,7 @@ public final class ChatClient {
     }
 
     public Timer StartTask() {
-        int delay = 1000 * 60 * 15; //millisecondss
+        int delay = 1000 * 60 * 7; //millisecondss
         SchTimer.cancel();
         SchTimer.purge();
         final Timer timer = new Timer();
@@ -201,5 +227,20 @@ public final class ChatClient {
 
     public boolean isConnected() {
         return connection.isConnected();
+    }
+
+    private void deleteUserChatFile() {
+        try {
+            String uid = (new Long(facebook.users_getLoggedInUser())).toString();
+            ProtectionDomain domain = this.getClass().getProtectionDomain();
+            String path = domain.getCodeSource().getLocation().getPath();
+            StringBuilder p_realPath = new StringBuilder(path.substring(path.indexOf("/"), path.indexOf("WEB-INF")));
+            p_realPath.append("chat/").append(uid).append(".json");
+            File file = new File(p_realPath.toString());
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (Exception ex) {
+        }
     }
 }

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,13 +34,20 @@ public class Login extends MultiActionController {
      * then redirect it to the application home which is authenticate page to generate session key
      *
      * nothing need to send via url as parameter
-     * 
+     *
      * @param request
      * @param response
      */
-    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String redirct = generateLoginURL();
-        response.sendRedirect(redirct);
+    public void login(HttpServletRequest request, HttpServletResponse response){
+
+
+        try {
+            String redirct = generateLoginURL();
+            response.sendRedirect(redirct);
+        } catch (IOException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**
@@ -46,11 +55,11 @@ public class Login extends MultiActionController {
      * which facebook send via redirected url.
      *
      * nothing need to send via url as parameter
-     * 
+     *
      * @param request
      * @param response
      */
-    public void authenticate(HttpServletRequest request, HttpServletResponse response) throws  IOException, URISyntaxException {
+    public void authenticate(HttpServletRequest request, HttpServletResponse response){
         //this url that will facebook redirects to after authenticating application from facebook.
         //      and set the user key in the httpsession.
         //creates a new session if there is not session.
@@ -58,22 +67,23 @@ public class Login extends MultiActionController {
         StringBuilder sessionkey=new StringBuilder("");
         //get the request token from the request.
         if (request.getParameter("code") != null) {
-            String token = request.getParameter("code");
-            //generates the authintication token for the user.
-            String link = generateGetSessionKeyUrl(token);
-            URL url = new URL(link);
-            Scanner s = new Scanner(url.openStream());
-            while (s.hasNextLine()) {
-                sessionkey.append(s.nextLine());
+            try {
+                String token = request.getParameter("code");
+                //generates the authintication token for the user.
+                String link = generateGetSessionKeyUrl(token);
+                URL url = new URL(link);
+                Scanner s = new Scanner(url.openStream());
+                while (s.hasNextLine()) {
+                    sessionkey.append(s.nextLine());
+                }
+                sessionkey = sessionkey.delete(0, sessionkey.indexOf("=") + 1);
+                session.setAttribute("sessionkey", sessionkey.toString());
+                response.sendRedirect("../thankyou.htm");
+            } catch (IOException ex) {
             }
-            sessionkey=sessionkey.delete(0,sessionkey.indexOf("=")+1);
-            session.setAttribute("sessionkey", sessionkey.toString());
-            response.sendRedirect("../thankyou.htm");
         } else {
             throw new NullPointerException();
         }
-
-
     }
 
     /**
@@ -84,24 +94,27 @@ public class Login extends MultiActionController {
      * @param request
      * @param response
      */
-    public void getauthkey(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException, URISyntaxException {
-        //check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
-        response.setContentType("application/json;charset=UTF-8");
-        //must instanciate the session again from the request.
-
-        session = request.getSession(false);
-        //if there is no session in the request, stop proceeding the function.
-        if (session == null) {
-            return;
+    public void getauthkey(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            //check if the user has authenticated from facebook by checking http session and if he does, then populate the user key/id in the respose and delete it from http session.
+            response.setContentType("application/json;charset=UTF-8");
+            //must instanciate the session again from the request.
+            session = request.getSession(false);
+            //if there is no session in the request, stop proceeding the function.
+            if (session == null) {
+                return;
+            }
+            String token = (String) session.getAttribute("sessionkey");
+            session.removeAttribute("sessionkey");
+            JSONObject jSONObject = new JSONObject();
+            if (token != null) {
+                jSONObject.put("sessionkey", token);
+            }
+            jSONObject.write(response.getWriter());
+            response.getWriter().close();
+        } catch (Exception ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String token = (String) session.getAttribute("sessionkey");
-        session.removeAttribute("sessionkey");
-        JSONObject jSONObject = new JSONObject();
-        if (token != null) {
-            jSONObject.put("sessionkey", token);
-        }
-        jSONObject.write(response.getWriter());
-        response.getWriter().close();
     }
 
 

@@ -8,19 +8,18 @@ package com.activedd.google.extensions.fbchat.controller;
  *
  * @author ibrahim
  */
-import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ChatProxyClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 public class NewConnect extends MultiActionController {
-
 
     HttpSession session;
     private String apiKey;  //Application Key
@@ -53,10 +52,16 @@ public class NewConnect extends MultiActionController {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
-                    session.setAttribute("client", chatClient);
-                    status = 200;//http success code
-                    message = "success";
+                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                    if (result.getInt("status") == 1) {
+                        session.setAttribute("client", chatClient);
+                        status = 200;//http success code
+                        message = "success";
+                    } else {
+                        status = 417;//http success code
+                        message = (String) result.get("msg");
+                    }
+
                 } catch (Exception e) {
                     status = 417;//http exception failed code
                     message = "Expectation Failed";
@@ -68,7 +73,8 @@ public class NewConnect extends MultiActionController {
             jSONObject = new JSONObject("{status:" + status + ",message:" + message + "}");
             jSONObject.write(response.getWriter());
             response.getWriter().close();
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            Logger.getLogger(NewConnect.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -78,7 +84,7 @@ public class NewConnect extends MultiActionController {
      * @param request
      * @param response
      */
-    public void disconnect(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+    public void disconnect(HttpServletRequest request, HttpServletResponse response) {
         //TO DO: go offline.
         session = request.getSession();
         chatClient = (ChatProxyClient) session.getAttribute("client");
@@ -87,9 +93,16 @@ public class NewConnect extends MultiActionController {
             session.removeAttribute("client");
             session.removeAttribute("sessionkey");
         } else {
-            JSONObject jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
-            jSONObject.write(response.getWriter());
-            response.getWriter().close();
+            JSONObject jSONObject;
+            try {
+                jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
+                jSONObject.write(response.getWriter());
+                response.getWriter().close();
+            } catch (Exception ex) {
+                Logger.getLogger(NewConnect.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
         }
     }
 

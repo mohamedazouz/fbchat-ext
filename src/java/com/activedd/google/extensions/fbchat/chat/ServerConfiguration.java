@@ -21,7 +21,7 @@ public class ServerConfiguration {
     private final SecurityMode securityMode = SecurityMode.enabled;
     private final boolean isSaslAuthenticationEnabled = true;
     private final boolean isCompressionEnabled = false;
-    private final boolean isReconnectionAllowed = false;
+    private final boolean isReconnectionAllowed = true;
     private FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
     private MessageListenerImp messageListenerImp;
     private ConnectionConfiguration config = null;

@@ -5,8 +5,11 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatProxyClient;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,6 +28,7 @@ public class NewMessaging extends MultiActionController {
     HttpSession session;
     private ChatProxyClient chatClient;
 
+
     /**
      * send page is to send message to specific user.
      *
@@ -34,7 +38,7 @@ public class NewMessaging extends MultiActionController {
      * @param response
      * @throws UnsupportedEncodingException
      */
-    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException, IOException, JSONException {
+    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException {
         //send a message
         //get to ID url parameter and msg
         request.setCharacterEncoding("UTF-8");
@@ -42,9 +46,14 @@ public class NewMessaging extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatProxyClient) session.getAttribute("client");
         if (chatClient == null || !chatClient.isConnected()) {
-            JSONObject jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
-            jSONObject.write(response.getWriter());
-            response.getWriter().close();
+            JSONObject jSONObject;
+            try {
+                jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
+                jSONObject.write(response.getWriter());
+                response.getWriter().close();
+            } catch (Exception ex) {
+                Logger.getLogger(NewMessaging.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             StringBuilder toId = new StringBuilder();
             String friend = request.getParameter("to");
@@ -64,7 +73,7 @@ public class NewMessaging extends MultiActionController {
      * @throws FacebookException
      * @throws JSONException
      */
-    public void onlinefriends(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException, XMPPException {
+    public void onlinefriends(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, JSONException, FileNotFoundException {
         //get list of online friends.
         //get user id url prameter and get his/her online user files and parse it to jsonArray and send it call back it again
         request.setCharacterEncoding("UTF-8");
@@ -72,14 +81,25 @@ public class NewMessaging extends MultiActionController {
         response.setContentType("application/json;charset=UTF-8");
         session = request.getSession();
         chatClient = (ChatProxyClient) session.getAttribute("client");
-        JSONObject jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
+        JSONObject jSONObject = null;
+        try {
+            jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
+        } catch (JSONException ex) {
+            Logger.getLogger(NewMessaging.class.getName()).log(Level.SEVERE, null, ex);
+        }
         JSONArray jSONArray = new JSONArray();
         if (chatClient == null || !chatClient.isConnected()) {
             jSONArray.put(jSONObject);
         } else {
             jSONArray = chatClient.getOnlineFriends();
         }
-        jSONArray.write(response.getWriter());
-        response.getWriter().close();
+        try {
+            jSONArray.write(response.getWriter());
+            response.getWriter().close();
+        } catch (Exception ex) {
+            Logger.getLogger(NewMessaging.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
     }
 }

@@ -32,14 +32,6 @@
         <filter-name>LoginFilter</filter-name>
         <url-pattern>/login/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>encodingFilter</filter-name>
-        <url-pattern>*.htm</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>encodingFilter</filter-name>
-        <url-pattern>*.json</url-pattern>
-    </filter-mapping>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>

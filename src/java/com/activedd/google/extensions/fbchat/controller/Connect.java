@@ -7,12 +7,9 @@ package com.activedd.google.extensions.fbchat.controller;
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
@@ -73,7 +70,6 @@ public class Connect extends MultiActionController {
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception ex) {
-            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -116,7 +112,6 @@ public class Connect extends MultiActionController {
             jSONObject.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception ex) {
-            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -142,7 +137,6 @@ public class Connect extends MultiActionController {
                 response.getWriter().close();
             }
         } catch (Exception ex) {
-            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

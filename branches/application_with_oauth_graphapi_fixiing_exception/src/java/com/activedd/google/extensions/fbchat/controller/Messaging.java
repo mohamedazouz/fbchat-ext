@@ -8,12 +8,9 @@ import com.activedd.google.extensions.fbchat.chat.ChatClient;
 import com.google.code.facebookapi.FacebookException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.jivesoftware.smack.XMPPException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +87,6 @@ public class Messaging extends MultiActionController {
             jSONArray.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception ex) {
-            Logger.getLogger(Messaging.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -121,7 +117,6 @@ public class Messaging extends MultiActionController {
             jSONArray.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception ex) {
-            Logger.getLogger(Messaging.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -153,7 +148,6 @@ public class Messaging extends MultiActionController {
             jSONArray.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception ex) {
-            Logger.getLogger(Messaging.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

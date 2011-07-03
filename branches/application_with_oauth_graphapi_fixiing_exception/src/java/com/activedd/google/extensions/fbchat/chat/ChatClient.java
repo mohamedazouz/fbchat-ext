@@ -7,8 +7,6 @@ package com.activedd.google.extensions.fbchat.chat;
 import com.google.code.facebookapi.FacebookException;
 import java.util.*;
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
@@ -66,34 +64,33 @@ public final class ChatClient {
         String result = "";
         int resultValu = 1;
         try {
-            connection.connect();
+            if (!connection.isConnected()) {
+                connection.connect();
+                if (connection.isConnected()) {
+                    facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
+                    connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
+                    connection.addPacketListener(packetListenerImp, packetFilterImpl);
+                } else {
+                    result += "+not connected";
+                    resultValu = -1;
+                }
+            } else {
+                result = "connected with errors";
+                resultValu = 1;
+            }
+
         } catch (XMPPException ex) {
-            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             result = "exception with connecting";
             resultValu = -1;
-        }
-        try {
-            if (connection.isConnected()) {
-                facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
-                connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
-                connection.addPacketListener(packetListenerImp, packetFilterImpl);
-            } else {
-                result += "+not connected";
-                resultValu = -1;
+        } finally {
+            JSONObject jSONObject = new JSONObject();
+            try {
+                jSONObject.put("msg", result);
+                jSONObject.put("status", resultValu);
+            } catch (JSONException ex) {
             }
-        } catch (XMPPException ex) {
-            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
-            result += "+exception with login";
-            resultValu = -1;
+            return jSONObject;
         }
-        JSONObject jSONObject = new JSONObject();
-        try {
-            jSONObject.put("msg", result);
-            jSONObject.put("status", resultValu);
-        } catch (JSONException ex) {
-            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return jSONObject;
     }
 
     /**
@@ -127,14 +124,12 @@ public final class ChatClient {
         try {
             friendsid = this.facebook.friends_get();
         } catch (FacebookException ex) {
-            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 0; i < friendsid.length(); i++) {
             String friendId = null;
             try {
                 friendId = friendsid.getString(i);
             } catch (JSONException ex) {
-                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
             friendsID.add(new Long(friendId.toString()));
         }
@@ -144,7 +139,6 @@ public final class ChatClient {
         try {
             friendsid = facebook.users_getInfo(friendsID, pf);
         } catch (FacebookException ex) {
-            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         SchTimer = this.StartTask();
@@ -167,13 +161,11 @@ public final class ChatClient {
             try {
                 jSONObject = friends.getJSONObject(i);
             } catch (JSONException ex) {
-                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
             String user = null;
             try {
                 user = "-" + jSONObject.get("uid") + "@chat.facebook.com";
             } catch (JSONException ex) {
-                Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
             }
             Presence presence = roster.getPresence(user);
             if (presence.getType() == Presence.Type.available) {
@@ -186,7 +178,6 @@ public final class ChatClient {
                 try {
                     jSONObject.accumulate("online", status);
                 } catch (JSONException ex) {
-                    Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 onlineFriends.put(jSONObject);
             }
@@ -300,7 +291,6 @@ public final class ChatClient {
                 file.delete();
             }
         } catch (Exception ex) {
-            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

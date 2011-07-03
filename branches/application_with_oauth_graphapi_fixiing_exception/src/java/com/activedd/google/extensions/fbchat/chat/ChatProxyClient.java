@@ -12,9 +12,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import java.security.ProtectionDomain;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.packet.Message;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,15 +63,17 @@ public final class ChatProxyClient {
         try {
             if (!connection.isConnected()) {
                 connection.connect();
-            } else {
                 if (connection.isConnected()) {
-                    result += "+++ANA Da5lt Hena  bas gbt exception";
                     connection.login(apiKey + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
                     connection.addPacketListener(packetListenerImp, packetFilterImpl);//adding the listening to listen for encoming packets
+                    result = "connected";
                 } else {
-                    result += "not connected";
+                    result = "not connected";
                     resultValu = -1;
                 }
+            } else {
+                result = "connected with errors";
+                resultValu = -1;
             }
         } catch (Exception ex) {
             connection.disconnect();
@@ -160,7 +162,7 @@ public final class ChatProxyClient {
     }
 
     public Timer StartTask() {
-        int delay = 1000 * 60 * 7; //millisecondss
+        int delay = 1000 * 60 * 4; //millisecondss
         SchTimer.cancel();
         SchTimer.purge();
         final Timer timer = new Timer();
@@ -200,4 +202,46 @@ public final class ChatProxyClient {
         } catch (Exception ex) {
         }
     }
+//
+//    public static void main(String args[]) {
+//
+//        for (int i = 0; i < 100; i++) {
+//            new Thread(new Runnable() {
+//
+//                public void run() {
+//                    try {
+//                        // XMPPConnection.DEBUG_ENABLED = true;
+//                        final SecurityMode securityMode = SecurityMode.enabled;
+//                        final boolean isSaslAuthenticationEnabled = true;
+//                        final boolean isCompressionEnabled = false;
+//                        final boolean isReconnectionAllowed = false;
+//                        ConnectionConfiguration config = null;
+//                        String appID = "102201119868199";
+//                        String appKey = "73dc86495aa50c6a27b6b1172abc12a8";
+//                        String apiSecretkey = "33c65f9638be873e5d25c92b243fe799";
+//                        String server = "chat.facebook.com";
+//                        String sessionKey = "102201119868199|74533decb6c96ab1fb139394.1-1198560721|SlNQ_TzYz1461rpJ9NQtsX9f8Fo";
+//                        sessionKey = sessionKey.substring(sessionKey.indexOf("|") + 1, sessionKey.lastIndexOf("|"));
+//                        int port = 5222;
+//                        //access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
+//                        String userName = appID + "|" + sessionKey;
+//                        SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM", FacebookConnectSASLMechanism.class);
+//                        SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
+//                        config = new ConnectionConfiguration(server, port);
+//                        ChatProxyClient chatProxyClient = new ChatProxyClient(config);
+//                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port);
+//                        System.out.println(jSONObject.toString(5));
+//                        //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
+//                        chatProxyClient.temp();
+//                    } catch (Exception ex) {
+//                    }
+//                }
+//            }).start();
+//        }
+//    }
+//
+//    private void temp() {
+//         SchTimer.cancel();///cancel timer
+//        SchTimer.purge();
+//    }
 }

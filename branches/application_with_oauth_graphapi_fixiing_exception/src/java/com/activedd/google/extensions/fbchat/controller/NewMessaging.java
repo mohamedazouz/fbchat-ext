@@ -8,8 +8,6 @@ import com.activedd.google.extensions.fbchat.chat.ChatProxyClient;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -52,7 +50,6 @@ public class NewMessaging extends MultiActionController {
                 jSONObject.write(response.getWriter());
                 response.getWriter().close();
             } catch (Exception ex) {
-                Logger.getLogger(NewMessaging.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             StringBuilder toId = new StringBuilder();
@@ -85,7 +82,6 @@ public class NewMessaging extends MultiActionController {
         try {
             jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
         } catch (JSONException ex) {
-            Logger.getLogger(NewMessaging.class.getName()).log(Level.SEVERE, null, ex);
         }
         JSONArray jSONArray = new JSONArray();
         if (chatClient == null || !chatClient.isConnected()) {
@@ -97,7 +93,6 @@ public class NewMessaging extends MultiActionController {
             jSONArray.write(response.getWriter());
             response.getWriter().close();
         } catch (Exception ex) {
-            Logger.getLogger(NewMessaging.class.getName()).log(Level.SEVERE, null, ex);
         }
 
 

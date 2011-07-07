@@ -13,6 +13,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 import java.security.ProtectionDomain;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.packet.Message;
@@ -33,12 +34,14 @@ public final class ChatProxyClient {
     private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fceboo
     private PacketFilterImp packetFilterImpl;//  filter message packet which contian no body
     private PacketListenerImp packetListenerImp;//listen for incomming messages and store in user file.
-    private Timer SchTimer = new Timer(); //timer thread for lossing session;
+    private Timer SchTimer = new Timer(); //timer thread for lossing session;s
+    ConnetionEvent connectionEvent;
 
     public ChatProxyClient(ConnectionConfiguration config) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
         packetListenerImp = new PacketListenerImp();
+        connectionEvent=new ConnetionEvent();
         SchTimer = this.StartTask();//rest timer
     }
 
@@ -57,15 +60,22 @@ public final class ChatProxyClient {
      * @throws InterruptedException
      * @throws FacebookException
      */
-    public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port) {
+    public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port, String apiID) {
         String result = "";
         int resultValu = 1;
+        connection.addPacketListener(packetListenerImp, packetFilterImpl);//adding the listening to listen for encoming packets
         try {
             if (!connection.isConnected()) {
+
                 connection.connect();
                 if (connection.isConnected()) {
-                    connection.login(apiKey + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
-                    connection.addPacketListener(packetListenerImp, packetFilterImpl);//adding the listening to listen for encoming packets
+                    try {
+                        connection.login(apiID + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
+                        connection.addConnectionListener(connectionEvent);
+                    } catch (Exception e) {
+                        result += "error  logining";
+                        resultValu = -1;
+                    }
                     result = "connected";
                 } else {
                     result = "not connected";
@@ -157,8 +167,18 @@ public final class ChatProxyClient {
         SchTimer.cancel();///cancel timer
         SchTimer.purge();
         if (connection.isConnected()) {
-            connection.disconnect();//disconnect from facebook server
+            try {
+                connection.disconnect();//disconnect from facebook server
+            } catch (Exception e) {
+            }
         }
+        connection.removePacketListener(packetListenerImp);
+        connection.removeConnectionListener(connectionEvent);
+        connection = null;
+        packetListenerImp = null;
+        packetFilterImpl = null;
+        connectionEvent=null;
+        System.gc();
     }
 
     public Timer StartTask() {
@@ -202,46 +222,64 @@ public final class ChatProxyClient {
         } catch (Exception ex) {
         }
     }
-//
-//    public static void main(String args[]) {
-//
-//        for (int i = 0; i < 100; i++) {
-//            new Thread(new Runnable() {
-//
-//                public void run() {
-//                    try {
-//                        // XMPPConnection.DEBUG_ENABLED = true;
-//                        final SecurityMode securityMode = SecurityMode.enabled;
-//                        final boolean isSaslAuthenticationEnabled = true;
-//                        final boolean isCompressionEnabled = false;
-//                        final boolean isReconnectionAllowed = false;
-//                        ConnectionConfiguration config = null;
-//                        String appID = "102201119868199";
-//                        String appKey = "73dc86495aa50c6a27b6b1172abc12a8";
-//                        String apiSecretkey = "33c65f9638be873e5d25c92b243fe799";
-//                        String server = "chat.facebook.com";
-//                        String sessionKey = "102201119868199|74533decb6c96ab1fb139394.1-1198560721|SlNQ_TzYz1461rpJ9NQtsX9f8Fo";
-//                        sessionKey = sessionKey.substring(sessionKey.indexOf("|") + 1, sessionKey.lastIndexOf("|"));
-//                        int port = 5222;
-//                        //access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
-//                        String userName = appID + "|" + sessionKey;
-//                        SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM", FacebookConnectSASLMechanism.class);
-//                        SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
-//                        config = new ConnectionConfiguration(server, port);
-//                        ChatProxyClient chatProxyClient = new ChatProxyClient(config);
-//                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port);
-//                        System.out.println(jSONObject.toString(5));
-//                        //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
-//                        chatProxyClient.temp();
-//                    } catch (Exception ex) {
-//                    }
-//                }
-//            }).start();
-//        }
-//    }
-//
-//    private void temp() {
-//         SchTimer.cancel();///cancel timer
-//        SchTimer.purge();
-//    }
+
+    public static void main(String args[]) {
+
+        for (int i = 0; i < 10; i++) {
+            new Thread(new Runnable() {
+
+                public void run() {
+                    try {
+                        // XMPPConnection.DEBUG_ENABLED = true;
+                        final SecurityMode securityMode = SecurityMode.enabled;
+                        final boolean isSaslAuthenticationEnabled = true;
+                        final boolean isCompressionEnabled = false;
+                        final boolean isReconnectionAllowed = false;
+                        ConnectionConfiguration config = null;
+                        String appID = "102201119868199";
+                        String appKey = "73dc86495aa50c6a27b6b1172abc12a8";
+                        String apiSecretkey = "33c65f9638be873e5d25c92b243fe799";
+                        String server = "chat.facebook.com";
+                        String sessionKey = "102201119868199|74533decb6c96ab1fb139394.1-1198560721|SlNQ_TzYz1461rpJ9NQtsX9f8Fo";
+                        sessionKey = sessionKey.substring(sessionKey.indexOf("|") + 1, sessionKey.lastIndexOf("|"));
+                        int port = 5222;
+                        //access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
+                        String userName = appID + "|" + sessionKey;
+                        SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM", FacebookConnectSASLMechanism.class);
+                        SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
+                        config = new ConnectionConfiguration(server, port);
+                        ChatProxyClient chatProxyClient = new ChatProxyClient(config);
+                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID);
+                        //System.out.println(jSONObject.toString(5));
+                        //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
+                         chatProxyClient.disconnect();
+                    } catch (Exception ex) {
+                    }
+                }
+            }).start();
+        }
+    }
+
+    class ConnetionEvent implements ConnectionListener {
+
+        public void connectionClosed() {
+            System.out.println("connection closed");
+        }
+
+        public void connectionClosedOnError(Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        public void reconnectingIn(int i) {
+            System.out.println(i);
+        }
+
+        public void reconnectionSuccessful() {
+            System.out.println("sucess");
+        }
+
+        public void reconnectionFailed(Exception excptn) {
+            System.out.println("reconnection faild");
+        }
+    }
 }

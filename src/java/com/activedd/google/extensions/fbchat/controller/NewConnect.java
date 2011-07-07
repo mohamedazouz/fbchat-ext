@@ -26,6 +26,7 @@ public class NewConnect extends MultiActionController {
     private int port;
     private ChatProxyClient chatClient;
     private ServerConfiguration configuration;
+    private String apiID;
 
     /**
      * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
@@ -49,7 +50,7 @@ public class NewConnect extends MultiActionController {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port,apiID);
                     if (result.getInt("status") == 1) {
                         session.setAttribute("client", chatClient);
                         status = 200;//http success code
@@ -149,5 +150,11 @@ public class NewConnect extends MultiActionController {
      */
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
+    }
+    /**
+     * @param apiID the apiID to set
+     */
+    public void setApiID(String apiID) {
+        this.apiID = apiID;
     }
 }

@@ -25,6 +25,7 @@ public class Connect extends MultiActionController {
     private String resource;
     private String domain;
     private int port;
+    private String apiID;
     private ServerConfiguration configuration;
 
     /**
@@ -50,7 +51,7 @@ public class Connect extends MultiActionController {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port,apiID);
                     if (result.getInt("status") == 1) {
                         session.setAttribute("client", chatClient);
                         jSONObject = chatClient.getLoggedInUserDetails();
@@ -96,7 +97,7 @@ public class Connect extends MultiActionController {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port);
+                    chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port,apiID);
                     session.setAttribute("client", chatClient);
                     status = 200;
                 } catch (Exception e) {
@@ -232,5 +233,12 @@ public class Connect extends MultiActionController {
      */
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
+    }
+
+    /**
+     * @param apiID the apiID to set
+     */
+    public void setApiID(String apiID) {
+        this.apiID = apiID;
     }
 }

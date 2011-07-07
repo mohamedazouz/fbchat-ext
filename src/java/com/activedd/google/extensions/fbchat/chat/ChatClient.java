@@ -60,7 +60,7 @@ public final class ChatClient {
      * @throws InterruptedException
      * @throws FacebookException
      */
-    public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port) {
+    public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port,String apiID) {
         String result = "";
         int resultValu = 1;
         try {
@@ -68,7 +68,7 @@ public final class ChatClient {
                 connection.connect();
                 if (connection.isConnected()) {
                     facebook = new FacebookJsonRestClient(apiKey, apiSecret, fbSessionKey);
-                    connection.login(apiKey + "|" + fbSessionKey, apiSecret, resource);
+                    connection.login(apiID + "|" + fbSessionKey, apiSecret, resource);
                     connection.addPacketListener(packetListenerImp, packetFilterImpl);
                 } else {
                     result += "+not connected";
@@ -240,6 +240,8 @@ public final class ChatClient {
         if (connection.isConnected()) {
             connection.disconnect();
         }
+        connection = null;
+        System.gc();
     }
 
     public void setIdle() {

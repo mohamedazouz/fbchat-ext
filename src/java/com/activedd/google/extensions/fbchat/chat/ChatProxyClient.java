@@ -34,15 +34,15 @@ public final class ChatProxyClient {
     private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fceboo
     private PacketFilterImp packetFilterImpl;//  filter message packet which contian no body
     private PacketListenerImp packetListenerImp;//listen for incomming messages and store in user file.
-    private Timer SchTimer = new Timer(); //timer thread for lossing session;s
+    private Timer SchTimer; //timer thread for lossing session;s
+    int sessionTimeOut = 4;
     ConnetionEvent connectionEvent;
 
     public ChatProxyClient(ConnectionConfiguration config) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
         packetListenerImp = new PacketListenerImp();
-        connectionEvent=new ConnetionEvent();
-        SchTimer = this.StartTask();//rest timer
+        connectionEvent = new ConnetionEvent();
     }
 
     /**
@@ -60,7 +60,7 @@ public final class ChatProxyClient {
      * @throws InterruptedException
      * @throws FacebookException
      */
-    public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port, String apiID) {
+    public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port, String apiID, int sessionTimeOut) {
         String result = "";
         int resultValu = 1;
         connection.addPacketListener(packetListenerImp, packetFilterImpl);//adding the listening to listen for encoming packets
@@ -72,23 +72,29 @@ public final class ChatProxyClient {
                     try {
                         connection.login(apiID + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
                         connection.addConnectionListener(connectionEvent);
+                        this.sessionTimeOut = sessionTimeOut;
+                        SchTimer = this.StartTask();
                     } catch (Exception e) {
                         result += "error  logining";
                         resultValu = -1;
+                        this.endTimer();
                     }
                     result = "connected";
                 } else {
                     result = "not connected";
                     resultValu = -1;
+                    this.endTimer();
                 }
             } else {
                 result = "connected with errors";
                 resultValu = -1;
+                this.endTimer();
             }
         } catch (Exception ex) {
             connection.disconnect();
             result += "+exception with login";
             resultValu = -1;
+            this.endTimer();
         } finally {
             JSONObject jSONObject = new JSONObject();
             try {
@@ -109,40 +115,53 @@ public final class ChatProxyClient {
      */
     public JSONArray getOnlineFriends() {
         JSONArray onlineFriends = new JSONArray();//online friends container
-        Roster roster = connection.getRoster();//get roster connection which contain all about friend
-        Collection<RosterEntry> enteries = roster.getEntries();//friends Entries
-        for (RosterEntry entry : enteries) {//loop for check online frineds
-            String user = entry.getUser();//friend id
-            Presence presence = roster.getPresence(user);
-            if (presence.getType() == Presence.Type.available) {//check if friend is not offline
-                JSONObject friend = new JSONObject();
-                try {
-                    friend.put("uid", user.substring(1, entry.getUser().indexOf("@")));
-                } catch (JSONException ex) {
-                }
-                try {
-                    friend.put("name", entry.getName());
-                } catch (JSONException ex) {
-                }
-                if (presence.getType() == Presence.Type.available) {
-                    String status = "";
-                    if (roster.getPresence(user).getMode() == Presence.Mode.away) {
-                        status = "away";
-                    } else {
-                        status = "online";
-                    }
+        try {
+            Roster roster = connection.getRoster();//get roster connection which contain all about friend
+            Collection<RosterEntry> enteries = roster.getEntries();//friends Entries
+            for (RosterEntry entry : enteries) {//loop for check online frineds
+                String user = entry.getUser();//friend id
+                Presence presence = roster.getPresence(user);
+                if (presence.getType() == Presence.Type.available) {//check if friend is not offline
+                    JSONObject friend = new JSONObject();
                     try {
-                        friend.put("online", status);
+                        friend.put("uid", user.substring(1, entry.getUser().indexOf("@")));
                     } catch (JSONException ex) {
                     }
-                    onlineFriends.put(friend);
-                    friend = null;
-                }
+                    try {
+                        friend.put("name", entry.getName());
+                    } catch (JSONException ex) {
+                    }
+                    if (presence.getType() == Presence.Type.available) {
+                        String status = "";
+                        if (roster.getPresence(user).getMode() == Presence.Mode.away) {
+                            status = "away";
+                        } else {
+                            status = "online";
+                        }
+                        try {
+                            friend.put("online", status);
+                        } catch (JSONException ex) {
+                        }
+                        onlineFriends.put(friend);
+                        friend = null;
+                    }
 
+                }
             }
+            SchTimer = this.StartTask();//rest timer
+        } catch (Exception e) {
+            this.endTimer();
+            JSONObject jSONObject = new JSONObject();
+            try {
+                jSONObject.put("msg", e.getMessage());
+                jSONObject.put("errorstatus", -1);
+            } catch (JSONException ex) {
+            }
+            onlineFriends.put(jSONObject);
+        } finally {
+            return onlineFriends;
         }
-        SchTimer = this.StartTask();//rest timer
-        return onlineFriends;
+
     }
 
     /**
@@ -151,12 +170,24 @@ public final class ChatProxyClient {
      * @param to friend which message send to
      * @throws XMPPException
      */
-    public void sendMessage(String msg, String to) {
-        Message message = new Message();
-        message.setBody(msg);
-        message.setTo(to);
-        connection.sendPacket(message);
-        SchTimer = this.StartTask();//reset timer
+    public JSONObject sendMessage(String msg, String to) {
+        JSONObject jSONObject = new JSONObject();
+        try {
+            Message message = new Message();
+            message.setBody(msg);
+            message.setTo(to);
+            connection.sendPacket(message);
+            SchTimer = this.StartTask();//reset timer
+        } catch (Exception e) {
+            this.endTimer();
+            try {
+                jSONObject.put("msg", e.getMessage());
+                jSONObject.put("errorstatus", -1);
+            } catch (JSONException ex) {
+            }
+        } finally {
+            return jSONObject;
+        }
     }
 
     /**
@@ -164,27 +195,24 @@ public final class ChatProxyClient {
      */
     public void disconnect() {
         deleteUserChatFile();//delete user file.
-        SchTimer.cancel();///cancel timer
-        SchTimer.purge();
-        if (connection.isConnected()) {
-            try {
-                connection.disconnect();//disconnect from facebook server
-            } catch (Exception e) {
+        if (connection != null) {
+            if (connection.isConnected()) {
+                try {
+                    SchTimer.cancel();///cancel timer
+                    SchTimer.purge();
+                    connection.disconnect();//disconnect from facebook server
+                } catch (Exception e) {
+                }
             }
+            connection.removePacketListener(packetListenerImp);
+            connection.removeConnectionListener(connectionEvent);
         }
-        connection.removePacketListener(packetListenerImp);
-        connection.removeConnectionListener(connectionEvent);
-        connection = null;
-        packetListenerImp = null;
-        packetFilterImpl = null;
-        connectionEvent=null;
         System.gc();
     }
 
     public Timer StartTask() {
-        int delay = 1000 * 60 * 4; //millisecondss
-        SchTimer.cancel();
-        SchTimer.purge();
+        int delay = 1000 * 60 * sessionTimeOut; //millisecondss
+        this.endTimer();
         final Timer timer = new Timer();
 
         timer.schedule(new TimerTask() {
@@ -197,6 +225,13 @@ public final class ChatProxyClient {
             }
         }, delay);
         return timer;
+    }
+
+    private void endTimer() {
+        if (SchTimer != null) {
+            SchTimer.cancel();///cancel timer
+            SchTimer.purge();
+        }
     }
 
     public boolean isConnected() {
@@ -224,8 +259,7 @@ public final class ChatProxyClient {
     }
 
     public static void main(String args[]) {
-
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             new Thread(new Runnable() {
 
                 public void run() {
@@ -249,10 +283,10 @@ public final class ChatProxyClient {
                         SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
                         config = new ConnectionConfiguration(server, port);
                         ChatProxyClient chatProxyClient = new ChatProxyClient(config);
-                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID);
-                        //System.out.println(jSONObject.toString(5));
+                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID, 1);
+                        System.out.println(jSONObject.toString(5));
                         //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
-                         chatProxyClient.disconnect();
+                        //chatProxyClient.disconnect();
                     } catch (Exception ex) {
                     }
                 }
@@ -267,19 +301,15 @@ public final class ChatProxyClient {
         }
 
         public void connectionClosedOnError(Exception ex) {
-            System.out.println(ex.getMessage());
         }
 
         public void reconnectingIn(int i) {
-            System.out.println(i);
         }
 
         public void reconnectionSuccessful() {
-            System.out.println("sucess");
         }
 
         public void reconnectionFailed(Exception excptn) {
-            System.out.println("reconnection faild");
         }
     }
 }

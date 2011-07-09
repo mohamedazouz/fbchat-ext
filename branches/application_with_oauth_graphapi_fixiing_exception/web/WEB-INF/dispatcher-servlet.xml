@@ -66,6 +66,7 @@
         <property name="domain" value="${fbapp.domain}"/>
         <property name="port"   value="${fbapp.port}"/>
         <property name="apiID"   value="${fbapp.appID}"/>
+        <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
         <property name="configuration" ref="configuration"/>
     </bean>
     <bean name="NewConnect" class="com.activedd.google.extensions.fbchat.controller.NewConnect" scope="request" >
@@ -75,6 +76,7 @@
         <property name="domain" value="${fbapp.domain}"/>
         <property name="port"   value="${fbapp.port}"/>
         <property name="apiID"   value="${fbapp.appID}"/>
+        <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
         <property name="configuration" ref="configuration"/>
     </bean>
 

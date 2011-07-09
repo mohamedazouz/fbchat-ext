@@ -26,7 +26,6 @@ public class NewMessaging extends MultiActionController {
     HttpSession session;
     private ChatProxyClient chatClient;
 
-
     /**
      * send page is to send message to specific user.
      *
@@ -43,7 +42,19 @@ public class NewMessaging extends MultiActionController {
         response.setCharacterEncoding("UTF-8");
         session = request.getSession();
         chatClient = (ChatProxyClient) session.getAttribute("client");
+        int flg = 1;
         if (chatClient == null || !chatClient.isConnected()) {
+            flg = -1;
+        } else {
+            StringBuilder toId = new StringBuilder();
+            String friend = request.getParameter("to");
+            toId.append("-").append(friend).append("@chat.facebook.com");
+            JSONObject jSONObject = chatClient.sendMessage(request.getParameter("msg"), toId.toString());
+            if (jSONObject.has("errorstatus")) {
+                flg = -1;
+            }
+        }
+        if (flg == -1) {
             JSONObject jSONObject;
             try {
                 jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
@@ -51,12 +62,9 @@ public class NewMessaging extends MultiActionController {
                 response.getWriter().close();
             } catch (Exception ex) {
             }
-        } else {
-            StringBuilder toId = new StringBuilder();
-            String friend = request.getParameter("to");
-            toId.append("-").append(friend).append("@chat.facebook.com");
-            chatClient.sendMessage(request.getParameter("msg"), toId.toString());
         }
+
+
     }
 
     /**
@@ -84,10 +92,17 @@ public class NewMessaging extends MultiActionController {
         } catch (JSONException ex) {
         }
         JSONArray jSONArray = new JSONArray();
+        int flg = 1;
         if (chatClient == null || !chatClient.isConnected()) {
-            jSONArray.put(jSONObject);
+            flg = -1;
         } else {
             jSONArray = chatClient.getOnlineFriends();
+            if (jSONArray.getJSONObject(0).has("errorstatus")) {
+                flg = -1;
+            }
+        }
+        if (flg == -1) {
+            jSONArray.put(jSONObject);
         }
         try {
             jSONArray.write(response.getWriter());

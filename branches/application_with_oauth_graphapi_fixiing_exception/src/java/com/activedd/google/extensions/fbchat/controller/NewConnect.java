@@ -24,6 +24,7 @@ public class NewConnect extends MultiActionController {
     private String resource;
     private String domain;
     private int port;
+    private int sessionTimeOut;
     private ChatProxyClient chatClient;
     private ServerConfiguration configuration;
     private String apiID;
@@ -50,7 +51,7 @@ public class NewConnect extends MultiActionController {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port,apiID);
+                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port,apiID,sessionTimeOut);
                     if (result.getInt("status") == 1) {
                         session.setAttribute("client", chatClient);
                         status = 200;//http success code
@@ -156,5 +157,12 @@ public class NewConnect extends MultiActionController {
      */
     public void setApiID(String apiID) {
         this.apiID = apiID;
+    }
+
+    /**
+     * @param sessionTimeOut the sessionTimeOut to set
+     */
+    public void setSessionTimeOut(int sessionTimeOut) {
+        this.sessionTimeOut = sessionTimeOut;
     }
 }

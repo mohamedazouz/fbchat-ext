@@ -24,11 +24,15 @@
 
 
 <!--    <bean id="chatClient" class="com.activedd.google.extensions.fbchat.chat.ChatClient"></bean>-->
-    <bean id="jsoncreator" class="com.activedd.google.extensions.fbchat.chat.JsonCreate" ></bean>
     
     <bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:../fbproperties.properties"/>
     </bean>
+    
+    <bean id="jsoncreator" class="com.activedd.google.extensions.fbchat.chat.JsonCreate" >
+        <property name="realPath" value="${fbapp.localDir}"/>
+    </bean>
+    
     <bean id="configuration" class="com.activedd.google.extensions.fbchat.chat.ServerConfiguration" >
         <constructor-arg value="${fbapp.domain}" />
         <constructor-arg value="${fbapp.port}"/>

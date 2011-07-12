@@ -63,7 +63,7 @@ public final class ChatProxyClient {
     public JSONObject xmppConnectAndLogin(String fbSessionKey, String apiKey, String apiSecret, String domain, String resource, int port, String apiID, int sessionTimeOut) {
         String result = "";
         int resultValu = 1;
-        connection.addPacketListener(packetListenerImp, packetFilterImpl);//adding the listening to listen for encoming packets
+        //connection.addPacketListener(packetListenerImp, packetFilterImpl);//adding the listening to listen for encoming packets
         try {
             if (!connection.isConnected()) {
 
@@ -72,6 +72,7 @@ public final class ChatProxyClient {
                     try {
                         connection.login(apiID + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
                         connection.addConnectionListener(connectionEvent);
+                        connection.addPacketListener(packetListenerImp, packetFilterImpl);
                         this.sessionTimeOut = sessionTimeOut;
                         SchTimer = this.StartTask();
                     } catch (Exception e) {

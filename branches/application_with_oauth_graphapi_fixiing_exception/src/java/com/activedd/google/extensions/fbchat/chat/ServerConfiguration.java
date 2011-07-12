@@ -20,7 +20,7 @@ public class ServerConfiguration {
     private XMPPConnection connection; // Connect to facebook chat and also it implement all xmpp chat for fcebook
     private final SecurityMode securityMode = SecurityMode.enabled;
     private final boolean isSaslAuthenticationEnabled = true;
-    private final boolean isCompressionEnabled = false;
+    public final boolean isCompressionEnabled = false;
     private final boolean isReconnectionAllowed = false;
     private FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
     private MessageListenerImp messageListenerImp;

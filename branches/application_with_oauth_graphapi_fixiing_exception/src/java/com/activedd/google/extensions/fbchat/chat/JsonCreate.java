@@ -25,6 +25,8 @@ import org.json.JSONObject;
 public class JsonCreate {
 
     private final int LAST_MODIFICATION_SECODS = 4;
+    
+    private String realPath="/var/www/http/chat/";
 
     /**
      * Store receiving messages in 1 json file and append to file if its last modification within 2 seconds
@@ -41,10 +43,10 @@ public class JsonCreate {
         Date currentDate = new Date();
         JSONArray lastReceivedMessages = null;
         JSONObject receivedMessage = new JSONObject();
-        ProtectionDomain domain = this.getClass().getProtectionDomain();
-        String path = domain.getCodeSource().getLocation().getPath();
-        String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
-        File file = new File(p_realPath + "chat/" + to.subSequence(1, to.lastIndexOf("@")) + ".json");
+//        ProtectionDomain domain = this.getClass().getProtectionDomain();
+        //String path = domain.getCodeSource().getLocation().getPath();
+        //String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
+        File file = new File(realPath + to.subSequence(1, to.lastIndexOf("@")) + ".json");
         long currentTime = currentDate.getTime();
         int currentSeconds = currentDate.getSeconds();
         currentDate = new Date(file.lastModified());
@@ -75,5 +77,9 @@ public class JsonCreate {
         String json = lastReceivedMessages.toString(5);
         out.append(json);
         out.close();
+    }
+
+    public void setRealPath(String realPath) {
+        this.realPath = realPath;
     }
 }

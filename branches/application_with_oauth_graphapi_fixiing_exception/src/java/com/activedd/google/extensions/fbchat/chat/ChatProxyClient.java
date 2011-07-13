@@ -37,6 +37,7 @@ public final class ChatProxyClient {
     private Timer SchTimer; //timer thread for lossing session;s
     int sessionTimeOut = 4;
     ConnetionEvent connectionEvent;
+    private String realPath = "/var/www/html/chat/";
 
     public ChatProxyClient(ConnectionConfiguration config) {
         connection = new XMPPConnection(config);
@@ -247,16 +248,20 @@ public final class ChatProxyClient {
         try {
             String user = connection.getUser();//user id
             String uid = user.substring(1, user.indexOf("@"));
-            ProtectionDomain domain = this.getClass().getProtectionDomain();
-            String path = domain.getCodeSource().getLocation().getPath();
-            StringBuilder p_realPath = new StringBuilder(path.substring(path.indexOf("/"), path.indexOf("WEB-INF")));
-            p_realPath.append("chat/").append(uid).append(".json");
-            File file = new File(p_realPath.toString());
+//            ProtectionDomain domain = this.getClass().getProtectionDomain();
+//            String path = domain.getCodeSource().getLocation().getPath();
+//            StringBuilder p_realPath = new StringBuilder(path.substring(path.indexOf("/"), path.indexOf("WEB-INF")));
+//            p_realPath.append("chat/").append(uid).append(".json");
+            File file = new File(realPath + uid + ".json");
             if (file.exists()) {
                 file.delete();
             }
         } catch (Exception ex) {
         }
+    }
+
+    public void setRealPath(String realPath) {
+        this.realPath = realPath;
     }
 
     public static void main(String args[]) {

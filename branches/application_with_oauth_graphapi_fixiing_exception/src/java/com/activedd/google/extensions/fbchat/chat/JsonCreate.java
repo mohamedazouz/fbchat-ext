@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.ProtectionDomain;
 import java.util.Date;
 import java.util.Scanner;
 import org.json.JSONArray;
@@ -26,7 +25,7 @@ public class JsonCreate {
 
     private final int LAST_MODIFICATION_SECODS = 4;
     
-    private String realPath="/var/www/http/chat/";
+    private String realPath="/var/www/html/chat/";
 
     /**
      * Store receiving messages in 1 json file and append to file if its last modification within 2 seconds

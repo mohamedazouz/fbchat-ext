@@ -5,6 +5,7 @@
 package com.activedd.google.extensions.fbchat.controller;
 
 import com.activedd.google.extensions.fbchat.chat.ChatClient;
+import com.activedd.google.extensions.fbchat.chat.JsonCreate;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class Connect extends MultiActionController {
     private int sessionTimeOut;
     private String apiID;
     private ServerConfiguration configuration;
+    private JsonCreate jsonCreator;
 
     /**
      * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
@@ -44,7 +46,7 @@ public class Connect extends MultiActionController {
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
             boolean flg = true;
-            chatClient = new ChatClient(configuration.getConfiguration());
+            chatClient = new ChatClient(configuration.getConfiguration(),jsonCreator);
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
@@ -89,7 +91,7 @@ public class Connect extends MultiActionController {
         //get the seesion key from url as parameter
         try {
             boolean flg = true;
-            chatClient = new ChatClient(configuration.getConfiguration());
+            chatClient = new ChatClient(configuration.getConfiguration(),jsonCreator);
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
@@ -248,5 +250,12 @@ public class Connect extends MultiActionController {
      */
     public void setSessionTimeOut(int sessionTimeOut) {
         this.sessionTimeOut = sessionTimeOut;
+    }
+
+    /**
+     * @param jsonCreator the jsonCreator to set
+     */
+    public void setJsonCreator(JsonCreate jsonCreator) {
+        this.jsonCreator = jsonCreator;
     }
 }

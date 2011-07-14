@@ -43,10 +43,10 @@ public final class ChatClient {
     int sessionTimeOut = 4;
     private Timer SchTimer;
 
-    public ChatClient(ConnectionConfiguration config) {
+    public ChatClient(ConnectionConfiguration config,JsonCreate jsonCreator) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
-        packetListenerImp = new PacketListenerImp();
+        packetListenerImp = new PacketListenerImp(jsonCreator);
         connectionEvent = new ConnetionEvent();
     }
 
@@ -328,7 +328,7 @@ public final class ChatClient {
     class ConnetionEvent implements ConnectionListener {
 
         public void connectionClosed() {
-            System.out.println("connection closed");
+           // System.out.println("connection closed");
         }
 
         public void connectionClosedOnError(Exception ex) {
@@ -369,7 +369,7 @@ public final class ChatClient {
                         SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM", FacebookConnectSASLMechanism.class);
                         SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
                         config = new ConnectionConfiguration(server, port);
-                        ChatClient chatProxyClient = new ChatClient(config);
+                        ChatClient chatProxyClient = new ChatClient(config,new JsonCreate());
                         JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID, 1);
                         System.out.println(jSONObject.toString(5));
                         //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));

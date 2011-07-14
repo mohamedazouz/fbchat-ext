@@ -16,7 +16,11 @@ import org.jivesoftware.smack.packet.Packet;
  */
 public class PacketListenerImp implements PacketListener {
 
-    private JsonCreate jsonCreate = new JsonCreate();
+    private JsonCreate jsonCreate;
+
+    public PacketListenerImp(JsonCreate jsonCreate) {
+        this.jsonCreate = jsonCreate;
+    }
 
     public void processPacket(Packet packet) {
         if (packet.toString().contains("Message")) {
@@ -24,7 +28,7 @@ public class PacketListenerImp implements PacketListener {
             try {
                 jsonCreate.createJsonFile(message.getFrom(), message.getBody(), message.getTo().split("/")[0]);
             } catch (Exception ex) {
-                if(!(ex instanceof NullPointerException)){
+                if (!(ex instanceof NullPointerException)) {
                     Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

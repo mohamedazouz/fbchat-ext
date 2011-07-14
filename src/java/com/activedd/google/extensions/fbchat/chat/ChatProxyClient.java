@@ -37,13 +37,14 @@ public final class ChatProxyClient {
     private Timer SchTimer; //timer thread for lossing session;s
     int sessionTimeOut = 4;
     ConnetionEvent connectionEvent;
-    private String realPath = "/var/www/html/chat/";
+    private String realPath;
 
-    public ChatProxyClient(ConnectionConfiguration config) {
+    public ChatProxyClient(ConnectionConfiguration config, JsonCreate jsonCreate) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
-        packetListenerImp = new PacketListenerImp();
+        packetListenerImp = new PacketListenerImp(jsonCreate);
         connectionEvent = new ConnetionEvent();
+        this.realPath = jsonCreate.getRealPath();
     }
 
     /**
@@ -93,7 +94,6 @@ public final class ChatProxyClient {
                 this.endTimer();
             }
         } catch (Exception ex) {
-            connection.disconnect();
             result += "+exception with login";
             resultValu = -1;
             this.endTimer();
@@ -133,21 +133,15 @@ public final class ChatProxyClient {
                         friend.put("name", entry.getName());
                     } catch (JSONException ex) {
                     }
-                    if (presence.getType() == Presence.Type.available) {
-                        String status = "";
-                        if (roster.getPresence(user).getMode() == Presence.Mode.away) {
-                            status = "away";
-                        } else {
-                            status = "online";
-                        }
-                        try {
-                            friend.put("online", status);
-                        } catch (JSONException ex) {
-                        }
-                        onlineFriends.put(friend);
-                        friend = null;
+                    String status = "";
+                    if (roster.getPresence(user).getMode() == Presence.Mode.away) {
+                        status = "away";
+                    } else {
+                        status = "online";
                     }
-
+                    friend.put("online", status);
+                    onlineFriends.put(friend);
+                    friend = null;
                 }
             }
             SchTimer = this.StartTask();//rest timer
@@ -233,6 +227,7 @@ public final class ChatProxyClient {
         if (SchTimer != null) {
             SchTimer.cancel();///cancel timer
             SchTimer.purge();
+            disconnect();
         }
     }
 
@@ -276,11 +271,11 @@ public final class ChatProxyClient {
                         final boolean isCompressionEnabled = false;
                         final boolean isReconnectionAllowed = false;
                         ConnectionConfiguration config = null;
-                        String appID = "102201119868199";
+                        String appID = "156782624384247";
                         String appKey = "73dc86495aa50c6a27b6b1172abc12a8";
-                        String apiSecretkey = "33c65f9638be873e5d25c92b243fe799";
+                        String apiSecretkey = "11b9c324c6abb5e8a0cf5a47826a2b51";
                         String server = "chat.facebook.com";
-                        String sessionKey = "102201119868199|74533decb6c96ab1fb139394.1-1198560721|SlNQ_TzYz1461rpJ9NQtsX9f8Fo";
+                        String sessionKey = "156782624384247|4afba9822e4c1dfdd7bf7594.1-1198560721|lpovwb0LHnGXSRHrQeB141oLX68";
                         sessionKey = sessionKey.substring(sessionKey.indexOf("|") + 1, sessionKey.lastIndexOf("|"));
                         int port = 5222;
                         //access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
@@ -288,9 +283,10 @@ public final class ChatProxyClient {
                         SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM", FacebookConnectSASLMechanism.class);
                         SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
                         config = new ConnectionConfiguration(server, port);
-                        ChatProxyClient chatProxyClient = new ChatProxyClient(config);
+                        ChatProxyClient chatProxyClient = new ChatProxyClient(config, new JsonCreate());
                         JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID, 1);
                         System.out.println(jSONObject.toString(5));
+                        chatProxyClient.sendMessage("hello", "-100002298398209@chat.facebook.com");
                         //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
                         //chatProxyClient.disconnect();
                     } catch (Exception ex) {
@@ -303,7 +299,7 @@ public final class ChatProxyClient {
     class ConnetionEvent implements ConnectionListener {
 
         public void connectionClosed() {
-            System.out.println("connection closed");
+          //  System.out.println("connection closed");
         }
 
         public void connectionClosedOnError(Exception ex) {

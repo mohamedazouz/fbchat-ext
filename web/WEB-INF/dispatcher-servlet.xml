@@ -68,6 +68,7 @@
         <property name="apiID"   value="${fbapp.appID}"/>
         <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
         <property name="configuration" ref="configuration"/>
+        <property name="jsonCreator" ref="jsoncreator"/>
     </bean>
     <bean name="NewConnect" class="com.activedd.google.extensions.fbchat.controller.NewConnect" scope="request" >
         <property name="apiKey" value="${fbapp.appKey}"/>
@@ -78,6 +79,7 @@
         <property name="apiID"   value="${fbapp.appID}"/>
         <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
         <property name="configuration" ref="configuration"/>
+        <property name="jsonCreator" ref="jsoncreator"/>
     </bean>
 
     <bean name="Messaging" class="com.activedd.google.extensions.fbchat.controller.Messaging" >

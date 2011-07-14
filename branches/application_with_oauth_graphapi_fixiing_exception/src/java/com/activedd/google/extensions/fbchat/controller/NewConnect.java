@@ -9,6 +9,7 @@ package com.activedd.google.extensions.fbchat.controller;
  * @author ibrahim
  */
 import com.activedd.google.extensions.fbchat.chat.ChatProxyClient;
+import com.activedd.google.extensions.fbchat.chat.JsonCreate;
 import com.activedd.google.extensions.fbchat.chat.ServerConfiguration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,8 @@ public class NewConnect extends MultiActionController {
     private ChatProxyClient chatClient;
     private ServerConfiguration configuration;
     private String apiID;
+    private JsonCreate jsonCreator;
+    private String realPath;
 
     /**
      * Connect Page is to xmppConnectAndLogin to facebook chat via user session key.
@@ -41,7 +44,7 @@ public class NewConnect extends MultiActionController {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
         try {
-            chatClient = new ChatProxyClient(configuration.getConfiguration());
+            chatClient = new ChatProxyClient(configuration.getConfiguration(),jsonCreator);
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
@@ -164,5 +167,19 @@ public class NewConnect extends MultiActionController {
      */
     public void setSessionTimeOut(int sessionTimeOut) {
         this.sessionTimeOut = sessionTimeOut;
+    }
+
+    /**
+     * @param jsonCreator the jsonCreator to set
+     */
+    public void setJsonCreator(JsonCreate jsonCreator) {
+        this.jsonCreator = jsonCreator;
+    }
+
+    /**
+     * @param realPath the realPath to set
+     */
+    public void setRealPath(String realPath) {
+        this.realPath = realPath;
     }
 }

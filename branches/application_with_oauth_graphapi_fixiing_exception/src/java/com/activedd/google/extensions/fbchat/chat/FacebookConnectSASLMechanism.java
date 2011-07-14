@@ -51,7 +51,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                 return stanza.toString();
             }
         };
-        getSASLAuthentication().send(p.toXML());
+        getSASLAuthentication().send(p);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                 return stanza.toString();
             }
         };
-        getSASLAuthentication().send(p.toXML());
+        getSASLAuthentication().send(p);
     }
 
     private Map<String, String> getQueryMap(String query) {

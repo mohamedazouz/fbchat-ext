@@ -35,7 +35,7 @@ public class NewMessaging extends MultiActionController {
      * @param response
      * @throws UnsupportedEncodingException
      */
-    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, XMPPException {
+    public void send(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         //send a message
         //get to ID url parameter and msg
         request.setCharacterEncoding("UTF-8");
@@ -43,6 +43,7 @@ public class NewMessaging extends MultiActionController {
         session = request.getSession();
         chatClient = (ChatProxyClient) session.getAttribute("client");
         int flg = 1;
+        String meessage="";
         if (chatClient == null || !chatClient.isConnected()) {
             flg = -1;
         } else {
@@ -57,7 +58,7 @@ public class NewMessaging extends MultiActionController {
         if (flg == -1) {
             JSONObject jSONObject;
             try {
-                jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'}");
+                jSONObject = new JSONObject("{status: 400 ,message:'No Session Found'"+meessage+"}");
                 jSONObject.write(response.getWriter());
                 response.getWriter().close();
             } catch (Exception ex) {
@@ -97,7 +98,7 @@ public class NewMessaging extends MultiActionController {
             flg = -1;
         } else {
             jSONArray = chatClient.getOnlineFriends();
-            if (jSONArray.getJSONObject(0).has("errorstatus")) {
+            if (jSONArray.length() >= 0 && jSONArray.getJSONObject(0).has("errorstatus")) {
                 flg = -1;
             }
         }
@@ -109,7 +110,5 @@ public class NewMessaging extends MultiActionController {
             response.getWriter().close();
         } catch (Exception ex) {
         }
-
-
     }
 }

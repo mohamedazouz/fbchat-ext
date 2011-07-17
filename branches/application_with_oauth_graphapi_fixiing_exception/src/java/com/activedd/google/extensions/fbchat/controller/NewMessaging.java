@@ -98,7 +98,7 @@ public class NewMessaging extends MultiActionController {
             flg = -1;
         } else {
             jSONArray = chatClient.getOnlineFriends();
-            if (jSONArray.length() >= 0 && jSONArray.getJSONObject(0).has("errorstatus")) {
+            if (jSONArray.length() == 1 && jSONArray.getJSONObject(0).has("errorstatus")) {
                 flg = -1;
             }
         }

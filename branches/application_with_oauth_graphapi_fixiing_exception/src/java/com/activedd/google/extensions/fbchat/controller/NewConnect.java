@@ -44,7 +44,7 @@ public class NewConnect extends MultiActionController {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
         try {
-            chatClient = new ChatProxyClient(configuration.getConfiguration(),jsonCreator);
+            chatClient = new ChatProxyClient(configuration.getConfiguration(), jsonCreator);
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
@@ -54,14 +54,14 @@ public class NewConnect extends MultiActionController {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
                     sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
-                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port,apiID,sessionTimeOut);
+                    JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port, apiID, sessionTimeOut);
                     if (result.getInt("status") == 1) {
                         session.setAttribute("client", chatClient);
                         status = 200;//http success code
                         message = "success";
                     } else {
                         status = 417;//http success code
-                        message = (String) result.get("msg");
+                        message = "Expectation Failed";
                     }
 
                 } catch (Exception e) {
@@ -155,6 +155,7 @@ public class NewConnect extends MultiActionController {
     public void setApiSecret(String apiSecret) {
         this.apiSecret = apiSecret;
     }
+
     /**
      * @param apiID the apiID to set
      */

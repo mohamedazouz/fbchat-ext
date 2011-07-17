@@ -36,14 +36,12 @@ public final class ChatProxyClient {
     private PacketListenerImp packetListenerImp;//listen for incomming messages and store in user file.
     private Timer SchTimer; //timer thread for lossing session;s
     int sessionTimeOut = 4;
-    ConnetionEvent connectionEvent;
     private String realPath;
 
     public ChatProxyClient(ConnectionConfiguration config, JsonCreate jsonCreate) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
         packetListenerImp = new PacketListenerImp(jsonCreate);
-        connectionEvent = new ConnetionEvent();
         this.realPath = jsonCreate.getRealPath();
     }
 
@@ -73,16 +71,15 @@ public final class ChatProxyClient {
                 if (connection.isConnected()) {
                     try {
                         connection.login(apiID + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
-                        connection.addConnectionListener(connectionEvent);
                         connection.addPacketListener(packetListenerImp, packetFilterImpl);
                         this.sessionTimeOut = sessionTimeOut;
+                        result = "connected";
                         SchTimer = this.StartTask();
                     } catch (Exception e) {
                         result += "error  logining";
                         resultValu = -1;
                         this.endTimer();
                     }
-                    result = "connected";
                 } else {
                     result = "not connected";
                     resultValu = -1;
@@ -193,22 +190,26 @@ public final class ChatProxyClient {
         deleteUserChatFile();//delete user file.
         if (connection != null) {
             if (connection.isConnected()) {
-                try {
-                    SchTimer.cancel();///cancel timer
-                    SchTimer.purge();
-                    connection.disconnect();//disconnect from facebook server
-                } catch (Exception e) {
-                }
+                connection.disconnect();//disconnect from facebook server
             }
             connection.removePacketListener(packetListenerImp);
-            connection.removeConnectionListener(connectionEvent);
         }
+        try {
+            SchTimer.cancel();///cancel timer
+            SchTimer.purge();
+        } catch (Exception e) {
+        }
+
+        SchTimer = null;
         System.gc();
     }
 
     public Timer StartTask() {
         int delay = 1000 * 60 * sessionTimeOut; //millisecondss
-        this.endTimer();
+        if (SchTimer != null) {
+            SchTimer.cancel();///cancel timer
+            SchTimer.purge();
+        }
         final Timer timer = new Timer();
 
         timer.schedule(new TimerTask() {
@@ -227,8 +228,8 @@ public final class ChatProxyClient {
         if (SchTimer != null) {
             SchTimer.cancel();///cancel timer
             SchTimer.purge();
-            disconnect();
         }
+        disconnect();
     }
 
     public boolean isConnected() {
@@ -275,7 +276,7 @@ public final class ChatProxyClient {
                         String appKey = "73dc86495aa50c6a27b6b1172abc12a8";
                         String apiSecretkey = "11b9c324c6abb5e8a0cf5a47826a2b51";
                         String server = "chat.facebook.com";
-                        String sessionKey = "156782624384247|4afba9822e4c1dfdd7bf7594.1-1198560721|lpovwb0LHnGXSRHrQeB141oLX68";
+                        String sessionKey = "156782624384247|29e5be08f6e8df00b937f9a4.1-1198560721|Juk3F63-ToKGw8yvuhxXt_D8EIA";
                         sessionKey = sessionKey.substring(sessionKey.indexOf("|") + 1, sessionKey.lastIndexOf("|"));
                         int port = 5222;
                         //access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
@@ -283,10 +284,12 @@ public final class ChatProxyClient {
                         SASLAuthentication.registerSASLMechanism("X-FACEBOOK-PLATFORM", FacebookConnectSASLMechanism.class);
                         SASLAuthentication.supportSASLMechanism("X-FACEBOOK-PLATFORM", 0);
                         config = new ConnectionConfiguration(server, port);
-                        ChatProxyClient chatProxyClient = new ChatProxyClient(config, new JsonCreate());
-                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID, 1);
+                        JsonCreate create=new JsonCreate();
+                        create.setRealPath("/home/ibrahim/Desktop/");
+                        ChatProxyClient chatProxyClient = new ChatProxyClient(config,create);
+                        JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID, 4);
                         System.out.println(jSONObject.toString(5));
-                        chatProxyClient.sendMessage("hello", "-100002298398209@chat.facebook.com");
+                        System.out.println(chatProxyClient.sendMessage("hello", "-100002298398209@chat.facebook.com").toString(5));;
                         //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
                         //chatProxyClient.disconnect();
                     } catch (Exception ex) {
@@ -296,22 +299,4 @@ public final class ChatProxyClient {
         }
     }
 
-    class ConnetionEvent implements ConnectionListener {
-
-        public void connectionClosed() {
-          //  System.out.println("connection closed");
-        }
-
-        public void connectionClosedOnError(Exception ex) {
-        }
-
-        public void reconnectingIn(int i) {
-        }
-
-        public void reconnectionSuccessful() {
-        }
-
-        public void reconnectionFailed(Exception excptn) {
-        }
-    }
 }

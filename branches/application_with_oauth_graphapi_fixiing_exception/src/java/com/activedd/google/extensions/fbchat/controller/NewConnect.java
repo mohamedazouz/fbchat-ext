@@ -29,7 +29,7 @@ public class NewConnect extends MultiActionController {
     private ChatProxyClient chatClient;
     private ServerConfiguration configuration;
     private String apiID;
-    private JsonCreate jsonCreator;
+   // private JsonCreate jsonCreator;
     private String realPath;
 
     /**
@@ -44,7 +44,7 @@ public class NewConnect extends MultiActionController {
         //TO DO: go online on facebook.
         //get the seesion key from url as parameter
         try {
-            chatClient = new ChatProxyClient(configuration.getConfiguration(), jsonCreator);
+            chatClient = new ChatProxyClient(configuration.getConfiguration(), realPath);
             //create a new session if there is no session associated with request.
             session = request.getSession(true);
             JSONObject jSONObject = null;
@@ -170,12 +170,12 @@ public class NewConnect extends MultiActionController {
         this.sessionTimeOut = sessionTimeOut;
     }
 
-    /**
-     * @param jsonCreator the jsonCreator to set
-     */
-    public void setJsonCreator(JsonCreate jsonCreator) {
-        this.jsonCreator = jsonCreator;
-    }
+//    /**
+//     * @param jsonCreator the jsonCreator to set
+//     */
+//    public void setJsonCreator(JsonCreate jsonCreator) {
+//        this.jsonCreator = jsonCreator;
+//    }
 
     /**
      * @param realPath the realPath to set

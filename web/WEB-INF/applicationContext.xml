@@ -29,9 +29,9 @@
         <property name="location" value="classpath:../fbproperties.properties"/>
     </bean>
     
-    <bean id="jsoncreator" class="com.activedd.google.extensions.fbchat.chat.JsonCreate"  >
+<!--    <bean id="jsoncreator" class="com.activedd.google.extensions.fbchat.chat.JsonCreate"  >
         <property name="realPath" value="${fbapp.localDir}"/>
-    </bean>
+    </bean>-->
     
     <bean id="configuration" class="com.activedd.google.extensions.fbchat.chat.ServerConfiguration" >
         <constructor-arg value="${fbapp.domain}" />

@@ -78,8 +78,8 @@
         <property name="port"   value="${fbapp.port}"/>
         <property name="apiID"   value="${fbapp.appID}"/>
         <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
-        <property name="configuration" ref="configuration"/>
-        <property name="jsonCreator" ref="jsoncreator"/>
+        <property name="configuration"  ref="configuration"/>
+        <property name="realPath" value="${fbapp.localDir}"/>
     </bean>
 
     <bean name="Messaging" class="com.activedd.google.extensions.fbchat.controller.Messaging" >

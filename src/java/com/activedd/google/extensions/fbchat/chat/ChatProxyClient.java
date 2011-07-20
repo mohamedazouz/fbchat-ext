@@ -38,9 +38,12 @@ public final class ChatProxyClient {
     int sessionTimeOut = 4;
     private String realPath;
 
-    public ChatProxyClient(ConnectionConfiguration config, JsonCreate jsonCreate) {
+    public ChatProxyClient(ConnectionConfiguration config, String realPath) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
+        JsonCreate jsonCreate=new JsonCreate();
+        jsonCreate.setRealPath(realPath);
+        System.out.println(realPath);
         packetListenerImp = new PacketListenerImp(jsonCreate);
         this.realPath = jsonCreate.getRealPath();
     }
@@ -91,7 +94,7 @@ public final class ChatProxyClient {
                 this.endTimer();
             }
         } catch (Exception ex) {
-            result += "+exception with login";
+            result += "+exception with login" + ex.getMessage();
             resultValu = -1;
             this.endTimer();
         } finally {
@@ -272,11 +275,11 @@ public final class ChatProxyClient {
                         final boolean isCompressionEnabled = false;
                         final boolean isReconnectionAllowed = false;
                         ConnectionConfiguration config = null;
-                        String appID = "156782624384247";
-                        String appKey = "73dc86495aa50c6a27b6b1172abc12a8";
-                        String apiSecretkey = "11b9c324c6abb5e8a0cf5a47826a2b51";
+                        String appID = "102201119868199";
+                        String appKey = "b6028f531b11c157e9ab42815cd2a433";
+                        String apiSecretkey = "d5756c1d7291c62bc16372e3112b6060";
                         String server = "chat.facebook.com";
-                        String sessionKey = "156782624384247|29e5be08f6e8df00b937f9a4.1-1198560721|Juk3F63-ToKGw8yvuhxXt_D8EIA";
+                        String sessionKey = "102201119868199|5fcdf506afb30378e55cc64b.1-1198560721|arE2qGJCTjT1iOd0n_GugOGe2_Y";
                         sessionKey = sessionKey.substring(sessionKey.indexOf("|") + 1, sessionKey.lastIndexOf("|"));
                         int port = 5222;
                         //access_token=127410177333318|c1878e53d815eacb850bd07e.1-1198560721|s8GRlMP7IQGuoivM6qoEK6TScYo
@@ -286,12 +289,12 @@ public final class ChatProxyClient {
                         config = new ConnectionConfiguration(server, port);
                         JsonCreate create=new JsonCreate();
                         create.setRealPath("/home/ibrahim/Desktop/");
-                        ChatProxyClient chatProxyClient = new ChatProxyClient(config,create);
+                        ChatProxyClient chatProxyClient = new ChatProxyClient(config,"/home/ibrahim/Desktop/");
                         JSONObject jSONObject = chatProxyClient.xmppConnectAndLogin(sessionKey, appKey, apiSecretkey, server, "eshta", port, appID, 4);
                         System.out.println(jSONObject.toString(5));
-                        System.out.println(chatProxyClient.sendMessage("hello", "-100002298398209@chat.facebook.com").toString(5));;
+                       //System.out.println(chatProxyClient.sendMessage("hello", "-100002298398209@chat.facebook.com").toString(5));;
                         //   System.out.println(chatProxyClient.getOnlineFriends().toString(5));
-                        //chatProxyClient.disconnect();
+                       // chatProxyClient.disconnect();
                     } catch (Exception ex) {
                     }
                 }

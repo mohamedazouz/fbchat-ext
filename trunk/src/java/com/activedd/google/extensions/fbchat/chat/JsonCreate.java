@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.ProtectionDomain;
 import java.util.Date;
 import java.util.Scanner;
 import org.json.JSONArray;
@@ -25,6 +24,8 @@ import org.json.JSONObject;
 public class JsonCreate {
 
     private final int LAST_MODIFICATION_SECODS = 4;
+    
+    private String realPath;
 
     /**
      * Store receiving messages in 1 json file and append to file if its last modification within 2 seconds
@@ -41,25 +42,27 @@ public class JsonCreate {
         Date currentDate = new Date();
         JSONArray lastReceivedMessages = null;
         JSONObject receivedMessage = new JSONObject();
-        ProtectionDomain domain = this.getClass().getProtectionDomain();
-        /*File filea = new File(domain.getCodeSource().getLocation().getPath());
-        String path = filea.getParentFile().getParentFile().getPath();*/
-        String path = domain.getCodeSource().getLocation().getPath();
-        String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
-        File file = new File(p_realPath + "chat/" + to.subSequence(1, to.lastIndexOf("@")) + ".json");
+//        ProtectionDomain domain = this.getClass().getProtectionDomain();
+        //String path = domain.getCodeSource().getLocation().getPath();
+        //String p_realPath = path.substring(path.indexOf("/"), path.indexOf("WEB-INF"));
+        File file = new File(getRealPath() + to.subSequence(1, to.lastIndexOf("@")) + ".json");
         long currentTime = currentDate.getTime();
         int currentSeconds = currentDate.getSeconds();
         currentDate = new Date(file.lastModified());
         int last = currentDate.getSeconds();
-        
+
         int remainingSeconds = Math.abs(last - currentSeconds);
-        String tot = "";
+        StringBuilder tot = new StringBuilder("");
         if (remainingSeconds < LAST_MODIFICATION_SECODS && file.exists()) {
             Scanner sc = new Scanner(file);
             while (sc.hasNext()) {
-                tot += sc.nextLine();
+                tot.append(sc.nextLine());
             }
-            lastReceivedMessages = new JSONArray(tot);
+            try {
+                lastReceivedMessages = new JSONArray(tot.toString());
+            } catch (Exception e) {
+                lastReceivedMessages=new JSONArray();
+            }
             sc.close();
         }
         receivedMessage.put("msg", msg);
@@ -73,5 +76,16 @@ public class JsonCreate {
         String json = lastReceivedMessages.toString(5);
         out.append(json);
         out.close();
+    }
+
+    public void setRealPath(String realPath) {
+        this.realPath = realPath;
+    }
+
+    /**
+     * @return the realPath
+     */
+    public String getRealPath() {
+        return realPath;
     }
 }

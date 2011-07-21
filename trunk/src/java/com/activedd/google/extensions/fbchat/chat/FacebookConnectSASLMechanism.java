@@ -13,6 +13,7 @@ import javax.security.sasl.Sasl;
 
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.sasl.SASLMechanism;
 import org.jivesoftware.smack.util.Base64;
 
@@ -37,13 +38,20 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
 
     @Override
     protected void authenticate() throws IOException, XMPPException {
-        StringBuilder stanza = new StringBuilder();
+        final StringBuilder stanza = new StringBuilder();
         stanza.append("<auth mechanism=\"").append(getName());
         stanza.append("\" xmlns=\"urn:ietf:params:xml:ns:xmpp-sasl\">");
         stanza.append("</auth>");
 
         // Send the authentication to the server
-        getSASLAuthentication().send(stanza.toString());
+        Packet p=new Packet() {
+
+            @Override
+            public String toXML() {
+                return stanza.toString();
+            }
+        };
+        getSASLAuthentication().send(p);
     }
 
     @Override
@@ -90,7 +98,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
     @Override
     public void challengeReceived(String challenge) throws IOException {
         // Build the challenge response stanza encoding the response text
-        StringBuilder stanza = new StringBuilder();
+        final StringBuilder stanza = new StringBuilder();
 
         byte response[] = null;
         if (challenge != null) {
@@ -139,7 +147,14 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
         stanza.append("</response>");
 
         // Send the authentication to the server
-        getSASLAuthentication().send(stanza.toString());
+        Packet p=new Packet() {
+
+            @Override
+            public String toXML() {
+                return stanza.toString();
+            }
+        };
+        getSASLAuthentication().send(p);
     }
 
     private Map<String, String> getQueryMap(String query) {

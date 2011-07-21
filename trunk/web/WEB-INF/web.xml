@@ -32,20 +32,12 @@
         <filter-name>LoginFilter</filter-name>
         <url-pattern>/login/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>encodingFilter</filter-name>
-        <url-pattern>*.htm</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>encodingFilter</filter-name>
-        <url-pattern>*.json</url-pattern>
-    </filter-mapping>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>15</session-timeout>
+        <session-timeout>4</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

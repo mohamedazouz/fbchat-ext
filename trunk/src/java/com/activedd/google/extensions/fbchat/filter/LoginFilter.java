@@ -38,28 +38,6 @@ public class LoginFilter implements Filter {
         if (debug) {
             log("LoginFilter:DoBeforeProcessing");
         }
-
-        // Write code here to process the request and/or response before
-        // the rest of the filter chain is invoked.
-
-        // For example, a logging filter might log items on the request object,
-        // such as the parameters.
-	/*
-        for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
-        String name = (String)en.nextElement();
-        String values[] = request.getParameterValues(name);
-        int n = values.length;
-        StringBuffer buf = new StringBuffer();
-        buf.append(name);
-        buf.append("=");
-        for(int i=0; i < n; i++) {
-        buf.append(values[i]);
-        if (i < n-1)
-        buf.append(",");
-        }
-        log(buf.toString());
-        }
-         */
     }
 
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
@@ -67,26 +45,6 @@ public class LoginFilter implements Filter {
         if (debug) {
             log("LoginFilter:DoAfterProcessing");
         }
-
-        // Write code here to process the request and/or response after
-        // the rest of the filter chain is invoked.
-
-        // For example, a logging filter might log the attributes on the
-        // request object after the request has been processed.
-	/*
-        for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
-        String name = (String)en.nextElement();
-        Object value = request.getAttribute(name);
-        log("attribute: " + name + "=" + value.toString());
-
-        }
-         */
-
-        // For example, a filter might append something to the response.
-	/*
-        PrintWriter respOut = new PrintWriter(response.getWriter());
-        respOut.println("<P><B>This has been appended by an intrusive filter.</B>");
-         */
     }
 
     /**
@@ -112,21 +70,9 @@ public class LoginFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (Throwable t) {
-            // If an exception is thrown somewhere down the filter chain,
-            // we still want to execute our after processing, and then
-            // rethrow the problem after that.
-            //t.getMessage();
-            t.printStackTrace();
-//            if (t instanceof JSONException) {
-//                //((HttpServletResponse) response).sendRedirect("../login/login.htm");
-//            }
-            if (t.getCause() instanceof NullPointerException) {
-           //     extUrl = "https://chrome.google.com/extensions/detail/kbbbdceaanenabhggodldamnegaicgpo";
-                ((HttpServletResponse) response).sendRedirect(extUrl);
-            } else {
-                ((HttpServletResponse) response).sendRedirect("../login/login.htm");
-            }
+            
 
+            ((HttpServletResponse) response).sendRedirect("../login/login.htm");
 
         }
 
@@ -179,7 +125,7 @@ public class LoginFilter implements Filter {
         if (filterConfig == null) {
             return ("LoginFilter()");
         }
-        StringBuffer sb = new StringBuffer("LoginFilter(");
+        StringBuilder sb = new StringBuilder("LoginFilter(");
         sb.append(filterConfig);
         sb.append(")");
         return (sb.toString());

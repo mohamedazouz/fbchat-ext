@@ -4,7 +4,6 @@
  */
 package com.activedd.google.extensions.fbchat.chat;
 
-import com.google.code.facebookapi.FacebookJsonRestClient;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.SASLAuthentication;
@@ -22,8 +21,6 @@ public class ServerConfiguration {
     private final boolean isSaslAuthenticationEnabled = true;
     public final boolean isCompressionEnabled = false;
     private final boolean isReconnectionAllowed = false;
-    private FacebookJsonRestClient facebook; // facebook client to get sessionkey and enable me to acces friends details like a photos and status
-    private MessageListenerImp messageListenerImp;
     private ConnectionConfiguration config = null;
 
     ServerConfiguration(String domain, int port) throws XMPPException {

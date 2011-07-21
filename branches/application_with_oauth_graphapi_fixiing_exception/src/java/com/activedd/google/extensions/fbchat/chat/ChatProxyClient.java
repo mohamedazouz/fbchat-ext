@@ -37,13 +37,12 @@ public final class ChatProxyClient {
     private Timer SchTimer; //timer thread for lossing session;s
     int sessionTimeOut = 4;
     private String realPath;
-
+    
     public ChatProxyClient(ConnectionConfiguration config, String realPath) {
         connection = new XMPPConnection(config);
         packetFilterImpl = new PacketFilterImp();
         JsonCreate jsonCreate=new JsonCreate();
         jsonCreate.setRealPath(realPath);
-        System.out.println(realPath);
         packetListenerImp = new PacketListenerImp(jsonCreate);
         this.realPath = jsonCreate.getRealPath();
     }
@@ -301,5 +300,5 @@ public final class ChatProxyClient {
             }).start();
         }
     }
-
+    
 }

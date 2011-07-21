@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/>
+
+    <!--
+    Most controllers will use the ControllerClassNameHandlerMapping above, but
+    for the index controller we are using ParameterizableViewController, so we must
+    define an explicit mapping for it.
+    -->
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="index.htm">indexController</prop>
+                <prop key="thankyou.htm">thankyou</prop>
+                <prop key="logout.htm">logout</prop>
+                <prop key="login/*.htm">Login</prop>
+                <prop key="connect/*.htm">Connect</prop>
+                <prop key="newconnect/*.htm">NewConnect</prop>
+                <prop key="messaging/*.htm">Messaging</prop>
+                <prop key="newmessaging/*.htm">NewMessaging</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:prefix="/WEB-INF/jsp/"
+          p:suffix=".jsp" />
+
+    <!--
+    The index controller.
+    -->
+    <bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:../fbproperties.properties"/>
+    </bean>
+    <bean name="indexController"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="index" />
+    <bean name="thankyou"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="thankYou" />
+    <bean name="logout"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="logout" />
+
+    <bean name="Login" class="com.activedd.google.extensions.fbchat.controller.Login" >
+        <property name="apiID" value="${fbapp.appID}"/>
+        <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
+        <property name="redirectUrl" value="${fbapp.redirectUrl}"/>
+        <property name="permissionTokens" value="${fbapp.permission}"/>
+    </bean>
+
+    <bean name="Connect" class="com.activedd.google.extensions.fbchat.controller.Connect" scope="request" >
+        <property name="apiKey" value="${fbapp.appKey}"/>
+        <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
+        <property name="resource" value="${fbapp.resource}"/>
+        <property name="domain" value="${fbapp.domain}"/>
+        <property name="port"   value="${fbapp.port}"/>
+        <property name="apiID"   value="${fbapp.appID}"/>
+        <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
+        <property name="configuration" ref="configuration"/>
+        <property name="jsonCreator" ref="jsoncreator"/>
+    </bean>
+    <bean name="NewConnect" class="com.activedd.google.extensions.fbchat.controller.NewConnect" scope="request" >
+        <property name="apiKey" value="${fbapp.appKey}"/>
+        <property name="apiSecret" value="${fbapp.apiSecretkey}"/>
+        <property name="resource" value="${fbapp.resource}"/>
+        <property name="domain" value="${fbapp.domain}"/>
+        <property name="port"   value="${fbapp.port}"/>
+        <property name="apiID"   value="${fbapp.appID}"/>
+        <property name="sessionTimeOut"   value="${fbapp.sessiontimeout}"/>
+        <property name="configuration"  ref="configuration"/>
+        <property name="realPath" value="${fbapp.localDir}"/>
+    </bean>
+
+    <bean name="Messaging" class="com.activedd.google.extensions.fbchat.controller.Messaging" >
+    </bean>
+    <bean name="NewMessaging" class="com.activedd.google.extensions.fbchat.controller.NewMessaging" >
+    </bean>
+   
+   
+
+</beans>

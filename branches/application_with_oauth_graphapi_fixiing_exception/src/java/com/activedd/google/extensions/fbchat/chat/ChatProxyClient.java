@@ -72,7 +72,7 @@ public final class ChatProxyClient {
                 connection.connect();
                 if (connection.isConnected()) {
                     try {
-                        connection.login(apiID + "|" + fbSessionKey, apiSecret); //login using user sessionkey as password.
+                        connection.login(apiID + "|" +apiSecret , fbSessionKey); //login using user sessionkey as password.
                         connection.addPacketListener(packetListenerImp, packetFilterImpl);
                         this.sessionTimeOut = sessionTimeOut;
                         result = "connected";

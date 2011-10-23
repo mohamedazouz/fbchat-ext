@@ -53,7 +53,7 @@ public class NewConnect extends MultiActionController {
             if (request.getParameter("sessionkey") != null) {
                 String sessionkey = request.getParameter("sessionkey");
                 try {
-                    sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
+                   // sessionkey = sessionkey.substring(sessionkey.indexOf("|") + 1, sessionkey.lastIndexOf("|"));
                     JSONObject result = chatClient.xmppConnectAndLogin(sessionkey, apiKey, getApiSecret(), domain, resource, port, apiID, sessionTimeOut);
                     if (result.getInt("status") == 1) {
                         session.setAttribute("client", chatClient);

@@ -69,8 +69,8 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
         }
 
         this.apiKey = keyArray[0];
-        this.sessionKey = keyArray[1];
-        this.sessionSecret = sessionSecret;
+        this.sessionKey = sessionSecret;
+        this.sessionSecret = keyArray[1];
 
         this.authenticationId = sessionKey;
         this.password = sessionSecret;
@@ -115,7 +115,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                     + "call_id=" + callId
                     + "method=" + method
                     + "nonce=" + nonce
-                    + "session_key=" + sessionKey
+                    + "access_token=" + sessionKey
                     + "v=" + version
                     + sessionSecret;
 
@@ -129,7 +129,7 @@ public class FacebookConnectSASLMechanism extends SASLMechanism {
                     + "call_id=" + callId + "&"
                     + "method=" + method + "&"
                     + "nonce=" + nonce + "&"
-                    + "session_key=" + sessionKey + "&"
+                    + "access_token=" + sessionKey + "&"
                     + "v=" + version + "&"
                     + "sig=" + sig;
 
